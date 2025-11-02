@@ -149,6 +149,7 @@
           <button 
             class="action-btn"
             @click="showInventory = !showInventory"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
             title="Инвентарь"
           >
             🎒 Инвентарь
@@ -156,6 +157,7 @@
           <button 
             class="action-btn"
             @click="confirmExitGame"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
             title="Выход"
           >
             🚪 Выход
@@ -167,7 +169,7 @@
           <div class="modal" @click.stop>
             <div class="modal-header">
               <h3>🎒 Инвентарь</h3>
-              <button class="modal-close" @click="showInventory = false">✕</button>
+              <button class="modal-close" @click="showInventory = false" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">✕</button>
             </div>
             <div class="modal-content">
               <div v-if="gameStore.inventory.length > 0" class="inventory-list">
