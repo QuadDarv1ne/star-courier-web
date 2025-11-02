@@ -1,5 +1,10 @@
 <template>
   <div class="game-view">
+    <!-- Animated Background -->
+    <div class="space-background">
+      <div class="star" v-for="i in 100" :key="i" :style="getStarStyle(i)"></div>
+    </div>
+    
     <!-- Loading State -->
     <div v-if="loading" class="loading-screen">
       <div class="loading-content">
@@ -283,6 +288,26 @@ export default defineComponent({
 
   methods: {
     /**
+     * Генерировать стиль для звезды
+     */
+    getStarStyle(index) {
+      const size = Math.random() * 3 + 1
+      const top = Math.random() * 100
+      const left = Math.random() * 100
+      const opacity = Math.random() * 0.8 + 0.2
+      const animationDelay = Math.random() * 5
+      
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        top: `${top}%`,
+        left: `${left}%`,
+        opacity: opacity,
+        animationDelay: `${animationDelay}s`
+      }
+    },
+    
+    /**
      * Сделать выбор
      */
     async makeChoice(choice) {
@@ -417,6 +442,32 @@ export default defineComponent({
   height: calc(100vh - 200px);
   background: linear-gradient(135deg, #0f172a 0%, #44260e 50%, #0f172a 100%);
   color: #e0e7ff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ======================== SPACE BACKGROUND ======================== */
+
+.space-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: twinkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
 }
 
 /* ======================== LOADING SCREEN ======================== */
@@ -427,26 +478,42 @@ export default defineComponent({
   justify-content: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #0f172a 0%, #44260e 50%, #0f172a 100%);
+  position: relative;
+  overflow: hidden;
 }
 
 .loading-content {
   text-align: center;
+  background: rgba(30, 41, 59, 0.8);
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 2px solid #fbbf24;
+  position: relative;
+  z-index: 2;
 }
 
 .loading-spinner {
   font-size: 4rem;
   margin-bottom: 1rem;
-  animation: float 2s ease-in-out infinite;
+  animation: float 2s ease-in-out infinite, spin 3s linear infinite;
 }
 
 .loading-content h2 {
   color: #fbbf24;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .loading-content p {
   color: #d1d5db;
+  font-size: 1.1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* ======================== GAME OVER SCREEN ======================== */
@@ -457,6 +524,7 @@ export default defineComponent({
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.8) 0%, rgba(68, 38, 14, 0.9) 100%);
 }
 
 .game-over-content {
@@ -466,23 +534,40 @@ export default defineComponent({
   padding: 3rem;
   text-align: center;
   max-width: 500px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.game-over-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #ef4444, #fbbf24, #ef4444);
 }
 
 .game-over-emoji {
   font-size: 5rem;
   margin-bottom: 1rem;
+  animation: pulse 2s infinite;
 }
 
 .game-over-content h2 {
   color: #fbbf24;
   font-size: 2rem;
   margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .game-over-reason {
   color: #d1d5db;
   font-size: 1.1rem;
   margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
 .game-stats {
@@ -491,6 +576,7 @@ export default defineComponent({
   border-radius: 0.5rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .stat-item {
@@ -513,6 +599,11 @@ export default defineComponent({
   color: #fbbf24;
   font-weight: bold;
   font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ======================== GAME CONTAINER ======================== */
@@ -573,6 +664,14 @@ export default defineComponent({
   border: 1px solid #78350f;
   border-radius: 0.375rem;
   padding: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: #fbbf24;
+  box-shadow: 0 5px 15px rgba(251, 191, 36, 0.2);
 }
 
 .stat-header {
@@ -585,6 +684,7 @@ export default defineComponent({
 
 .stat-emoji {
   font-size: 1.25rem;
+  animation: pulse 2s infinite;
 }
 
 .stat-name {
@@ -600,16 +700,20 @@ export default defineComponent({
   border-radius: 0.2rem;
   overflow: hidden;
   margin-bottom: 0.25rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .stat-fill {
   height: 100%;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 0.2rem;
 }
 
 .stat-value {
   font-size: 0.75rem;
   color: #9ca3af;
+  text-align: right;
+  font-weight: 600;
 }
 
 /* Relationships */
@@ -623,17 +727,30 @@ export default defineComponent({
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 1rem 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .relationship-item {
   margin-bottom: 0.75rem;
   font-size: 0.85rem;
+  background: rgba(17, 24, 39, 0.5);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.relationship-item:hover {
+  background: rgba(17, 24, 39, 0.7);
+  transform: translateX(3px);
 }
 
 .char-name {
   color: #fcd34d;
   display: block;
   margin-bottom: 0.25rem;
+  font-weight: 600;
 }
 
 .relationship-bar {
@@ -643,17 +760,20 @@ export default defineComponent({
   border-radius: 0.15rem;
   overflow: hidden;
   margin-bottom: 0.2rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .relationship-fill {
   height: 100%;
   background: linear-gradient(90deg, #ec4899 0%, #f43f5e 100%);
   transition: width 0.3s ease;
+  border-radius: 0.15rem;
 }
 
 .relationship-value {
   color: #9ca3af;
   float: right;
+  font-weight: 600;
 }
 
 /* Game Info */
@@ -694,12 +814,22 @@ export default defineComponent({
   border: 2px solid #fbbf24;
   border-radius: 0.5rem;
   padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.scene:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(251, 191, 36, 0.3);
 }
 
 .scene-emoji {
   font-size: 3rem;
   text-align: center;
   margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
 }
 
 .scene-character {
@@ -707,6 +837,8 @@ export default defineComponent({
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .scene-title {
@@ -714,6 +846,21 @@ export default defineComponent({
   font-size: 1.75rem;
   margin: 0 0 1rem 0;
   font-weight: bold;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.scene-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
 }
 
 .scene-text {
@@ -722,6 +869,9 @@ export default defineComponent({
   line-height: 1.8;
   white-space: pre-wrap;
   word-wrap: break-word;
+  text-align: justify;
+  font-family: 'Georgia', serif;
+  padding: 1rem 0;
 }
 
 /* Choices */
@@ -731,6 +881,7 @@ export default defineComponent({
   border: 1px solid #92400e;
   border-radius: 0.5rem;
   padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .choices-label {
@@ -738,6 +889,9 @@ export default defineComponent({
   font-size: 0.95rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .choices-grid {
@@ -759,6 +913,20 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.choice-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
 }
 
 .choice-button:hover:not(:disabled) {
@@ -767,14 +935,24 @@ export default defineComponent({
   box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
 }
 
+.choice-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
 .choice-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .choice-arrow {
   font-size: 1rem;
   flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.choice-button:hover:not(:disabled) .choice-arrow {
+  transform: translateX(3px);
 }
 
 .choice-text {
@@ -785,6 +963,9 @@ export default defineComponent({
   font-size: 0.75rem;
   opacity: 0.8;
   flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
 
 /* Quick Actions */
@@ -917,12 +1098,38 @@ export default defineComponent({
   border-radius: 0.375rem;
   text-align: center;
   color: #fbbf24;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.inventory-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
+}
+
+.inventory-item:hover {
+  transform: translateY(-5px);
+  border-color: #fbbf24;
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+.inventory-item:hover::before {
+  left: 100%;
 }
 
 .empty-inventory {
   text-align: center;
   color: #9ca3af;
   padding: 2rem;
+  font-style: italic;
 }
 
 .modal-footer {

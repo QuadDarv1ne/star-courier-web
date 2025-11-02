@@ -2,6 +2,11 @@
   <div class="home-view">
     <!-- Hero Section -->
     <section class="hero">
+      <!-- Animated Background -->
+      <div class="hero-background">
+        <div class="star" v-for="i in 50" :key="i" :style="getStarStyle(i)"></div>
+      </div>
+      
       <div class="hero-content">
         <div class="hero-emoji">🚀</div>
         <h1 class="hero-title">STAR COURIER</h1>
@@ -253,6 +258,26 @@ export default defineComponent({
 
   methods: {
     /**
+     * Генерировать стиль для звезды
+     */
+    getStarStyle(index) {
+      const size = Math.random() * 3 + 1
+      const top = Math.random() * 100
+      const left = Math.random() * 100
+      const opacity = Math.random() * 0.8 + 0.2
+      const animationDelay = Math.random() * 5
+      
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        top: `${top}%`,
+        left: `${left}%`,
+        opacity: opacity,
+        animationDelay: `${animationDelay}s`
+      }
+    },
+    
+    /**
      * Обработчик начала игры
      */
     async handleStartGame() {
@@ -324,6 +349,7 @@ export default defineComponent({
   justify-content: center;
   padding: 4rem 2rem;
   overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #44260e 50%, #0f172a 100%);
 }
 
 .hero-background {
@@ -333,26 +359,17 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   z-index: 0;
-  opacity: 0.1;
 }
 
 .star {
   position: absolute;
-  width: 3px;
-  height: 3px;
   background: #fbbf24;
   border-radius: 50%;
-  animation: twinkle 3s infinite;
+  animation: twinkle 3s infinite ease-in-out;
 }
 
-.star:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-.star:nth-child(2) { top: 20%; right: 20%; animation-delay: 1s; }
-.star:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 2s; }
-.star:nth-child(4) { bottom: 30%; right: 25%; animation-delay: 1.5s; }
-.star:nth-child(5) { top: 50%; left: 5%; animation-delay: 0.5s; }
-
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
+  0%, 100% { opacity: 0.2; }
   50% { opacity: 1; }
 }
 
@@ -361,12 +378,18 @@ export default defineComponent({
   z-index: 1;
   text-align: center;
   max-width: 600px;
+  background: rgba(17, 24, 39, 0.7);
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 2px solid #92400e;
 }
 
 .hero-emoji {
   font-size: 5rem;
   margin-bottom: 1rem;
   animation: float 3s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
 }
 
 .hero-title {
@@ -376,12 +399,26 @@ export default defineComponent({
   font-weight: bold;
   text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
   letter-spacing: 2px;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.hero-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
 }
 
 .hero-subtitle {
   font-size: 1.5rem;
   color: #fcd34d;
   margin-bottom: 1.5rem;
+  font-style: italic;
 }
 
 .hero-description {
@@ -389,6 +426,7 @@ export default defineComponent({
   color: #d1d5db;
   line-height: 1.8;
   margin-bottom: 2rem;
+  text-align: justify;
 }
 
 .hero-buttons {
@@ -499,6 +537,20 @@ export default defineComponent({
   padding: 2rem;
   text-align: center;
   transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
 }
 
 .feature-card:hover {
@@ -507,15 +559,21 @@ export default defineComponent({
   box-shadow: 0 10px 30px rgba(251, 191, 36, 0.2);
 }
 
+.feature-card:hover::before {
+  left: 100%;
+}
+
 .feature-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
+  animation: pulse 2s infinite;
 }
 
 .feature-card h3 {
   color: #fbbf24;
   margin-bottom: 0.75rem;
   font-size: 1.25rem;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
 }
 
 .feature-card p {
@@ -547,22 +605,43 @@ export default defineComponent({
   padding: 2rem;
   text-align: center;
   transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.character-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
 }
 
 .character-card:hover {
   border-color: #fbbf24;
   box-shadow: 0 10px 30px rgba(251, 191, 36, 0.2);
+  transform: translateY(-5px);
+}
+
+.character-card:hover::before {
+  left: 100%;
 }
 
 .character-avatar {
   font-size: 4rem;
   margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
 }
 
 .character-card h3 {
   color: #fbbf24;
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
 }
 
 .character-role {
@@ -570,12 +649,15 @@ export default defineComponent({
   font-size: 0.9rem;
   margin-bottom: 1rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .character-description {
   color: #d1d5db;
   line-height: 1.6;
   font-size: 0.95rem;
+  text-align: justify;
 }
 
 /* ======================== STATS PREVIEW SECTION ======================== */
@@ -603,17 +685,37 @@ export default defineComponent({
   padding: 1.5rem;
   text-align: center;
   transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-preview-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
 }
 
 .stat-preview-item:hover {
   border-color: #fbbf24;
   background: rgba(17, 24, 39, 0.9);
+  transform: translateY(-5px);
+}
+
+.stat-preview-item:hover::before {
+  left: 100%;
 }
 
 .stat-emoji {
   font-size: 2.5rem;
   display: block;
   margin-bottom: 0.75rem;
+  animation: pulse 2s infinite;
 }
 
 .stat-name {
@@ -621,6 +723,7 @@ export default defineComponent({
   color: #fbbf24;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
 }
 
 .stat-desc {
@@ -638,18 +741,33 @@ export default defineComponent({
   border: 2px solid #d97706;
   border-radius: 1rem;
   margin: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
 }
 
 .cta-content h2 {
   font-size: 2.5rem;
   color: #fbbf24;
   margin-bottom: 1rem;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
 }
 
 .cta-content p {
   font-size: 1.1rem;
   color: #d1d5db;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 /* ======================== INFO SECTION ======================== */

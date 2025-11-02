@@ -205,6 +205,11 @@ export default defineComponent({
   50% { transform: translateY(-10px); }
 }
 
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 .logo-text h1 {
   font-size: 1.5rem;
   color: #fbbf24;
