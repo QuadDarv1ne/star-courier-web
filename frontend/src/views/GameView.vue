@@ -156,6 +156,15 @@
           </button>
           <button 
             class="action-btn"
+            @click="showAchievements = true"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+            title="Достижения"
+          >
+            🏆 Достижения
+          </button>
+
+          <button 
+            class="action-btn"
             @click="confirmExitGame"
             @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
             title="Выход"
@@ -163,6 +172,13 @@
             🚪 Выход
           </button>
         </section>
+
+        <!-- Achievements Modal -->
+        <div v-if="showAchievements" class="modal-overlay" @click="showAchievements = false">
+          <div class="modal achievements-container" @click.stop>
+            <achievements-list @close="showAchievements = false" />
+          </div>
+        </div>
 
         <!-- Inventory Modal -->
         <div v-if="showInventory" class="modal-overlay" @click="showInventory = false">
@@ -203,6 +219,13 @@
             </div>
           </div>
         </div>
+        <!-- Achievement Notification -->
+        <achievement-notification
+          v-if="recentAchievement"
+          :achievement="recentAchievement"
+          :show="showAchievementNotification"
+          @dismiss="dismissAchievement"
+        />
       </main>
     </div>
   </div>
@@ -213,19 +236,29 @@ import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../store/game'
 import { useUiStore } from '../store/ui'
+import { useAchievementsStore } from '../store/achievements'
+import AchievementNotification from '../components/AchievementNotification.vue'
+import AchievementsList from '../components/AchievementsList.vue'
 
 export default defineComponent({
   name: 'GameView',
+
+  components: {
+    AchievementNotification,
+    AchievementsList
+  },
 
   setup() {
     const router = useRouter()
     const gameStore = useGameStore()
     const uiStore = useUiStore()
+    const achievementsStore = useAchievementsStore()
 
     return {
       router,
       gameStore,
-      uiStore
+      uiStore,
+      achievementsStore
     }
   },
 
@@ -239,6 +272,7 @@ export default defineComponent({
       await this.$utils.$audio.loadSoundEffect('sceneChange', '/audio/sfx/scene-change.mp3');
       await this.$utils.$audio.loadSoundEffect('gameOver', '/audio/sfx/game-over.mp3');
       await this.$utils.$audio.loadSoundEffect('choiceMade', '/audio/sfx/choice-made.mp3');
+      await this.$utils.$audio.loadSoundEffect('achievementUnlocked', '/audio/sfx/achievement.mp3');
       
       // Load background music
       await this.$utils.$audio.loadBackgroundMusic('/audio/music/background.mp3');
@@ -256,9 +290,12 @@ export default defineComponent({
       loadingMessage: 'Инициализация игры...',
       showInventory: false,
       showExitConfirm: false,
+      showAchievements: false,
       isGameOver: false,
       gameOverReason: '',
       startTime: null,
+      recentAchievement: null,
+      showAchievementNotification: false,
       statEmojis: {
         health: '❤️',
         morale: '💪',
@@ -342,6 +379,8 @@ export default defineComponent({
       this.loadingMessage = 'Загрузка следующей сцены...'
 
       try {
+        // Проверяем достижения после выбора
+        this.checkAchievements()
         this.$utils.log('info', 'Выбор сделан', choice.text)
         
         // Отправляем выбор в store
@@ -438,6 +477,45 @@ export default defineComponent({
       const seconds = elapsed % 60
       
       return `${minutes}:${seconds.toString().padStart(2, '0')}`
+    },
+
+    /**
+     * Показать уведомление о достижении
+     */
+    showAchievement(achievement) {
+      this.recentAchievement = achievement
+      this.showAchievementNotification = true
+      this.$utils.$audio.playSoundEffect('achievementUnlocked')
+      
+      // Автоматически скрыть через 5 секунд
+      setTimeout(() => {
+        this.dismissAchievement()
+      }, 5000)
+    },
+
+    /**
+     * Скрыть уведомление о достижении
+     */
+    dismissAchievement() {
+      this.showAchievementNotification = false
+      setTimeout(() => {
+        this.recentAchievement = null
+      }, 300)
+    },
+
+    /**
+     * Проверить достижения
+     */
+    checkAchievements() {
+      const previouslyUnlocked = new Set(this.achievementsStore.unlockedAchievements)
+      this.achievementsStore.checkAchievements(this.gameStore)
+      
+      // Показать уведомления о новых достижениях
+      this.achievementsStore.unlockedAchievementsList.forEach(achievement => {
+        if (!previouslyUnlocked.has(achievement.id)) {
+          this.showAchievement(achievement)
+        }
+      })
     }
   },
 

@@ -25,7 +25,7 @@
           >
             {{ loading ? '⏳ Загрузка...' : '🎮 Начать приключение' }}
           </button>
-          <button class="btn btn-secondary" @click="scrollToInfo">
+          <button class="btn btn-secondary" @click="scrollToInfo" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">
             📖 О проекте
           </button>
         </div>
@@ -182,6 +182,7 @@
         <button 
           class="btn btn-large" 
           @click="handleStartGame"
+          @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
           :disabled="loading"
         >
           {{ loading ? '⏳ Загрузка...' : '🎮 Начать игру прямо сейчас' }}
