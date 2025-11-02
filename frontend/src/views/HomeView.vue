@@ -20,6 +20,7 @@
           <button 
             class="btn btn-primary" 
             @click="handleStartGame"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
             :disabled="loading"
           >
             {{ loading ? '⏳ Загрузка...' : '🎮 Начать приключение' }}
