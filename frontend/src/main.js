@@ -10,6 +10,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import audioService from './services/audio'
 
 // Импорт стилей
 import './styles/main.css'
@@ -50,6 +51,9 @@ app.config.globalProperties.$api = API_URL
 
 // Глобальные утилиты
 app.config.globalProperties.$utils = {
+  // Audio service
+  $audio: audioService,
+  
   /**
    * Форматирование числа со статистикой
    */

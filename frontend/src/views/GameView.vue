@@ -226,6 +226,27 @@ export default defineComponent({
     }
   },
 
+  async mounted() {
+    // Initialize audio
+    await this.$utils.$audio.createUserContext();
+    
+    // Load sound effects
+    try {
+      await this.$utils.$audio.loadSoundEffect('buttonClick', '/audio/sfx/button-click.mp3');
+      await this.$utils.$audio.loadSoundEffect('sceneChange', '/audio/sfx/scene-change.mp3');
+      await this.$utils.$audio.loadSoundEffect('gameOver', '/audio/sfx/game-over.mp3');
+      await this.$utils.$audio.loadSoundEffect('choiceMade', '/audio/sfx/choice-made.mp3');
+      
+      // Load background music
+      await this.$utils.$audio.loadBackgroundMusic('/audio/music/background.mp3');
+      await this.$utils.$audio.playBackgroundMusic();
+      
+      this.$utils.log('info', 'Audio system initialized');
+    } catch (error) {
+      this.$utils.log('warning', 'Failed to initialize audio system', error);
+    }
+  },
+
   data() {
     return {
       loading: false,
@@ -311,6 +332,9 @@ export default defineComponent({
      * Сделать выбор
      */
     async makeChoice(choice) {
+      // Play sound effect
+      this.$utils.$audio.playSoundEffect('choiceMade');
+      
       this.loading = true
       this.loadingMessage = 'Загрузка следующей сцены...'
 
@@ -328,6 +352,10 @@ export default defineComponent({
           this.isGameOver = true
           this.gameOverReason = response.reason
           this.$root.showNotification('Игра окончена!', 'warning')
+          this.$utils.$audio.playSoundEffect('gameOver');
+        } else {
+          // Play scene change sound
+          this.$utils.$audio.playSoundEffect('sceneChange');
         }
 
         this.$utils.log('success', 'Сцена загружена')
