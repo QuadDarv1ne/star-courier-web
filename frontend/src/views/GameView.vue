@@ -132,6 +132,7 @@
               :key="idx"
               class="choice-button"
               @click="makeChoice(choice)"
+              @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
               :disabled="loading"
             >
               <span class="choice-arrow">▶</span>
