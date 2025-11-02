@@ -194,10 +194,10 @@
               <p>Вы уверены? Прогресс не сохранится.</p>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-secondary" @click="showExitConfirm = false">
+              <button class="btn btn-secondary" @click="showExitConfirm = false" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">
                 Отмена
               </button>
-              <button class="btn btn-primary" @click="exitGame">
+              <button class="btn btn-primary" @click="exitGame" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">
                 Выход
               </button>
             </div>
