@@ -1,0 +1,409 @@
+# ============================================================================
+# StarCourier Web - .gitignore
+# ============================================================================
+# Файлы и папки которые НЕ должны быть в репозитории
+#
+# Создайте этот файл в корне проекта:
+# starcourier-web/.gitignore
+# ============================================================================
+
+# ========================
+# ENVIRONMENT VARIABLES
+# ========================
+
+# Локальные переменные окружения (содержат чувствительные данные!)
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# ========================
+# BACKEND (Python/FastAPI)
+# ========================
+
+# Виртуальное окружение
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# Кэширование Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Распределённое кэширование
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Database файлы
+*.db
+*.sqlite
+*.sqlite3
+
+# Логи
+logs/
+*.log
+*.log.*
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ========================
+# FRONTEND (Node.js/Vue)
+# ========================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Production build
+dist/
+.dist
+
+# Vite cache и output
+.vite/
+.vitest/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettierignore
+
+# Nuxt dev/build outputs
+.nuxt
+dist
+
+# Nuxt generate
+.nuxt
+
+# Parcel-related files
+dist/
+.cache/
+
+# ========================
+# IDE & EDITORS
+# ========================
+
+# Visual Studio Code
+.vscode/
+.vscode-insiders/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+.idea_modules/
+*.iml
+*.iws
+*.ipr
+
+# WebStorm
+.WebStorm*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+
+# ========================
+# DOCKER
+# ========================
+
+# Docker volumes
+docker-volumes/
+postgres_data/
+
+# Docker compose override
+docker-compose.override.yml
+
+# ========================
+# OS SPECIFIC
+# ========================
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.Trash-*/
+
+# ========================
+# BUILD & ARTIFACTS
+# ========================
+
+# Build outputs
+build/
+dist/
+.dist/
+*.egg-info/
+.eggs/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Compiled files
+*.o
+*.a
+*.so
+.so
+*.dylib
+*.dll
+*.exe
+
+# ========================
+# PACKAGE MANAGERS
+# ========================
+
+# npm
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json*
+yarn.lock*
+.npm
+.eslintcache
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# poetry
+poetry.lock
+
+# ========================
+# TEMPORARY FILES
+# ========================
+
+# OS temp files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.~*
+
+# Backup files
+*.backup
+*.orig
+
+# ========================
+# DOCUMENTATION
+# ========================
+
+# Site output
+site/
+docs/_build/
+.mkdocs.yml
+
+# ========================
+# TESTING
+# ========================
+
+# Test coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# Pytest
+.pytest_cache/
+.tox/
+
+# ========================
+# DEPENDENCIES
+# ========================
+
+# Lock files (опционально)
+# package-lock.json
+# yarn.lock
+# poetry.lock
+# Pipfile.lock
+
+# ========================
+# CUSTOM FOR STARCOURIER
+# ========================
+
+# Game progress files (опционально)
+game_progress.json
+player_*.json
+
+# Backup databases
+*.db-backup
+*.sqlite-backup
+
+# Temporary uploads
+uploads/tmp/
+temp/
+
+# IDE specific files
+.editorconfig
+
+# ========================
+# KEEP THESE TRACKED
+# ========================
+
+# .gitkeep - чтобы пустые папки сохранились в гите
+!.gitkeep
+
+# Config examples
+!.env.example
+!config.example.py
+
+# Documentation
+!README.md
+!docs/
+!LICENSE
+
+# ========================
+# NOTES
+# ========================
+
+# Если вам нужно исключить файл который обычно игнорируется:
+# git add -f filename.txt
+#
+# Если вы случайно добавили файл в гит:
+# git rm --cached filename
+# git commit --amend
+#
+# Просмотреть какие файлы игнорируются:
+# git check-ignore -v *
