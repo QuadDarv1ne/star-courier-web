@@ -28,6 +28,7 @@ ENV/
 env.bak/
 venv.bak/
 .venv
+__init__*
 
 # Кэширование Python
 __pycache__/
