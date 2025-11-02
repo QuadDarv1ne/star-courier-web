@@ -1,0 +1,202 @@
+fastapi>=0.95.0
+uvicorn[standard]>=0.22.0
+pydantic>=1.10.0
+pytest>=7.0.0
+requests
+
+# ============================================================================
+# StarCourier Web - Backend Requirements
+# ============================================================================
+# Установка: pip install -r requirements.txt
+# ============================================================================
+
+# ========================
+# FASTAPI & WEB FRAMEWORK
+# ========================
+
+# FastAPI - современный веб-фреймворк для Python
+fastapi==0.104.1
+
+# Uvicorn - ASGI сервер для FastAPI
+uvicorn[standard]==0.24.0
+
+# Python-multipart - для работы с multipart/form-data
+python-multipart==0.0.6
+
+# ========================
+# DATA VALIDATION
+# ========================
+
+# Pydantic - валидация данных и сериализация
+pydantic==2.5.0
+
+# Pydantic Settings - управление конфигурацией через переменные окружения
+pydantic-settings==2.1.0
+
+# Pydantic Extra Types - дополнительные типы данных
+pydantic-extra-types==2.3.0
+
+# ========================
+# ENVIRONMENT & CONFIG
+# ========================
+
+# Python-dotenv - загрузка переменных окружения из .env файлов
+python-dotenv==1.0.0
+
+# ========================
+# ASYNC & CONCURRENCY
+# ========================
+
+# AioFiles - асинхронная работа с файлами
+aiofiles==23.2.1
+
+# ========================
+# DATABASE (OPTIONAL)
+# ========================
+
+# SQLAlchemy - ORM для работы с БД
+sqlalchemy==2.0.23
+
+# Alembic - миграции БД для SQLAlchemy
+alembic==1.13.0
+
+# Psycopg2-binary - PostgreSQL адаптер (раскомментировать если нужна PostgreSQL)
+# psycopg2-binary==2.9.9
+
+# Motor - асинхронный драйвер для MongoDB
+# motor==3.3.2
+
+# Pymongo - MongoDB драйвер
+# pymongo==4.6.0
+
+# ========================
+# CACHING (OPTIONAL)
+# ========================
+
+# Redis - клиент для Redis
+redis==5.0.1
+
+# FastAPI Cache2 - кэширование для FastAPI
+fastapi-cache2==0.2.1
+
+# ========================
+# AUTHENTICATION (OPTIONAL)
+# ========================
+
+# PyJWT - создание и проверка JWT токенов
+pyjwt==2.8.1
+
+# Passlib - хеширование паролей
+passlib[bcrypt]==1.7.4
+
+# Python-jose - создание JOSE токенов
+python-jose[cryptography]==3.3.0
+
+# ========================
+# LOGGING & MONITORING
+# ========================
+
+# Structlog - структурированное логирование
+structlog==23.3.0
+
+# Python-json-logger - логирование в JSON формате
+python-json-logger==2.0.7
+
+# ========================
+# TESTING
+# ========================
+
+# Pytest - фреймворк для тестирования
+pytest==7.4.3
+
+# Pytest-asyncio - поддержка async тестов
+pytest-asyncio==0.21.1
+
+# Pytest-cov - покрытие кода тестами
+pytest-cov==4.1.0
+
+# Httpx - асинхронный HTTP клиент для тестирования
+httpx==0.25.2
+
+# ========================
+# DEVELOPMENT
+# ========================
+
+# Black - форматирование кода
+black==23.12.0
+
+# Flake8 - линтер для Python
+flake8==6.1.0
+
+# Pylint - анализ кода
+pylint==3.0.3
+
+# Mypy - проверка типов
+mypy==1.7.1
+
+# Isort - сортировка импортов
+isort==5.13.2
+
+# Pre-commit - Git хуки для качества кода
+pre-commit==3.5.0
+
+# ========================
+# DOCUMENTATION
+# ========================
+
+# Mkdocs - генерация документации
+mkdocs==1.5.3
+
+# Mkdocs-material - красивая тема для Mkdocs
+mkdocs-material==9.4.14
+
+# ========================
+# UTILITIES
+# ========================
+
+# Requests - HTTP клиент для синхронных запросов
+requests==2.31.0
+
+# Httpx - асинхронный HTTP клиент
+httpx==0.25.2
+
+# Click - CLI фреймворк
+click==8.1.7
+
+# Rich - красивый вывод в консоль
+rich==13.7.0
+
+# Tqdm - прогресс-бар
+tqdm==4.67.0
+
+# ========================
+# CORS SUPPORT
+# ========================
+
+# FastAPI CORS уже встроен в FastAPI
+# Дополнительная настройка: from fastapi.middleware.cors import CORSMiddleware
+
+# ========================
+# BACKGROUND TASKS (OPTIONAL)
+# ========================
+
+# Celery - распределённая очередь задач
+# celery==5.3.4
+
+# RQ - Redis-based job queue
+# rq==1.15.1
+
+# ========================
+# REALTIME (OPTIONAL)
+# ========================
+
+# WebSocket поддержка уже встроена в FastAPI
+# Дополнительно для WebSocket:
+# python-socketio==5.10.0
+
+# ========================
+# API DOCUMENTATION (OPTIONAL)
+# ========================
+
+# Swagger UI уже встроен в FastAPI
+# ReDoc уже встроен в FastAPI
