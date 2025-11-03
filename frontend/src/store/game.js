@@ -337,11 +337,19 @@ export const useGameStore = defineStore('game', {
           'начало игры'
         );
 
+        // Validate API response before updating state
+        const sceneErrors = this.validateScene(response.scene);
+        this.handleValidationErrors(sceneErrors, 'scene data');
+        
         // Update state from API response
         this.currentSceneId = response.scene.id;
         this.currentScene = response.scene;
         this.stats = response.stats;
         this.relationships = response.relationships;
+
+        // Validate game state after update
+        const validationErrors = this.validateGameState();
+        this.handleValidationErrors(validationErrors, 'initial game state');
 
         // Initialize game
         this.isGameStarted = true;
@@ -442,6 +450,10 @@ export const useGameStore = defineStore('game', {
           };
         }
 
+        // Validate response scene
+        const sceneErrors = this.validateScene(response.scene);
+        this.handleValidationErrors(sceneErrors, 'scene data');
+        
         // Update state
         this.currentSceneId = response.scene.id;
         this.currentScene = response.scene;
@@ -485,6 +497,10 @@ export const useGameStore = defineStore('game', {
         if (response.relationships) {
           this.relationships = response.relationships;
         }
+        
+        // Validate game state after update
+        const validationErrors = this.validateGameState();
+        this.handleValidationErrors(validationErrors, 'game state after choice');
         
         // Auto-save after each choice if enabled
         if (this.autoSaveEnabled) {
@@ -1266,20 +1282,123 @@ export const useGameStore = defineStore('game', {
       }
       
       // Validate stats
+      const validStats = ['health', 'morale', 'knowledge', 'team', 'danger', 'security', 'fuel', 'money', 'psychic', 'trust']
       Object.entries(this.stats).forEach(([key, value]) => {
+        if (!validStats.includes(key)) {
+          errors.push(`Неизвестная статистика: ${key}`)
+        }
         if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
           errors.push(`Неверное значение статистики: ${key} = ${value}`)
         }
       })
       
       // Validate relationships
+      const validCharacters = ['sara_nova', 'grisha_romanov', 'li_zheng']
       Object.entries(this.relationships).forEach(([key, value]) => {
+        if (!validCharacters.includes(key)) {
+          errors.push(`Неизвестный персонаж: ${key}`)
+        }
         if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
           errors.push(`Неверное значение отношения: ${key} = ${value}`)
         }
       })
       
+      // Validate inventory
+      if (!Array.isArray(this.inventory)) {
+        errors.push('Неверный формат инвентаря')
+      } else {
+        this.inventory.forEach((item, index) => {
+          if (typeof item !== 'string') {
+            errors.push(`Неверный предмет в инвентаре на позиции ${index}`)
+          }
+        })
+      }
+      
+      // Validate choices made
+      if (typeof this.choicesMade !== 'number' || isNaN(this.choicesMade) || this.choicesMade < 0) {
+        errors.push('Неверное количество сделанных выборов')
+      }
+      
+      // Validate visited scenes
+      if (!(this.visitedScenes instanceof Set)) {
+        errors.push('Неверный формат посещенных сцен')
+      }
+      
       return errors
+    },
+    
+    /**
+     * Validate scene data
+     */
+    validateScene(scene) {
+      const errors = []
+      
+      if (!scene) {
+        errors.push('Сцена не существует')
+        return errors
+      }
+      
+      // Validate scene ID
+      if (!scene.id || typeof scene.id !== 'string') {
+        errors.push('Неверный ID сцены')
+      }
+      
+      // Validate scene title
+      if (!scene.title || typeof scene.title !== 'string') {
+        errors.push('Неверное название сцены')
+      }
+      
+      // Validate scene text
+      if (!scene.text || typeof scene.text !== 'string') {
+        errors.push('Неверный текст сцены')
+      }
+      
+      // Validate scene image
+      if (!scene.image || typeof scene.image !== 'string') {
+        errors.push('Неверное изображение сцены')
+      }
+      
+      // Validate scene character
+      if (!scene.character || typeof scene.character !== 'string') {
+        errors.push('Неверный персонаж сцены')
+      }
+      
+      // Validate scene choices
+      if (!Array.isArray(scene.choices)) {
+        errors.push('Неверный формат выборов сцены')
+      } else {
+        scene.choices.forEach((choice, index) => {
+          if (!choice.text || typeof choice.text !== 'string') {
+            errors.push(`Неверный текст выбора ${index + 1}`)
+          }
+          if (!choice.next || typeof choice.next !== 'string') {
+            errors.push(`Неверный следующий ID сцены для выбора ${index + 1}`)
+          }
+          if (choice.stats && typeof choice.stats !== 'object') {
+            errors.push(`Неверный формат статистики для выбора ${index + 1}`)
+          }
+        })
+      }
+      
+      return errors
+    },
+    
+    /**
+     * Handle validation errors
+     */
+    handleValidationErrors(errors, context = 'game state') {
+      if (errors.length > 0) {
+        console.error(`❌ Validation errors in ${context}:`, errors)
+        
+        // Show user-friendly error notification
+        if (this.$uiStore) {
+          const errorMessage = `Обнаружены ошибки в ${context}: ${errors.join(', ')}`
+          this.$uiStore.showError(errorMessage)
+        }
+        
+        // Throw error for critical validation failures
+        throw new Error(`Validation failed for ${context}: ${errors.join(', ')}`)
+      }
     },
     
     /**

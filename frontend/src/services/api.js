@@ -121,20 +121,47 @@ apiClient.interceptors.response.use(
     return response
   },
   (error) => {
+    // Log detailed error information
+    console.error('❌ API Error Details:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.response?.data,
+      request: error.request ? 'Request made' : 'No request'
+    });
+    
     if (error.response) {
       // Server responded with error status
       console.error(`❌ Response Error (${error.response.status}):`, error.response.data)
       
-      const message = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера'
-      throw new Error(message)
+      // Create more detailed error message
+      const status = error.response.status;
+      const statusText = error.response.statusText || 'Unknown Status';
+      const serverMessage = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера';
+      
+      let message = `${status} ${statusText}: ${serverMessage}`;
+      
+      // Add context-specific messages
+      if (status === 404) {
+        message = `Ресурс не найден: ${serverMessage}`;
+      } else if (status === 429) {
+        message = `Слишком много запросов. Пожалуйста, подождите немного.`;
+      } else if (status >= 500) {
+        message = `Внутренняя ошибка сервера. Пожалуйста, попробуйте позже.`;
+      }
+      
+      throw new Error(message);
     } else if (error.request) {
       // Request made but no response
       console.error('❌ Network Error: No response from server')
-      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен.')
+      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен и доступен.');
     } else {
       // Error in request setup
-      console.error('❌ Error:', error.message)
-      throw new Error(error.message)
+      console.error('❌ Request Setup Error:', error.message)
+      throw new Error(`Ошибка запроса: ${error.message}`);
     }
   }
 )
@@ -154,8 +181,19 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
     return await fn()
   } catch (error) {
     if (retries === 0) {
+      // Log detailed error information before throwing
+      console.error('❌ API call failed after all retries:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        url: error.config?.url,
+        method: error.config?.method,
+        data: error.response?.data
+      });
       throw error
     }
+    
+    console.warn(`⚠️ API call failed, retrying in ${delay}ms... (${retries} retries left)`);
     
     // Wait for delay
     await new Promise(resolve => setTimeout(resolve, delay))

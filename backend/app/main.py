@@ -919,14 +919,27 @@ logger.info("✅ GZip compression middleware добавлен")
 async def http_exception_handler(request, exc):
     """Обработчик HTTP исключений"""
     logger.error(f"❌ HTTP Exception ({exc.status_code}): {exc.detail}")
+    
+    # Add more detailed error information
+    error_details = {
+        "error": exc.detail,
+        "status_code": exc.status_code,
+        "timestamp": datetime.now().isoformat(),
+        "path": str(request.url),
+        "method": request.method,
+        "client": request.client.host if request.client else None
+    }
+    
+    # Add request body for debugging in development
+    if settings.debug and hasattr(request, 'body'):
+        try:
+            error_details["request_body"] = await request.body()
+        except:
+            pass
+    
     return JSONResponse(
         status_code=exc.status_code,
-        content={
-            "error": exc.detail,
-            "status_code": exc.status_code,
-            "timestamp": datetime.now().isoformat(),
-            "path": str(request.url)
-        }
+        content=error_details
     )
 
 
@@ -934,15 +947,29 @@ async def http_exception_handler(request, exc):
 async def general_exception_handler(request, exc):
     """Обработчик общих исключений"""
     logger.error(f"❌ Необработанное исключение: {str(exc)}", exc_info=True)
+    
+    # Create detailed error response
+    error_details = {
+        "error": "Internal server error",
+        "status_code": 500,
+        "timestamp": datetime.now().isoformat(),
+        "path": str(request.url),
+        "method": request.method,
+        "client": request.client.host if request.client else None
+    }
+    
+    # Add exception details in debug mode
+    if settings.debug:
+        error_details["details"] = str(exc)
+        error_details["exception_type"] = type(exc).__name__
+        
+        # Try to get traceback
+        import traceback
+        error_details["traceback"] = traceback.format_exc()
+    
     return JSONResponse(
         status_code=500,
-        content={
-            "error": "Internal server error",
-            "status_code": 500,
-            "timestamp": datetime.now().isoformat(),
-            "path": str(request.url),
-            "details": str(exc) if settings.debug else None
-        }
+        content=error_details
     )
 
 # Rate limiting middleware
@@ -1008,6 +1035,16 @@ async def start_game(request: GameStartRequest):
     try:
         player_id = request.player_id
         
+        # Validate player ID
+        if not player_id or not isinstance(player_id, str) or len(player_id.strip()) == 0:
+            logger.warning(f"⚠️ Неверный ID игрока: {player_id}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Неверный ID игрока"
+            )
+        
+        player_id = player_id.strip()
+        
         logger.info(f"🎮 Попытка начать игру для игрока: {player_id}")
         
         # Проверка существования игроков
@@ -1042,9 +1079,12 @@ async def start_game(request: GameStartRequest):
         logger.info(f"✅ Игра начата для игрока: {player_id}")
         logger.debug(f"📊 Активных сессий: {len(game_progress)}/{settings.max_active_games}")
         
+        # Validate and return scene data
+        scene_data = get_scene_data('start')
+        
         return {
             "status": "success",
-            "scene": get_scene_data('start'),
+            "scene": scene_data,
             "stats": game_progress[player_id]['stats'],
             "relationships": game_progress[player_id]['relationships']
         }
@@ -1052,6 +1092,10 @@ async def start_game(request: GameStartRequest):
         raise
     except Exception as e:
         logger.error(f"❌ Ошибка при начале игры: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при начале игры"
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ошибка при начале игры"
