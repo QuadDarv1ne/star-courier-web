@@ -16,6 +16,16 @@
           <router-link to="/game" v-if="gameStore.isGameStarted" class="nav-link">Игра</router-link>
           <router-link to="/about" class="nav-link">О проекте</router-link>
         </nav>
+        
+        <!-- Settings Button -->
+        <button 
+          class="settings-button"
+          @click="uiStore.openModal('settings')"
+          @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+          title="Настройки"
+        >
+          ⚙️
+        </button>
       </div>
     </header>
 
@@ -52,6 +62,15 @@
       </div>
     </transition>
     
+    <!-- Settings Modal -->
+    <transition name="fade">
+      <div v-if="uiStore.modals.settings" class="modal-overlay" @click="uiStore.closeModal('settings')">
+        <div class="modal-container" @click.stop>
+          <SettingsPanel @close="uiStore.closeModal('settings')" />
+        </div>
+      </div>
+    </transition>
+    
     <!-- Cache Stats (Development only) -->
     <div v-if="showCacheStats" class="cache-stats">
       <div>Cache Stats:</div>
@@ -66,9 +85,14 @@
 import { defineComponent } from 'vue'
 import { useGameStore } from './store/game'
 import { useUiStore } from './store/ui'
+import SettingsPanel from './components/SettingsPanel.vue'
 
 export default defineComponent({
   name: 'App',
+  
+  components: {
+    SettingsPanel
+  },
   
   setup() {
     const gameStore = useGameStore()
@@ -238,6 +262,27 @@ export default defineComponent({
   margin: 0;
 }
 
+/* Settings Button */
+.settings-button {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid #fbbf24;
+  color: #fbbf24;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-button:hover {
+  background: rgba(251, 191, 36, 0.2);
+  transform: rotate(90deg);
+}
+
 /* Navigation */
 
 .header-nav {
@@ -380,6 +425,27 @@ export default defineComponent({
 .notification-error {
   background: rgba(239, 68, 68, 0.9);
   border-left: 4px solid #ef4444;
+}
+
+/* ======================== MODAL ======================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-container {
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* ======================== ANIMATIONS ======================== */
