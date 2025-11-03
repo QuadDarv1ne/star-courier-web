@@ -1,3 +1,10 @@
+/**
+ * API Client for StarCourier Web
+ * Handles all backend API requests
+ * 
+ * Uses Axios for HTTP requests
+ */
+
 import axios from 'axios'
 
 // ============================================================================
@@ -133,6 +140,78 @@ apiClient.interceptors.response.use(
 )
 
 // ============================================================================
+// RETRY MECHANISM
+// ============================================================================
+
+/**
+ * Retry a function with exponential backoff
+ * @param {Function} fn - Function to retry
+ * @param {number} retries - Number of retries
+ * @param {number} delay - Initial delay in ms
+ */
+async function retryWithBackoff(fn, retries = 3, delay = 1000) {
+  try {
+    return await fn()
+  } catch (error) {
+    if (retries === 0) {
+      throw error
+    }
+    
+    // Wait for delay
+    await new Promise(resolve => setTimeout(resolve, delay))
+    
+    // Retry with exponential backoff
+    return retryWithBackoff(fn, retries - 1, delay * 2)
+  }
+}
+
+// ============================================================================
+// INPUT VALIDATION
+// ============================================================================
+
+/**
+ * Validate player ID
+ * @param {string} playerId - Player ID to validate
+ */
+function validatePlayerId(playerId) {
+  if (!playerId || typeof playerId !== 'string' || playerId.length < 5) {
+    throw new Error('Неверный ID игрока')
+  }
+}
+
+/**
+ * Validate scene ID
+ * @param {string} sceneId - Scene ID to validate
+ */
+function validateSceneId(sceneId) {
+  if (!sceneId || typeof sceneId !== 'string' || sceneId.length < 1) {
+    throw new Error('Неверный ID сцены')
+  }
+}
+
+/**
+ * Validate stats object
+ * @param {Object} stats - Stats object to validate
+ */
+function validateStats(stats) {
+  if (!stats || typeof stats !== 'object') {
+    throw new Error('Неверный объект статистики')
+  }
+  
+  // Validate each stat value
+  for (const [key, value] of Object.entries(stats)) {
+    if (typeof value !== 'number' || isNaN(value)) {
+      throw new Error(`Неверное значение статистики для ${key}: ${value}`)
+    }
+    
+    // Ensure values are within reasonable bounds
+    if (value < -1000 || value > 1000) {
+      throw new Error(`Значение статистики ${key} вне допустимого диапазона: ${value}`)
+    }
+  }
+}
+
+// ============================================================================
 // GAME API ENDPOINTS
 // ============================================================================
 
@@ -140,39 +219,87 @@ export const gameApi = {
   /**
    * Start a new game
    */
-  startGame(playerId) {
-    // Clear cache when starting new game
-    apiCache.clear()
-    return apiClient.post('/game/start', {
-      player_id: playerId
-    })
+  async startGame(playerId) {
+    try {
+      validatePlayerId(playerId)
+      
+      // Clear cache when starting new game
+      apiCache.clear()
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.post('/game/start', {
+          player_id: playerId
+        })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to start game:', error)
+      throw new Error(`Не удалось начать игру: ${error.message}`)
+    }
   },
 
   /**
    * Make a choice in game
    */
-  makeChoice(playerId, nextScene, stats = {}) {
-    // Clear cache when making choices (game state changes)
-    apiCache.clear()
-    return apiClient.post('/game/choose', {
-      player_id: playerId,
-      next_scene: nextScene,
-      stats
-    })
+  async makeChoice(playerId, nextScene, stats = {}) {
+    try {
+      validatePlayerId(playerId)
+      validateSceneId(nextScene)
+      validateStats(stats)
+      
+      // Clear cache when making choices (game state changes)
+      apiCache.clear()
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.post('/game/choose', {
+          player_id: playerId,
+          next_scene: nextScene,
+          stats
+        })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to make choice:', error)
+      throw new Error(`Не удалось выполнить выбор: ${error.message}`)
+    }
   },
 
   /**
    * Get scene details (cached)
    */
-  getScene(sceneId) {
-    return apiClient.get(`/game/scene/${sceneId}`, { cache: true })
+  async getScene(sceneId) {
+    try {
+      validateSceneId(sceneId)
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/game/scene/${sceneId}`, { cache: true })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get scene:', error)
+      throw new Error(`Не удалось загрузить сцену: ${error.message}`)
+    }
   },
 
   /**
    * Get player stats
    */
-  getPlayerStats(playerId) {
-    return apiClient.get(`/game/stats/${playerId}`)
+  async getPlayerStats(playerId) {
+    try {
+      validatePlayerId(playerId)
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/game/stats/${playerId}`)
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get player stats:', error)
+      throw new Error(`Не удалось получить статистику игрока: ${error.message}`)
+    }
   }
 }
 
@@ -184,15 +311,64 @@ export const characterApi = {
   /**
    * Get all characters (cached)
    */
-  getAllCharacters() {
-    return apiClient.get('/characters', { cache: true })
+  async getAllCharacters() {
+    try {
+      const response = await retryWithBackoff(() => 
+        apiClient.get('/characters', { cache: true })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get characters:', error)
+      throw new Error(`Не удалось загрузить персонажей: ${error.message}`)
+    }
   },
 
   /**
    * Get specific character (cached)
    */
-  getCharacter(characterId) {
-    return apiClient.get(`/characters/${characterId}`, { cache: true })
+  async getCharacter(characterId) {
+    try {
+      if (!characterId || typeof characterId !== 'string') {
+        throw new Error('Неверный ID персонажа')
+      }
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/characters/${characterId}`, { cache: true })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get character:', error)
+      throw new Error(`Не удалось загрузить персонажа: ${error.message}`)
+    }
+  },
+
+  /**
+   * Get multiple characters in a single request (batch)
+   */
+  async getCharactersBatch(characterIds) {
+    try {
+      if (!Array.isArray(characterIds) || characterIds.length === 0) {
+        throw new Error('Неверный список ID персонажей')
+      }
+      
+      // Validate each character ID
+      characterIds.forEach(id => {
+        if (!id || typeof id !== 'string') {
+          throw new Error('Неверный ID персонажа в списке')
+        }
+      })
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/characters/batch?character_ids=${characterIds.join(',')}`)
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get characters batch:', error)
+      throw new Error(`Не удалось загрузить персонажей: ${error.message}`)
+    }
   }
 }
 
@@ -204,15 +380,62 @@ export const sceneApi = {
   /**
    * Get all scenes (cached)
    */
-  getAllScenes() {
-    return apiClient.get('/scenes', { cache: true })
+  async getAllScenes() {
+    try {
+      const response = await retryWithBackoff(() => 
+        apiClient.get('/scenes', { cache: true })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get scenes:', error)
+      throw new Error(`Не удалось загрузить сцены: ${error.message}`)
+    }
   },
 
   /**
    * Get specific scene (cached)
    */
-  getScene(sceneId) {
-    return apiClient.get(`/scenes/${sceneId}`, { cache: true })
+  async getScene(sceneId) {
+    try {
+      validateSceneId(sceneId)
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/scenes/${sceneId}`, { cache: true })
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get scene:', error)
+      throw new Error(`Не удалось загрузить сцену: ${error.message}`)
+    }
+  },
+
+  /**
+   * Get multiple scenes in a single request (batch)
+   */
+  async getScenesBatch(sceneIds) {
+    try {
+      if (!Array.isArray(sceneIds) || sceneIds.length === 0) {
+        throw new Error('Неверный список ID сцен')
+      }
+      
+      // Validate each scene ID
+      sceneIds.forEach(id => {
+        if (!id || typeof id !== 'string') {
+          throw new Error('Неверный ID сцены в списке')
+        }
+      })
+      
+      const response = await retryWithBackoff(() => 
+        apiClient.get(`/scenes/batch?scene_ids=${sceneIds.join(',')}`)
+      )
+      
+      return response
+    } catch (error) {
+      console.error('❌ Failed to get scenes batch:', error)
+      throw new Error(`Не удалось загрузить сцены: ${error.message}`)
+    }
   }
 }
 
@@ -226,11 +449,14 @@ export const healthApi = {
    */
   async checkHealth() {
     try {
-      const response = await apiClient.get('/health')
+      const response = await retryWithBackoff(() => 
+        apiClient.get('/health')
+      )
+      
       return response.data
     } catch (error) {
       console.error('❌ Server health check failed:', error)
-      throw error
+      throw new Error(`Проверка состояния сервера не удалась: ${error.message}`)
     }
   },
 
@@ -250,7 +476,7 @@ export const healthApi = {
         }
       }
     }
-    throw new Error('Server не ответил. Пожалуйста, убедитесь, что backend запущен на http://localhost:8000')
+    throw new Error('Сервер не ответил. Пожалуйста, убедитесь, что backend запущен на http://localhost:8000')
   }
 }
 

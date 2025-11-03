@@ -17,8 +17,11 @@ requests
 # FastAPI - современный веб-фреймворк для Python
 fastapi==0.104.1
 
+# WebSockets support is included with FastAPI
+
 # Uvicorn - ASGI сервер для FastAPI
 uvicorn[standard]==0.24.0
+# Uvicorn with WebSocket support (included in standard)
 
 # Python-multipart - для работы с multipart/form-data
 python-multipart==0.0.6

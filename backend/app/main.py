@@ -11,10 +11,15 @@ from contextlib import asynccontextmanager
 from typing import Dict, Optional, List
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.websockets import WebSocket
 from pydantic import BaseModel, Field
+from typing import List, Optional
+import time
+from collections import defaultdict
 
 # Импорт конфигурации
 from config import settings
@@ -806,6 +811,9 @@ SCENES: Dict[str, dict] = {
 # Game progress storage (in-memory for now, would use database in production)
 game_progress = {}
 
+# WebSocket connections storage
+websocket_connections = defaultdict(set)
+
 # Character data
 CHARACTERS = {
     "sara_nova": {
@@ -837,6 +845,9 @@ game_progress: Dict[str, dict] = {}
 # Облачные сохранения
 cloud_saves: Dict[str, Dict[str, dict]] = {}
 
+# Rate limiting storage
+request_counts = defaultdict(list)
+
 # ============================================================================
 # LIFESPAN - ИНИЦИАЛИЗАЦИЯ И ЗАВЕРШЕНИЕ
 # ============================================================================
@@ -844,7 +855,7 @@ cloud_saves: Dict[str, Dict[str, dict]] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом приложения"""
+    """Управление жизнением циклом приложения"""
     # Инициализация
     logger.info("=" * 80)
     logger.info(f"🚀 {settings.app_name} Backend запущен")
@@ -893,7 +904,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add GZip compression middleware
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
 logger.info(f"✅ CORS настроен для {len(settings.cors_origins_list)} источников")
+logger.info("✅ GZip compression middleware добавлен")
 
 # ============================================================================
 # EXCEPTION HANDLERS
@@ -906,7 +921,12 @@ async def http_exception_handler(request, exc):
     logger.error(f"❌ HTTP Exception ({exc.status_code}): {exc.detail}")
     return JSONResponse(
         status_code=exc.status_code,
-        content={"error": exc.detail}
+        content={
+            "error": exc.detail,
+            "status_code": exc.status_code,
+            "timestamp": datetime.now().isoformat(),
+            "path": str(request.url)
+        }
     )
 
 
@@ -916,8 +936,42 @@ async def general_exception_handler(request, exc):
     logger.error(f"❌ Необработанное исключение: {str(exc)}", exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"error": "Internal server error"}
+        content={
+            "error": "Internal server error",
+            "status_code": 500,
+            "timestamp": datetime.now().isoformat(),
+            "path": str(request.url),
+            "details": str(exc) if settings.debug else None
+        }
     )
+
+# Rate limiting middleware
+async def rate_limit_middleware(request: Request, call_next):
+    # Get client IP
+    client_ip = request.client.host if request.client else "unknown"
+    
+    # Get current time
+    now = time.time()
+    
+    # Clean old requests (older than 1 minute)
+    request_counts[client_ip] = [timestamp for timestamp in request_counts[client_ip] if now - timestamp < 60]
+    
+    # Check if limit exceeded (60 requests per minute)
+    if len(request_counts[client_ip]) >= 60:
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Слишком много запросов. Пожалуйста, попробуйте позже."}
+        )
+    
+    # Add current request
+    request_counts[client_ip].append(now)
+    
+    # Continue with request
+    response = await call_next(request)
+    return response
+
+# Apply rate limiting middleware
+app.middleware("http")(rate_limit_middleware)
 
 # ============================================================================
 # ENDPOINTS
@@ -1316,6 +1370,40 @@ async def get_character(character_id: str):
         "description": char['description']
     }
 
+
+@app.get("/api/characters/batch", tags=["Characters"])
+async def get_characters_batch(character_ids: List[str] = Query(..., description="Список ID персонажей для загрузки")):
+    """
+    Получить несколько персонажей за один запрос
+    
+    Возвращает данные для нескольких персонажей в одном ответе для уменьшения количества запросов
+    """
+    logger.debug(f"Пакетный запрос персонажей: {len(character_ids)} персонажей")
+    
+    characters = {}
+    not_found = []
+    
+    for char_id in character_ids:
+        if char_id in CHARACTERS:
+            char = CHARACTERS[char_id]
+            characters[char_id] = {
+                "id": char_id,
+                "name": char['name'],
+                "role": char['role'],
+                "relationship": char['relationship'],
+                "description": char['description']
+            }
+        else:
+            not_found.append(char_id)
+    
+    if not_found:
+        logger.warning(f"Не найдены персонажи: {not_found}")
+    
+    return {
+        "characters": characters,
+        "not_found": not_found
+    }
+
 # -------- Scene Endpoints --------
 
 
@@ -1329,6 +1417,61 @@ async def list_scenes():
     logger.debug(f"Запрос списка всех сцен: {len(SCENES)} сцен")
     
     return {scene_id: scene['title'] for scene_id, scene in SCENES.items()}
+
+
+@app.get("/api/scenes/batch", tags=["Scenes"])
+async def get_scenes_batch(scene_ids: List[str] = Query(..., description="Список ID сцен для загрузки")):
+    """
+    Получить несколько сцен за один запрос
+    
+    Возвращает данные для нескольких сцен в одном ответе для уменьшения количества запросов
+    """
+    logger.debug(f"Пакетный запрос сцен: {len(scene_ids)} сцен")
+    
+    scenes = {}
+    not_found = []
+    
+    for scene_id in scene_ids:
+        if scene_id in SCENES:
+            scenes[scene_id] = get_scene_data(scene_id)
+        else:
+            not_found.append(scene_id)
+    
+    if not_found:
+        logger.warning(f"Не найдены сцены: {not_found}")
+    
+    return {
+        "scenes": scenes,
+        "not_found": not_found
+    }
+
+
+# -------- WebSocket Endpoints --------
+
+
+@app.websocket("/api/ws/game/{player_id}")
+async def websocket_game_endpoint(websocket: WebSocket, player_id: str):
+    """
+    WebSocket endpoint for real-time game updates
+    
+    Provides real-time updates for game state changes
+    """
+    await websocket.accept()
+    
+    # Add connection to player's connections
+    websocket_connections[player_id].add(websocket)
+    
+    try:
+        while True:
+            # Keep connection alive
+            data = await websocket.receive_text()
+            # Echo back for keep-alive
+            await websocket.send_text(f"pong: {data}")
+    except Exception as e:
+        logger.error(f"WebSocket error for player {player_id}: {str(e)}")
+    finally:
+        # Remove connection when closed
+        websocket_connections[player_id].discard(websocket)
 
 
 # -------- Admin Endpoints --------

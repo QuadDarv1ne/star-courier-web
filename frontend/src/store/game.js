@@ -6,7 +6,12 @@
  */
 
 import { defineStore } from 'pinia'
-import { apiClient, handleApiCall, formatErrorMessage } from '../services/api'
+import { apiClient, handleApiCall, formatErrorMessage, sceneApi, characterApi } from '../services/api'
+
+// WebSocket connection
+let websocket = null
+let websocketReconnectAttempts = 0
+const MAX_RECONNECT_ATTEMPTS = 5
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -122,7 +127,11 @@ export const useGameStore = defineStore('game', {
     cacheTimestamps: new Map(),
     
     // Cache expiration time (10 minutes)
-    cacheExpiration: 10 * 60 * 1000
+    cacheExpiration: 10 * 60 * 1000,
+    
+    // WebSocket connection status
+    websocketConnected: false,
+    websocketReconnectAttempts: 0
   }),
 
   getters: {
@@ -355,6 +364,9 @@ export const useGameStore = defineStore('game', {
           this.startAutoSave();
         }
 
+        // Connect to WebSocket for real-time updates
+        this.connectWebSocket();
+
         console.log('✅ Игра инициализирована успешно');
         
         return {
@@ -538,6 +550,11 @@ export const useGameStore = defineStore('game', {
      */
     async fetchScene(sceneId) {
       try {
+        // Validate input
+        if (!sceneId || typeof sceneId !== 'string') {
+          throw new Error('Неверный ID сцены');
+        }
+        
         // Check cache first
         const cachedScene = this.getCachedScene(sceneId);
         if (cachedScene) {
@@ -666,6 +683,9 @@ export const useGameStore = defineStore('game', {
         caring: 0
       };
       this.sceneEntryTime = null;
+
+      // Disconnect WebSocket
+      this.disconnectWebSocket();
 
       console.log('✅ Игра сброшена')
     },
@@ -1090,6 +1110,11 @@ export const useGameStore = defineStore('game', {
      * Load scene with caching
      */
     async loadScene(sceneId) {
+      // Validate input
+      if (!sceneId || typeof sceneId !== 'string') {
+        throw new Error('Неверный ID сцены');
+      }
+      
       // Check cache first
       const cachedScene = this.getCachedScene(sceneId)
       if (cachedScene) {
@@ -1100,7 +1125,7 @@ export const useGameStore = defineStore('game', {
       
       try {
         // Load from API if not in cache
-        const response = await apiClient.get(`/game/scene/${sceneId}`)
+        const response = await sceneApi.getScene(sceneId)
         const scene = response.data
         
         // Cache the scene
@@ -1119,6 +1144,11 @@ export const useGameStore = defineStore('game', {
      * Load character with caching
      */
     async loadCharacter(characterId) {
+      // Validate input
+      if (!characterId || typeof characterId !== 'string') {
+        throw new Error('Неверный ID персонажа');
+      }
+      
       // Check cache first
       const cachedCharacter = this.getCachedCharacter(characterId)
       if (cachedCharacter) {
@@ -1128,7 +1158,7 @@ export const useGameStore = defineStore('game', {
       
       try {
         // Load from API if not in cache
-        const response = await apiClient.get(`/characters/${characterId}`)
+        const response = await characterApi.getCharacter(characterId)
         const character = response.data
         
         // Cache the character
@@ -1167,11 +1197,22 @@ export const useGameStore = defineStore('game', {
      * Batch load scenes for better performance
      */
     async batchLoadScenes(sceneIds) {
+      // Validate input
+      if (!Array.isArray(sceneIds)) {
+        throw new Error('Неверный формат списка сцен');
+      }
+      
       const results = {}
       const toLoad = []
       
       // Check cache first
       sceneIds.forEach(id => {
+        // Validate each scene ID
+        if (!id || typeof id !== 'string') {
+          console.warn('Неверный ID сцены в списке:', id)
+          return
+        }
+        
         const cached = this.getCachedScene(id)
         if (cached) {
           results[id] = cached
@@ -1180,14 +1221,24 @@ export const useGameStore = defineStore('game', {
         }
       })
       
-      // Load uncached scenes
+      // Load uncached scenes using batch endpoint
       if (toLoad.length > 0) {
         try {
-          // In a real implementation, you might want to batch API calls
-          // For now, we'll load them individually
-          for (const id of toLoad) {
-            const scene = await this.fetchScene(id)
+          // Use batch endpoint for better performance
+          const response = await sceneApi.getScenesBatch(toLoad)
+          const scenes = response.data.scenes
+          
+          // Process each scene
+          Object.entries(scenes).forEach(([id, scene]) => {
+            // Cache the scene
+            this.sceneCache.set(id, scene)
+            this.cacheTimestamps.set(`scene-${id}`, Date.now())
             results[id] = scene
+          })
+          
+          // Handle not found scenes
+          if (response.data.not_found && response.data.not_found.length > 0) {
+            console.warn('Сцены не найдены:', response.data.not_found)
           }
         } catch (error) {
           console.error('Failed to batch load scenes:', error)
@@ -1196,6 +1247,131 @@ export const useGameStore = defineStore('game', {
       }
       
       return results
+    },
+    
+    /**
+     * Validate game state
+     */
+    validateGameState() {
+      const errors = []
+      
+      // Validate player ID
+      if (!this.playerId || typeof this.playerId !== 'string') {
+        errors.push('Неверный ID игрока')
+      }
+      
+      // Validate current scene ID
+      if (!this.currentSceneId || typeof this.currentSceneId !== 'string') {
+        errors.push('Неверный ID текущей сцены')
+      }
+      
+      // Validate stats
+      Object.entries(this.stats).forEach(([key, value]) => {
+        if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
+          errors.push(`Неверное значение статистики: ${key} = ${value}`)
+        }
+      })
+      
+      // Validate relationships
+      Object.entries(this.relationships).forEach(([key, value]) => {
+        if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
+          errors.push(`Неверное значение отношения: ${key} = ${value}`)
+        }
+      })
+      
+      return errors
+    },
+    
+    /**
+     * Connect to WebSocket for real-time updates
+     */
+    connectWebSocket() {
+      if (!this.playerId) {
+        console.warn('Cannot connect WebSocket: No player ID')
+        return
+      }
+      
+      // Close existing connection if any
+      if (websocket) {
+        websocket.close()
+      }
+      
+      // Create WebSocket connection
+      const wsUrl = `${apiClient.defaults.baseURL.replace('http', 'ws')}/ws/game/${this.playerId}`
+      console.log(`🔌 Connecting to WebSocket: ${wsUrl}`)
+      
+      websocket = new WebSocket(wsUrl)
+      
+      websocket.onopen = () => {
+        console.log('✅ WebSocket connected')
+        this.websocketConnected = true
+        websocketReconnectAttempts = 0
+        
+        // Send ping every 30 seconds to keep connection alive
+        setInterval(() => {
+          if (websocket && websocket.readyState === WebSocket.OPEN) {
+            websocket.send('ping')
+          }
+        }, 30000)
+      }
+      
+      websocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          console.log('📥 WebSocket message:', data)
+          
+          // Handle different types of updates
+          if (data.type === 'stats_update') {
+            this.stats = { ...this.stats, ...data.stats }
+          } else if (data.type === 'scene_update') {
+            this.currentScene = data.scene
+            this.currentSceneId = data.scene.id
+          } else if (data.type === 'relationship_update') {
+            this.relationships = { ...this.relationships, ...data.relationships }
+          }
+        } catch (error) {
+          console.error('❌ Error processing WebSocket message:', error)
+        }
+      }
+      
+      websocket.onclose = () => {
+        console.log('🔌 WebSocket disconnected')
+        this.websocketConnected = false
+        
+        // Attempt to reconnect if needed
+        if (websocketReconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          websocketReconnectAttempts++
+          console.log(`⏳ Attempting to reconnect (${websocketReconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`)
+          setTimeout(() => {
+            this.connectWebSocket()
+          }, 1000 * websocketReconnectAttempts) // Exponential backoff
+        }
+      }
+      
+      websocket.onerror = (error) => {
+        console.error('❌ WebSocket error:', error)
+        this.websocketConnected = false
+      }
+    },
+    
+    /**
+     * Disconnect WebSocket
+     */
+    disconnectWebSocket() {
+      if (websocket) {
+        websocket.close()
+        websocket = null
+      }
+      this.websocketConnected = false
+    },
+    
+    /**
+     * Send update through WebSocket
+     */
+    sendWebSocketUpdate(update) {
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        websocket.send(JSON.stringify(update))
+      }
     }
   }
 })
