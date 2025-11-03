@@ -23,12 +23,31 @@ export const apiClient = axios.create({
 })
 
 // ============================================================================
+// SIMPLE IN-MEMORY CACHE
+// ============================================================================
+
+const apiCache = new Map()
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+// ============================================================================
 // REQUEST INTERCEPTOR
 // ============================================================================
 
 apiClient.interceptors.request.use(
   (config) => {
     console.log(`📤 API Request: ${config.method.toUpperCase()} ${config.url}`)
+    
+    // Check if we should use cache
+    if (config.method === 'get' && config.cache !== false) {
+      const cacheKey = `${config.method}:${config.url}`
+      const cached = apiCache.get(cacheKey)
+      
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        console.log(`📥 API Response (cached): ${config.url}`)
+        return Promise.resolve(cached.response)
+      }
+    }
+    
     return config
   },
   (error) => {
@@ -43,24 +62,34 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`📥 API Response: ${response.status}`, response.data);
-    return response;
+    console.log(`📥 API Response: ${response.status}`, response.data)
+    
+    // Cache GET responses
+    if (response.config.method === 'get' && response.config.cache !== false) {
+      const cacheKey = `${response.config.method}:${response.config.url}`
+      apiCache.set(cacheKey, {
+        response: response,
+        timestamp: Date.now()
+      })
+    }
+    
+    return response
   },
   (error) => {
     if (error.response) {
       // Server responded with error status
-      console.error(`❌ Response Error (${error.response.status}):`, error.response.data);
+      console.error(`❌ Response Error (${error.response.status}):`, error.response.data)
       
-      const message = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера';
-      throw new Error(message);
+      const message = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера'
+      throw new Error(message)
     } else if (error.request) {
       // Request made but no response
-      console.error('❌ Network Error: No response from server');
-      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен.');
+      console.error('❌ Network Error: No response from server')
+      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен.')
     } else {
       // Error in request setup
-      console.error('❌ Error:', error.message);
-      throw new Error(error.message);
+      console.error('❌ Error:', error.message)
+      throw new Error(error.message)
     }
   }
 )
@@ -74,6 +103,8 @@ export const gameApi = {
    * Start a new game
    */
   startGame(playerId) {
+    // Clear cache when starting new game
+    apiCache.clear()
     return apiClient.post('/game/start', {
       player_id: playerId
     })
@@ -83,6 +114,8 @@ export const gameApi = {
    * Make a choice in game
    */
   makeChoice(playerId, nextScene, stats = {}) {
+    // Clear cache when making choices (game state changes)
+    apiCache.clear()
     return apiClient.post('/game/choose', {
       player_id: playerId,
       next_scene: nextScene,
@@ -91,10 +124,10 @@ export const gameApi = {
   },
 
   /**
-   * Get scene details
+   * Get scene details (cached)
    */
   getScene(sceneId) {
-    return apiClient.get(`/game/scene/${sceneId}`)
+    return apiClient.get(`/game/scene/${sceneId}`, { cache: true })
   },
 
   /**
@@ -111,17 +144,17 @@ export const gameApi = {
 
 export const characterApi = {
   /**
-   * Get all characters
+   * Get all characters (cached)
    */
   getAllCharacters() {
-    return apiClient.get('/characters')
+    return apiClient.get('/characters', { cache: true })
   },
 
   /**
-   * Get specific character
+   * Get specific character (cached)
    */
   getCharacter(characterId) {
-    return apiClient.get(`/characters/${characterId}`)
+    return apiClient.get(`/characters/${characterId}`, { cache: true })
   }
 }
 
@@ -131,17 +164,17 @@ export const characterApi = {
 
 export const sceneApi = {
   /**
-   * Get all scenes
+   * Get all scenes (cached)
    */
   getAllScenes() {
-    return apiClient.get('/scenes')
+    return apiClient.get('/scenes', { cache: true })
   },
 
   /**
-   * Get specific scene
+   * Get specific scene (cached)
    */
   getScene(sceneId) {
-    return apiClient.get(`/scenes/${sceneId}`)
+    return apiClient.get(`/scenes/${sceneId}`, { cache: true })
   }
 }
 
@@ -219,33 +252,100 @@ export async function isApiAvailable() {
  */
 export function formatErrorMessage(error) {
   if (typeof error === 'string') {
-    return error;
+    return error
   }
   
   if (error.response?.data?.error) {
-    return error.response.data.error;
+    return error.response.data.error
   }
   
   if (error.response?.data?.detail) {
-    return error.response.data.detail;
+    return error.response.data.detail
   }
   
   if (error.message) {
-    return error.message;
+    return error.message
   }
   
-  return 'Неизвестная ошибка';
+  return 'Неизвестная ошибка'
+}
+
+/**
+ * Get detailed error information
+ */
+export function getErrorDetails(error) {
+  const details = {
+    message: formatErrorMessage(error),
+    status: error.response?.status || null,
+    statusText: error.response?.statusText || null,
+    url: error.config?.url || null,
+    method: error.config?.method || null,
+    timestamp: new Date().toISOString()
+  }
+  
+  // Add network error information
+  if (error.code) {
+    details.code = error.code
+  }
+  
+  if (error.isAxiosError) {
+    details.isNetworkError = error.isAxiosError
+  }
+  
+  return details
+}
+
+/**
+ * Create user-friendly error message
+ */
+export function createUserFriendlyError(error, context = '') {
+  const details = getErrorDetails(error)
+  
+  // Handle specific error cases
+  if (details.status === 404) {
+    return `Ресурс не найден${context ? ` (${context})` : ''}. Пожалуйста, проверьте подключение к серверу.`
+  }
+  
+  if (details.status === 500) {
+    return `Внутренняя ошибка сервера${context ? ` (${context})` : ''}. Пожалуйста, попробуйте позже.`
+  }
+  
+  if (details.status === 429) {
+    return `Слишком много запросов${context ? ` (${context})` : ''}. Пожалуйста, подождите немного.`
+  }
+  
+  if (details.isNetworkError) {
+    return `Ошибка подключения к серверу${context ? ` (${context})` : ''}. Пожалуйста, проверьте ваше интернет-соединение.`
+  }
+  
+  // Default message
+  return `${details.message}${context ? ` (${context})` : ''}`
+}
+
+/**
+ * Clear API cache
+ */
+export function clearApiCache() {
+  apiCache.clear()
+  console.log('✅ API cache cleared')
+}
+
+/**
+ * Get cache size
+ */
+export function getCacheSize() {
+  return apiCache.size
 }
 
 // Add a more robust error handler for API calls
-export async function handleApiCall(apiCall, errorMessage = 'Произошла ошибка') {
+export async function handleApiCall(apiCall, context = '') {
   try {
-    const response = await apiCall();
-    return response.data;
+    const response = await apiCall()
+    return response.data
   } catch (error) {
-    const formattedError = formatErrorMessage(error);
-    console.error('API Error:', formattedError);
-    throw new Error(errorMessage + ': ' + formattedError);
+    const userFriendlyError = createUserFriendlyError(error, context)
+    console.error('API Error:', getErrorDetails(error))
+    throw new Error(userFriendlyError)
   }
 }
 

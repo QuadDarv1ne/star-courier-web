@@ -1,1 +1,8 @@
 Placeholder for sfx directory
+
+Missing sound files (replace with actual audio files):
+- button-click.mp3
+- choice-made.mp3
+- game-over.mp3
+- scene-change.mp3
+- achievement-unlocked.mp3

@@ -239,7 +239,7 @@ class AudioService {
       await this.loadSoundEffect('sceneChange', '/audio/sfx/scene-change.mp3');
       await this.loadSoundEffect('gameOver', '/audio/sfx/game-over.mp3');
       await this.loadSoundEffect('choiceMade', '/audio/sfx/choice-made.mp3');
-      await this.loadSoundEffect('achievementUnlocked', '/audio/sfx/achievement.mp3');
+      await this.loadSoundEffect('achievementUnlocked', '/audio/sfx/achievement-unlocked.mp3');
       
       // Load background music
       await this.loadBackgroundMusic('/audio/music/background.mp3');

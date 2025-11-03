@@ -1,7 +1,12 @@
 <!-- Achievement notification component -->
 <template>
-  <Transition name="achievement">
-    <div v-if="show && achievement" class="achievement-notification" @click="dismiss">
+  <Transition name="achievement" mode="out-in">
+    <div 
+      v-if="show && achievement" 
+      class="achievement-notification" 
+      @click="dismiss"
+      :key="achievement.id"
+    >
       <div class="achievement-icon">{{ achievement.icon }}</div>
       <div class="achievement-info">
         <h4>{{ achievement.title }}</h4>
@@ -41,7 +46,18 @@ export default defineComponent({
     show(newVal) {
       if (newVal && this.achievement) {
         console.log('🏆 Разблокировано достижение:', this.achievement.title)
+        // Play achievement sound
+        if (this.$utils && this.$utils.$audio) {
+          this.$utils.$audio.playSoundEffect('achievementUnlocked');
+        }
       }
+    }
+  },
+  
+  // Optimize re-renders
+  computed: {
+    achievementKey() {
+      return this.achievement ? this.achievement.id : null
     }
   }
 })
@@ -64,6 +80,7 @@ export default defineComponent({
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   min-width: 300px;
   transform-origin: bottom right;
+  will-change: transform, opacity;
 }
 
 .achievement-icon {
@@ -77,6 +94,7 @@ export default defineComponent({
   background: rgba(251, 191, 36, 0.1);
   border-radius: 0.375rem;
   animation: pulse 1s infinite;
+  will-change: transform;
 }
 
 .achievement-info {

@@ -147,14 +147,18 @@ app.config.warnHandler = (msg, instance, trace) => {
 // МОНТИРОВАНИЕ ПРИЛОЖЕНИЯ
 // ============================================================================
 
-// Preload audio before mounting
-audioService.preloadGameAudio().then(() => {
-  console.log('Audio preloaded successfully')
-}).catch((error) => {
-  console.warn('Failed to preload audio:', error)
-})
-
-app.mount('#app')
+// Preload audio before mounting with error handling
+audioService.preloadGameAudio()
+  .then(() => {
+    console.log('Audio preloaded successfully')
+  })
+  .catch((error) => {
+    console.warn('Failed to preload audio:', error)
+  })
+  .finally(() => {
+    // Mount app regardless of audio preload status
+    app.mount('#app')
+  })
 
 // ============================================================================
 // ЛОГИРОВАНИЕ ЗАПУСКА
@@ -164,3 +168,16 @@ console.log('%c🚀 StarCourier Web Frontend', 'font-size: 20px; font-weight: bo
 console.log('%cОкружение: ' + import.meta.env.MODE, 'color: #60a5fa;')
 console.log('%cAPI URL: ' + API_URL, 'color: #34d399;')
 console.log('%cВерсия: 1.0.0', 'color: #a78bfa;')
+
+// Performance monitoring
+if ('performance' in window) {
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const perfData = performance.getEntriesByType('navigation')[0];
+      console.log('%c⏱️ Performance Metrics:', 'color: #8b5cf6; font-weight: bold;')
+      console.log(`  DOM Content Loaded: ${perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart}ms`)
+      console.log(`  Load Time: ${perfData.loadEventEnd - perfData.loadEventStart}ms`)
+      console.log(`  Total Time: ${perfData.loadEventEnd - perfData.fetchStart}ms`)
+    }, 0);
+  });
+}

@@ -2,42 +2,29 @@
 <html lang="ru">
   <head>
     <!-- ================================================================ -->
-    <!-- METADATA & CHARACTER ENCODING -->
+    <!-- META TAGS -->
     <!-- ================================================================ -->
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- ================================================================ -->
-    <!-- DOCUMENT TITLE & BASIC INFO -->
-    <!-- ================================================================ -->
-    
-    <title>StarCourier Web - Интерактивная текстовая RPG в космосе</title>
-    <meta name="description" content="Управляйте капитаном Максом Веллом, раскрывайте тайны артефактов, развивайте отношения с командой и определяйте судьбу человечества в космической одиссее." />
-    <meta name="keywords" content="RPG, игра, интерактивная новелла, космос, приключение, Vue.js, FastAPI" />
+    <meta name="description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
+    <meta name="keywords" content="RPG, игра, космос, текстовая игра, новелла, Vue.js, FastAPI" />
     <meta name="author" content="QuadDarv1ne" />
     <meta name="robots" content="index, follow" />
-    <meta name="language" content="Russian" />
     
-    <!-- ================================================================ -->
-    <!-- OPEN GRAPH (Social Media) -->
-    <!-- ================================================================ -->
-    
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="StarCourier Web - Интерактивная текстовая RPG" />
-    <meta property="og:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте звездолётом и определяйте судьбу человечества." />
+    <meta property="og:url" content="https://star-courier-web.example.com/" />
+    <meta property="og:title" content="StarCourier Web - Интерактивная космическая RPG" />
+    <meta property="og:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
     <meta property="og:image" content="/og-image.png" />
-    <meta property="og:url" content="https://starcourier.web" />
-    <meta property="og:site_name" content="StarCourier Web" />
     
-    <!-- ================================================================ -->
-    <!-- TWITTER CARD -->
-    <!-- ================================================================ -->
-    
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="StarCourier Web - Интерактивная текстовая RPG" />
-    <meta name="twitter:description" content="Космическая одиссея с выборами, влияющими на судьбу человечества." />
-    <meta name="twitter:image" content="/twitter-image.png" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://star-courier-web.example.com/" />
+    <meta property="twitter:title" content="StarCourier Web - Интерактивная космическая RPG" />
+    <meta property="twitter:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
+    <meta property="twitter:image" content="/twitter-image.png" />
     <meta name="twitter:creator" content="@QuadDarv1ne" />
     
     <!-- ================================================================ -->
@@ -86,39 +73,37 @@
       #app {
         visibility: hidden;
       }
+      
+      /* Базовые стили для быстрой отрисовки */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #0f172a;
+        color: #e0e7ff;
+      }
     </style>
     
     <!-- ================================================================ -->
-    <!-- GOOGLE ANALYTICS (Опционально) -->
+    <!-- TITLE -->
     <!-- ================================================================ -->
     
-    <!-- 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GA_ID');
-    </script>
-    -->
-    
+    <title>StarCourier Web - Интерактивная космическая RPG</title>
   </head>
-  
-  <!-- ================================================================ -->
-  <!-- BODY -->
-  <!-- ================================================================ -->
   
   <body>
     <!-- ================================================================ -->
-    <!-- NO-SCRIPT FALLBACK (должен быть в BODY, не в HEAD) -->
+    <!-- NOSCRIPT WARNING -->
     <!-- ================================================================ -->
     
     <noscript>
-      <div style="background: #1a1a2e; color: #fbbf24; text-align: center; padding: 2rem; font-family: Arial, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div style="padding: 2rem; text-align: center;">
+        <h2>JavaScript требуется для работы приложения</h2>
+        <p>Пожалуйста, включите JavaScript в настройках вашего браузера.</p>
         <div>
-          <h1 style="font-size: 2rem; margin-bottom: 1rem;">💥 JavaScript отключен</h1>
-          <p style="font-size: 1.1rem;">StarCourier Web требует включённый JavaScript.</p>
-          <p style="color: #aaa; margin-top: 1rem;">Пожалуйста, включите JavaScript в настройках браузера.</p>
+          <a href="https://www.enable-javascript.com/ru/" target="_blank" rel="noopener">
+            Инструкции по включению JavaScript
+          </a>
         </div>
       </div>
     </noscript>
@@ -161,6 +146,14 @@
         environment: import.meta.env.MODE || 'development',
         startTime: Date.now()
       };
+      
+      // Показываем приложение после загрузки
+      window.addEventListener('load', function() {
+        const app = document.getElementById('app');
+        if (app) {
+          app.style.visibility = 'visible';
+        }
+      });
     </script>
   </body>
 </html>

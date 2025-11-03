@@ -43,11 +43,13 @@ const routes = [
     },
     beforeEnter: (to, from, next) => {
       const gameStore = useGameStore()
-      if (!gameStore.isGameStarted) {
-        console.warn('⚠️ Игра не начата. Перенаправляем на главную.')
-        next('/')
-      } else {
+      
+      // Проверяем, начата ли игра
+      if (gameStore.isGameStarted) {
         next()
+      } else {
+        // Если игра не начата, перенаправляем на главную
+        next('/')
       }
     }
   },
@@ -58,30 +60,31 @@ const routes = [
     component: AboutView,
     meta: {
       title: 'StarCourier Web - О проекте',
-      description: 'Информация о проекте StarCourier Web'
+      description: 'Информация о проекте, технологиях и авторе'
     }
   },
 
-  // Catch-all для 404
+  // 404 страница (всегда последняя)
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFoundView,
     meta: {
-      title: 'Страница не найдена',
-      description: '404 - Страница не найдена'
+      title: 'StarCourier Web - Страница не найдена',
+      description: 'Запрашиваемая страница не найдена'
     }
   }
 ]
 
 // ============================================================================
-// CREATE ROUTER INSTANCE
+// ROUTER INSTANCE
 // ============================================================================
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
-  // Плавная прокрутка вверх при переходе
+  
+  // Scroll behavior
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -92,97 +95,42 @@ const router = createRouter({
 })
 
 // ============================================================================
-// GLOBAL GUARDS
+// GLOBAL NAVIGATION GUARDS
 // ============================================================================
 
-/**
- * Before Each Guard - Выполняется ДО каждой навигации
- */
+// Before each route change
 router.beforeEach((to, from, next) => {
-  // Обновляем title страницы
-  const title = to.meta.title || 'StarCourier Web'
-  document.title = title
-
-  console.log(`📍 Навигация: ${from.name || 'Start'} → ${to.name}`)
-
-  // Логируем мета информацию
-  if (to.meta.requiresGame) {
-    console.log('🎮 Требуется активная игра')
+  // Update document title and meta tags
+  document.title = to.meta.title || 'StarCourier Web'
+  
+  // Update meta description
+  const metaDescription = document.querySelector('meta[name="description"]')
+  if (metaDescription) {
+    metaDescription.setAttribute('content', to.meta.description || 'Интерактивная текстовая RPG в космосе')
   }
-
+  
+  // Clear notifications when navigating
+  const app = document.getElementById('app')
+  if (app && app.__vue_app__) {
+    const appInstance = app.__vue_app__
+    // This is a simplified approach - in a real app you might want to use a global event bus
+  }
+  
   next()
 })
 
-/**
- * After Each Guard - Выполняется ПОСЛЕ каждой навигации
- */
+// After each route change
 router.afterEach((to, from) => {
-  // Отправляем событие (например, для аналитики)
-  if (window.gtag) {
-    window.gtag('config', 'GA_ID', {
-      page_path: to.path,
-      page_title: to.meta.title
-    })
+  // Log page views for analytics (if implemented)
+  console.log(`📍 Navigated to: ${to.path}`)
+  
+  // Clear cache when navigating away from game
+  if (from.name === 'Game' && to.name !== 'Game') {
+    const gameStore = useGameStore()
+    if (gameStore) {
+      gameStore.clearCaches()
+    }
   }
-
-  console.log(`✅ Загружена страница: ${to.name}`)
 })
-
-/**
- * On Error Guard - Обработчик ошибок навигации
- */
-router.onError((error) => {
-  console.error('❌ Router Error:', error)
-})
-
-// ============================================================================
-// ROUTE HELPER FUNCTIONS
-// ============================================================================
-
-/**
- * Перейти на главную
- */
-export function goHome() {
-  router.push('/')
-}
-
-/**
- * Перейти в игру
- */
-export function goGame() {
-  router.push('/game')
-}
-
-/**
- * Перейти к информации
- */
-export function goAbout() {
-  router.push('/about')
-}
-
-/**
- * Перейти на 404
- */
-export function goNotFound() {
-  router.push('/404')
-}
-
-/**
- * Вернуться назад
- */
-export function goBack() {
-  router.back()
-}
-
-/**
- * Перейти на путь
- */
-export function navigateTo(path) {
-  router.push(path)
-}
-
-// ============================================================================
-// EXPORT
-// ============================================================================
 
 export default router

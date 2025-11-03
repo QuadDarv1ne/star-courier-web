@@ -14,7 +14,9 @@ export const useAchievementsStore = defineStore('achievements', {
         title: 'Первый выбор',
         description: 'Сделайте свой первый выбор в игре',
         icon: '🎯',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 1
       },
       explorer: {
         id: 'explorer',
@@ -30,7 +32,9 @@ export const useAchievementsStore = defineStore('achievements', {
         title: 'Выживший',
         description: 'Выживите с менее чем 20% здоровья',
         icon: '💪',
-        secret: true
+        secret: true,
+        progress: 0,
+        target: 1
       },
       rich_courier: {
         id: 'rich_courier',
@@ -46,7 +50,9 @@ export const useAchievementsStore = defineStore('achievements', {
         title: 'Надёжный друг',
         description: 'Достигните 100% доверия с любым персонажем',
         icon: '🤝',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 100
       },
       // New achievements
       knowledge_seeker: {
@@ -54,35 +60,45 @@ export const useAchievementsStore = defineStore('achievements', {
         title: 'Искатель знаний',
         description: 'Достигните 80% знания',
         icon: '📚',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 80
       },
       team_player: {
         id: 'team_player',
         title: 'Командный игрок',
         description: 'Достигните 90% командного духа',
         icon: '👥',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 90
       },
       fuel_efficient: {
         id: 'fuel_efficient',
         title: 'Экономный пилот',
         description: 'Завершите игру с более чем 50% топлива',
         icon: '⛽',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 50
       },
       peace_maker: {
         id: 'peace_maker',
         title: 'Миротворец',
         description: 'Завершите игру без снижения морали ниже 50%',
         icon: '🕊️',
-        secret: false
+        secret: false,
+        progress: 0,
+        target: 50
       },
       danger_zone: {
         id: 'danger_zone',
         title: 'Зона опасности',
         description: 'Достигните 90% уровня опасности',
         icon: '⚠️',
-        secret: true
+        secret: true,
+        progress: 0,
+        target: 90
       }
     }
   }),
@@ -157,14 +173,12 @@ export const useAchievementsStore = defineStore('achievements', {
       const unlocked = []
       
       // Проверяем первый выбор
-      if (gameStore.choicesMade >= 1) {
-        const achievement = this.unlockAchievement('first_choice')
-        if (achievement) unlocked.push(achievement)
-      }
+      const firstChoice = this.updateProgress('first_choice', gameStore.choicesMade)
+      if (firstChoice) unlocked.push(firstChoice)
 
       // Проверяем здоровье для достижения "Выживший"
       if (gameStore.stats.health <= 20 && gameStore.stats.health > 0) {
-        const achievement = this.unlockAchievement('survivor')
+        const achievement = this.updateProgress('survivor', 1)
         if (achievement) unlocked.push(achievement)
       }
 
@@ -173,12 +187,9 @@ export const useAchievementsStore = defineStore('achievements', {
       if (richCourier) unlocked.push(richCourier)
 
       // Проверяем отношения с персонажами
-      Object.values(gameStore.relationships).forEach(value => {
-        if (value >= 100) {
-          const achievement = this.unlockAchievement('trusted_friend')
-          if (achievement) unlocked.push(achievement)
-        }
-      })
+      const maxRelationship = Math.max(...Object.values(gameStore.relationships))
+      const trustedFriend = this.updateProgress('trusted_friend', maxRelationship)
+      if (trustedFriend) unlocked.push(trustedFriend)
 
       // Обновляем прогресс исследователя
       const uniqueScenes = new Set(gameStore.visitedScenes)
@@ -187,22 +198,16 @@ export const useAchievementsStore = defineStore('achievements', {
       
       // Новые проверки
       // Искатель знаний
-      if (gameStore.stats.knowledge >= 80) {
-        const achievement = this.unlockAchievement('knowledge_seeker')
-        if (achievement) unlocked.push(achievement)
-      }
+      const knowledgeSeeker = this.updateProgress('knowledge_seeker', gameStore.stats.knowledge)
+      if (knowledgeSeeker) unlocked.push(knowledgeSeeker)
       
       // Командный игрок
-      if (gameStore.stats.team >= 90) {
-        const achievement = this.unlockAchievement('team_player')
-        if (achievement) unlocked.push(achievement)
-      }
+      const teamPlayer = this.updateProgress('team_player', gameStore.stats.team)
+      if (teamPlayer) unlocked.push(teamPlayer)
       
       // Зона опасности
-      if (gameStore.stats.danger >= 90) {
-        const achievement = this.unlockAchievement('danger_zone')
-        if (achievement) unlocked.push(achievement)
-      }
+      const dangerZone = this.updateProgress('danger_zone', gameStore.stats.danger)
+      if (dangerZone) unlocked.push(dangerZone)
       
       return unlocked
     },
@@ -214,18 +219,14 @@ export const useAchievementsStore = defineStore('achievements', {
       const unlocked = []
       
       // Экономный пилот
-      if (gameStore.stats.fuel > 50) {
-        const achievement = this.unlockAchievement('fuel_efficient')
-        if (achievement) unlocked.push(achievement)
-      }
+      const fuelEfficient = this.updateProgress('fuel_efficient', gameStore.stats.fuel)
+      if (fuelEfficient) unlocked.push(fuelEfficient)
       
       // Миротворец (проверяем, что мораль никогда не опускалась ниже 50)
       // This would require tracking min morale throughout the game
       // For now, we'll just check the final value
-      if (gameStore.stats.morale >= 50) {
-        const achievement = this.unlockAchievement('peace_maker')
-        if (achievement) unlocked.push(achievement)
-      }
+      const peaceMaker = this.updateProgress('peace_maker', gameStore.stats.morale)
+      if (peaceMaker) unlocked.push(peaceMaker)
       
       return unlocked
     },

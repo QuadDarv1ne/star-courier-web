@@ -2,17 +2,15 @@
   <div class="game-view">
     <!-- Animated Background -->
     <div class="space-background">
-      <div class="star" v-for="i in 100" :key="i" :style="getStarStyle(i)"></div>
+      <div class="star" v-for="i in 100" :key="`space-star-${i}`" :style="getStarStyle(i)"></div>
     </div>
     
     <!-- Loading State -->
-    <div v-if="loading" class="loading-screen">
-      <div class="loading-content">
-        <div class="loading-spinner">🚀</div>
-        <h2>Загрузка сцены...</h2>
-        <p>{{ loadingMessage }}</p>
-      </div>
-    </div>
+    <LoadingIndicator 
+      v-if="loading" 
+      :message="loadingMessage" 
+      :overlay="true"
+    />
 
     <!-- Game Over Screen -->
     <div v-else-if="isGameOver" class="game-over-screen">
@@ -51,7 +49,7 @@
         <div class="stats-grid">
           <div 
             v-for="(stat, key) in displayStats" 
-            :key="key"
+            :key="`stat-${key}`"
             class="stat-card"
           >
             <div class="stat-header">
@@ -79,7 +77,7 @@
           <h4 class="relationships-title">💕 Отношения</h4>
           <div 
             v-for="(relationship, charId) in gameStore.relationships" 
-            :key="charId"
+            :key="`relationship-${charId}`"
             class="relationship-item"
           >
             <span class="char-name">{{ getCharacterName(charId) }}</span>
@@ -145,7 +143,7 @@
           <div class="choices-grid">
             <button 
               v-for="(choice, idx) in currentScene.choices"
-              :key="idx"
+              :key="`choice-${idx}`"
               class="choice-button"
               @click="makeChoice(choice)"
               @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
@@ -189,6 +187,15 @@
 
           <button 
             class="action-btn"
+            @click="showStatistics = true"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+            title="Статистика"
+          >
+            📊 Статистика
+          </button>
+
+          <button 
+            class="action-btn"
             @click="confirmExitGame"
             @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
             title="Выход"
@@ -200,14 +207,20 @@
         <!-- Achievements Modal -->
         <div v-if="showAchievements" class="modal-overlay" @click="showAchievements = false">
           <div class="modal achievements-container" @click.stop>
-            <achievements-list @close="showAchievements = false" />
+            <component 
+              :is="AchievementsList" 
+              @close="showAchievements = false" 
+            />
           </div>
         </div>
 
         <!-- Save Manager Modal -->
         <div v-if="showSaveManager" class="modal-overlay" @click="showSaveManager = false">
           <div class="modal" @click.stop>
-            <save-manager @close="showSaveManager = false" />
+            <component 
+              :is="SaveManager" 
+              @close="showSaveManager = false" 
+            />
           </div>
         </div>
 
@@ -220,7 +233,7 @@
             </div>
             <div class="modal-content">
               <div v-if="gameStore.inventory.length > 0" class="inventory-list">
-                <div v-for="(item, idx) in gameStore.inventory" :key="idx" class="inventory-item">
+                <div v-for="(item, idx) in gameStore.inventory" :key="`inventory-${idx}`" class="inventory-item">
                   {{ item }}
                 </div>
               </div>
@@ -228,6 +241,16 @@
                 Инвентарь пуст
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Statistics Panel Modal -->
+        <div v-if="showStatistics" class="modal-overlay" @click="showStatistics = false">
+          <div class="modal" @click.stop>
+            <component 
+              :is="StatisticsPanel" 
+              @close="showStatistics = false" 
+            />
           </div>
         </div>
 
@@ -251,7 +274,8 @@
           </div>
         </div>
         <!-- Achievement Notification -->
-        <achievement-notification
+        <component 
+          :is="AchievementNotification"
           v-if="recentAchievement"
           :achievement="recentAchievement"
           :show="showAchievementNotification"
@@ -268,9 +292,11 @@ import { useRouter } from 'vue-router'
 import { useGameStore } from '../store/game'
 import { useUiStore } from '../store/ui'
 import { useAchievementsStore } from '../store/achievements'
-import AchievementNotification from '../components/AchievementNotification.vue'
-import AchievementsList from '../components/AchievementsList.vue'
-import SaveManager from '../components/SaveManager.vue'
+
+// Lazy load components that are not always visible
+const AchievementNotification = () => import('../components/AchievementNotification.vue')
+const AchievementsList = () => import('../components/AchievementsList.vue')
+const SaveManager = () => import('../components/SaveManager.vue')
 
 export default defineComponent({
   name: 'GameView',
@@ -278,7 +304,9 @@ export default defineComponent({
   components: {
     AchievementNotification,
     AchievementsList,
-    SaveManager
+    SaveManager,
+    StatisticsPanel: () => import('../components/StatisticsPanel.vue'),
+    LoadingIndicator: () => import('../components/LoadingIndicator.vue')
   },
 
   setup() {
@@ -322,11 +350,14 @@ export default defineComponent({
       showExitConfirm: false,
       showAchievements: false,
       showSaveManager: false,
+      showStatistics: false,
       isGameOver: false,
       gameOverReason: '',
       startTime: null,
       recentAchievement: null,
       showAchievementNotification: false,
+      // Pre-generate star styles to reduce computations
+      starStyles: this.generateStarStyles(100),
       statEmojis: {
         health: '❤️',
         morale: '💪',
@@ -359,44 +390,36 @@ export default defineComponent({
     }
   },
 
-  computed: {
-    currentScene() {
-      return this.gameStore.currentScene
-    },
-
-    displayStats() {
-      const excludeStats = ['security', 'psychic', 'trust', 'money']
-      const stats = {}
-      
-      Object.keys(this.gameStore.stats).forEach(key => {
-        if (!excludeStats.includes(key)) {
-          stats[key] = this.gameStore.stats[key]
-        }
-      })
-      
-      return stats
-    }
-  },
-
   methods: {
     /**
-     * Генерировать стиль для звезды
+     * Pre-generate star styles to reduce computations
+     */
+    generateStarStyles(count) {
+      const styles = []
+      for (let i = 0; i < count; i++) {
+        const size = Math.random() * 3 + 1
+        const top = Math.random() * 100
+        const left = Math.random() * 100
+        const opacity = Math.random() * 0.8 + 0.2
+        const animationDelay = Math.random() * 5
+        
+        styles.push({
+          width: `${size}px`,
+          height: `${size}px`,
+          top: `${top}%`,
+          left: `${left}%`,
+          opacity: opacity,
+          animationDelay: `${animationDelay}s`
+        })
+      }
+      return styles
+    },
+    
+    /**
+     * Генерировать стиль для звезды (fallback method)
      */
     getStarStyle(index) {
-      const size = Math.random() * 3 + 1
-      const top = Math.random() * 100
-      const left = Math.random() * 100
-      const opacity = Math.random() * 0.8 + 0.2
-      const animationDelay = Math.random() * 5
-      
-      return {
-        width: `${size}px`,
-        height: `${size}px`,
-        top: `${top}%`,
-        left: `${left}%`,
-        opacity: opacity,
-        animationDelay: `${animationDelay}s`
-      }
+      return this.starStyles[index] || {}
     },
     
     /**
@@ -450,6 +473,9 @@ export default defineComponent({
       } catch (error) {
         this.$utils.log('error', 'Ошибка при выборе', error)
         this.$root.showNotification('Ошибка при загрузке сцены: ' + error.message, 'error')
+        
+        // Play error sound
+        this.$utils.$audio.playSoundEffect('gameOver')
       } finally {
         this.loading = false
       }

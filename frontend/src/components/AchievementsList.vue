@@ -36,7 +36,7 @@
       <div class="achievements-grid">
         <div 
           v-for="achievement in filteredAchievements" 
-          :key="achievement.id"
+          :key="`achievement-${achievement.id}`"
           :class="[
             'achievement-card',
             {

@@ -176,6 +176,72 @@ export const useUiStore = defineStore('ui', {
         duration
       })
     },
+    
+    /**
+     * Show network error notification
+     */
+    showNetworkError(message, duration = 0) {
+      return this.addNotification({
+        message: `📡 ${message}`,
+        type: 'error',
+        duration
+      })
+    },
+    
+    /**
+     * Show success notification with icon
+     */
+    showSuccessWithIcon(message, duration = 3000) {
+      return this.addNotification({
+        message: `✅ ${message}`,
+        type: 'success',
+        duration
+      })
+    },
+    
+    /**
+     * Show warning notification with icon
+     */
+    showWarningWithIcon(message, duration = 5000) {
+      return this.addNotification({
+        message: `⚠️ ${message}`,
+        type: 'warning',
+        duration
+      })
+    },
+    
+    /**
+     * Show info notification with icon
+     */
+    showInfoWithIcon(message, duration = 3000) {
+      return this.addNotification({
+        message: `ℹ️ ${message}`,
+        type: 'info',
+        duration
+      })
+    },
+    
+    /**
+     * Show loading notification
+     */
+    showLoading(message, duration = 0) {
+      return this.addNotification({
+        message: `⏳ ${message}`,
+        type: 'info',
+        duration
+      })
+    },
+    
+    /**
+     * Show achievement notification
+     */
+    showAchievement(title, description, duration = 5000) {
+      return this.addNotification({
+        message: `🏆 ${title}: ${description}`,
+        type: 'success',
+        duration
+      })
+    },
 
     /**
      * Open modal

@@ -1,1 +1,4 @@
 Placeholder for music directory
+
+Missing sound files (replace with actual audio files):
+- background.mp3

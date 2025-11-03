@@ -95,7 +95,32 @@ export const useGameStore = defineStore('game', {
     choiceHistory: [],
     
     // Track achievements progress
-    achievementsProgress: {}
+    achievementsProgress: {},
+    
+    // Track time spent in each scene
+    sceneTimeTracking: {},
+    
+    // Track stat changes over time
+    statChangeHistory: [],
+    
+    // Track decision patterns
+    decisionPatterns: {
+      aggressive: 0,  // combat/force choices
+      diplomatic: 0,  // negotiation/peace choices
+      analytical: 0,  // knowledge/research choices
+      caring: 0       // team/relationship choices
+    },
+    
+    // Add cache for scenes and characters
+    sceneCache: new Map(),
+    characterCache: new Map(),
+    cacheTimestamps: new Map(),
+    
+    // Add cloud save state
+    cloudSaves: [],
+    isCloudSyncEnabled: false,
+    lastCloudSync: null,
+    
   }),
 
   getters: {
@@ -147,7 +172,10 @@ export const useGameStore = defineStore('game', {
         inventory: state.inventory,
         playtime: state.playtime,
         statHistory: state.statHistory,
-        choiceHistory: state.choiceHistory
+        choiceHistory: state.choiceHistory,
+        sceneTimeTracking: state.sceneTimeTracking,
+        statChangeHistory: state.statChangeHistory,
+        decisionPatterns: state.decisionPatterns
       }
     },
     
@@ -177,6 +205,93 @@ export const useGameStore = defineStore('game', {
       if (state.stats.danger >= 40) return 'Средняя'
       if (state.stats.danger >= 20) return 'Низкая'
       return 'Лёгкая'
+    },
+    
+    /**
+     * Get player decision style based on patterns
+     */
+    decisionStyle: (state) => {
+      const patterns = state.decisionPatterns
+      const maxPattern = Math.max(patterns.aggressive, patterns.diplomatic, patterns.analytical, patterns.caring)
+      
+      if (maxPattern === 0) return 'Сбалансированный'
+      
+      if (patterns.aggressive === maxPattern) return 'Агрессивный'
+      if (patterns.diplomatic === maxPattern) return 'Дипломатичный'
+      if (patterns.analytical === maxPattern) return 'Аналитический'
+      if (patterns.caring === maxPattern) return 'Заботливый'
+      
+      return 'Сбалансированный'
+    },
+    
+    /**
+     * Get average stats
+     */
+    averageStats: (state) => {
+      const stats = state.stats
+      const total = Object.values(stats).reduce((sum, val) => sum + val, 0)
+      return Math.round(total / Object.keys(stats).length)
+    },
+    
+    /**
+     * Get strongest stat
+     */
+    strongestStat: (state) => {
+      const stats = state.stats
+      let maxStat = ''
+      let maxValue = -1
+      
+      Object.entries(stats).forEach(([key, value]) => {
+        if (value > maxValue) {
+          maxValue = value
+          maxStat = key
+        }
+      })
+      
+      const statLabels = {
+        health: 'Здоровье',
+        morale: 'Мораль',
+        knowledge: 'Знание',
+        team: 'Команда',
+        danger: 'Опасность',
+        security: 'Безопасность',
+        fuel: 'Топливо',
+        money: 'Деньги',
+        psychic: 'Психика',
+        trust: 'Доверие'
+      }
+      
+      return statLabels[maxStat] || maxStat
+    },
+    
+    /**
+     * Get cached scene
+     */
+    getCachedScene: (state) => (sceneId) => {
+      const cached = state.sceneCache.get(sceneId)
+      if (cached) {
+        const timestamp = state.cacheTimestamps.get(`scene-${sceneId}`)
+        // Cache for 5 minutes
+        if (timestamp && Date.now() - timestamp < 5 * 60 * 1000) {
+          return cached
+        }
+      }
+      return null
+    },
+    
+    /**
+     * Get cached character
+     */
+    getCachedCharacter: (state) => (charId) => {
+      const cached = state.characterCache.get(charId)
+      if (cached) {
+        const timestamp = state.cacheTimestamps.get(`character-${charId}`)
+        // Cache for 10 minutes
+        if (timestamp && Date.now() - timestamp < 10 * 60 * 1000) {
+          return cached
+        }
+      }
+      return null
     }
   },
 
@@ -200,7 +315,7 @@ export const useGameStore = defineStore('game', {
           () => apiClient.post('/game/start', {
             player_id: this.playerId
           }),
-          'Не удалось начать игру'
+          'начало игры'
         );
 
         // Update state from API response
@@ -212,6 +327,7 @@ export const useGameStore = defineStore('game', {
         // Initialize game
         this.isGameStarted = true;
         this.startTime = Date.now();
+        this.sceneEntryTime = Date.now();
         this.choicesMade = 0;
         this.visitedScenes = new Set(['start']);
         this.choiceHistory = [];
@@ -240,6 +356,12 @@ export const useGameStore = defineStore('game', {
       } catch (err) {
         this.error = formatErrorMessage(err) || 'Ошибка при инициализации игры';
         console.error('❌ Ошибка при инициализации:', err);
+        
+        // Show user-friendly error notification
+        if (this.$uiStore) {
+          this.$uiStore.showNetworkError('Не удалось начать игру. Проверьте подключение к серверу.');
+        }
+        
         throw err;
       } finally {
         this.isLoading = false;
@@ -266,6 +388,16 @@ export const useGameStore = defineStore('game', {
           timestamp: Date.now()
         });
 
+        // Track time spent in current scene
+        if (this.sceneEntryTime) {
+          const timeSpent = Date.now() - this.sceneEntryTime;
+          if (!this.sceneTimeTracking[this.currentSceneId]) {
+            this.sceneTimeTracking[this.currentSceneId] = 0;
+          }
+          this.sceneTimeTracking[this.currentSceneId] += timeSpent;
+        }
+        this.sceneEntryTime = Date.now();
+
         // Call backend API
         const response = await handleApiCall(
           () => apiClient.post('/game/choose', {
@@ -273,8 +405,10 @@ export const useGameStore = defineStore('game', {
             next_scene: nextSceneId,
             stats: statChanges
           }),
-          'Не удалось выполнить выбор'
+          'выполнение выбора'
         );
+
+        ;
 
         // Handle game over
         if (response.status === 'game_over') {
@@ -305,6 +439,15 @@ export const useGameStore = defineStore('game', {
             
             this.stats[stat] = newValue;
             
+            // Track stat changes over time
+            this.statChangeHistory.push({
+              stat,
+              oldValue,
+              newValue,
+              change,
+              timestamp: Date.now()
+            });
+            
             // Update stat history
             if (!this.statHistory[stat]) {
               this.statHistory[stat] = { min: newValue, max: newValue };
@@ -312,6 +455,9 @@ export const useGameStore = defineStore('game', {
               this.statHistory[stat].min = Math.min(this.statHistory[stat].min, newValue);
               this.statHistory[stat].max = Math.max(this.statHistory[stat].max, newValue);
             }
+            
+            // Update decision patterns based on stat changes
+            this.updateDecisionPatterns(stat, change);
           }
         });
 
@@ -337,6 +483,12 @@ export const useGameStore = defineStore('game', {
       } catch (err) {
         this.error = formatErrorMessage(err) || 'Ошибка при обработке выбора';
         console.error('❌ Ошибка при выборе:', err);
+        
+        // Show user-friendly error notification
+        if (this.$uiStore) {
+          this.$uiStore.showNetworkError('Не удалось выполнить выбор. Проверьте подключение к серверу.');
+        }
+        
         throw err;
       } finally {
         this.isLoading = false;
@@ -350,7 +502,7 @@ export const useGameStore = defineStore('game', {
       try {
         const response = await handleApiCall(
           () => apiClient.get(`/game/stats/${this.playerId}`),
-          'Не удалось получить статистику игрока'
+          'получение статистики игрока'
         );
         
         this.stats = response.stats;
@@ -362,6 +514,12 @@ export const useGameStore = defineStore('game', {
       } catch (err) {
         console.error('❌ Ошибка при получении статистики:', err);
         this.error = formatErrorMessage(err) || 'Ошибка при получении статистики';
+        
+        // Show user-friendly error notification
+        if (this.$uiStore) {
+          this.$uiStore.showNetworkError('Не удалось получить статистику игрока. Проверьте подключение к серверу.');
+        }
+        
         throw err;
       }
     },
@@ -374,13 +532,19 @@ export const useGameStore = defineStore('game', {
       try {
         const response = await handleApiCall(
           () => apiClient.get(`/game/scene/${sceneId}`),
-          'Не удалось загрузить сцену'
+          'загрузка сцены'
         );
         this.currentScene = response;
         return response;
       } catch (err) {
         console.error(`❌ Ошибка при загрузке сцены ${sceneId}:`, err);
         this.error = formatErrorMessage(err) || `Ошибка при загрузке сцены ${sceneId}`;
+        
+        // Show user-friendly error notification
+        if (this.$uiStore) {
+          this.$uiStore.showNetworkError(`Не удалось загрузить сцену "${sceneId}". Проверьте подключение к серверу.`);
+        }
+        
         throw err;
       }
     },
@@ -390,6 +554,45 @@ export const useGameStore = defineStore('game', {
      */
     generatePlayerId() {
       return 'player_' + Math.random().toString(36).substr(2, 9)
+    },
+    
+    /**
+     * Update decision patterns based on stat changes
+     * @param {string} stat - The stat that changed
+     * @param {number} change - The amount of change
+     */
+    updateDecisionPatterns(stat, change) {
+      // Only track significant changes
+      if (Math.abs(change) < 5) return;
+      
+      // Map stats to decision patterns
+      const statToPattern = {
+        // Aggressive choices affect these stats
+        danger: 'aggressive',
+        security: 'aggressive',
+        
+        // Diplomatic choices affect these stats
+        trust: 'diplomatic',
+        morale: 'diplomatic',
+        team: 'diplomatic',
+        
+        // Analytical choices affect these stats
+        knowledge: 'analytical',
+        psychic: 'analytical',
+        
+        // Caring choices affect these stats
+        health: 'caring',
+        morale: 'caring',
+        team: 'caring'
+      };
+      
+      const pattern = statToPattern[stat];
+      if (pattern) {
+        // Increase pattern score for positive changes, decrease for negative
+        this.decisionPatterns[pattern] += change > 0 ? 1 : -1;
+        // Ensure pattern scores don't go negative
+        this.decisionPatterns[pattern] = Math.max(0, this.decisionPatterns[pattern]);
+      }
     },
 
     /**
@@ -431,6 +634,17 @@ export const useGameStore = defineStore('game', {
 
       // Reset inventory
       this.inventory = ['Брекер кодов', 'Боевой нож']
+      
+      // Reset enhanced statistics
+      this.sceneTimeTracking = {};
+      this.statChangeHistory = [];
+      this.decisionPatterns = {
+        aggressive: 0,
+        diplomatic: 0,
+        analytical: 0,
+        caring: 0
+      };
+      this.sceneEntryTime = null;
 
       console.log('✅ Игра сброшена')
     },
@@ -457,7 +671,10 @@ export const useGameStore = defineStore('game', {
           playtime: this.playtime,
           visitedScenes: Array.from(this.visitedScenes),
           choiceHistory: [...this.choiceHistory],
-          statHistory: { ...this.statHistory }
+          statHistory: { ...this.statHistory },
+          sceneTimeTracking: { ...this.sceneTimeTracking },
+          statChangeHistory: [...this.statChangeHistory],
+          decisionPatterns: { ...this.decisionPatterns }
         }
 
         // Load existing saves
@@ -468,6 +685,11 @@ export const useGameStore = defineStore('game', {
         localStorage.setItem('starCourierSavedGames', JSON.stringify(existingSaves))
         this.savedGames = existingSaves
 
+        // Save to cloud if enabled
+        if (this.isCloudSyncEnabled && this.playerId) {
+          this.saveToCloud(saveData)
+        }
+
         console.log('✅ Игра сохранена:', saveData.name)
         return saveData
       } catch (error) {
@@ -476,7 +698,169 @@ export const useGameStore = defineStore('game', {
         throw error
       }
     },
+    
+    /**
+     * Save game to cloud storage
+     * @param {Object} saveData - Save data to upload
+     */
+    async saveToCloud(saveData) {
+      if (!this.playerId) {
+        console.warn('⚠️ Невозможно сохранить в облако: отсутствует ID игрока')
+        return
+      }
 
+      try {
+        console.log('☁️ Сохранение в облако...')
+        
+        const response = await handleApiCall(
+          () => apiClient.post('/game/save/cloud', {
+            player_id: this.playerId,
+            save_data: saveData
+          }),
+          'сохранение в облако'
+        )
+
+        this.lastCloudSync = Date.now()
+        console.log('✅ Игра сохранена в облако:', response.save_id)
+        
+        // Refresh cloud saves list
+        await this.loadCloudSaves()
+        
+        return response
+      } catch (error) {
+        console.error('❌ Ошибка при сохранении в облако:', error)
+        this.error = 'Не удалось сохранить в облако: ' + (error.message || 'ошибка соединения')
+        throw error
+      }
+    },
+    
+    /**
+     * Load game from cloud storage
+     * @param {string} saveId - ID of the cloud save to load
+     */
+    async loadFromCloud(saveId) {
+      if (!this.playerId) {
+        throw new Error('Невозможно загрузить из облака: отсутствует ID игрока')
+      }
+
+      try {
+        console.log('☁️ Загрузка из облака:', saveId)
+        
+        const response = await handleApiCall(
+          () => apiClient.post('/game/load/cloud', {
+            player_id: this.playerId,
+            save_id: saveId
+          }),
+          'загрузка из облака'
+        )
+        
+        // Find the save data in our cloud saves
+        const cloudSave = this.cloudSaves.find(save => save.id === saveId)
+        if (!cloudSave) {
+          throw new Error('Сохранение не найдено в облаке')
+        }
+        
+        // Restore game state
+        const saveData = cloudSave.data
+        this.playerId = saveData.playerId
+        this.currentSceneId = saveData.currentSceneId
+        this.choicesMade = saveData.choicesMade
+        this.stats = { ...saveData.stats }
+        this.relationships = { ...saveData.relationships }
+        this.inventory = [...saveData.inventory]
+        this.startTime = saveData.startTime
+        this.isGameStarted = true
+        
+        // Restore enhanced data
+        this.visitedScenes = new Set(saveData.visitedScenes || ['start'])
+        this.choiceHistory = [...(saveData.choiceHistory || [])]
+        this.statHistory = { ...(saveData.statHistory || {}) }
+        this.sceneTimeTracking = { ...(saveData.sceneTimeTracking || {}) }
+        this.statChangeHistory = [...(saveData.statChangeHistory || [])]
+        this.decisionPatterns = { ...(saveData.decisionPatterns || { aggressive: 0, diplomatic: 0, analytical: 0, caring: 0 }) }
+
+        console.log('✅ Сохранение загружено из облака:', saveData.name)
+        return saveData
+      } catch (error) {
+        console.error('❌ Ошибка при загрузке из облака:', error)
+        this.error = 'Не удалось загрузить из облака: ' + (error.message || 'ошибка соединения')
+        throw error
+      }
+    },
+    
+    /**
+     * Load all cloud saves for current player
+     */
+    async loadCloudSaves() {
+      if (!this.playerId) {
+        this.cloudSaves = []
+        return []
+      }
+
+      try {
+        console.log('☁️ Загрузка списка облачных сохранений...')
+        
+        const response = await handleApiCall(
+          () => apiClient.get(`/game/saves/cloud/${this.playerId}`),
+          'загрузка списка сохранений'
+        )
+        
+        this.cloudSaves = response.saves || []
+        console.log('✅ Загружено облачных сохранений:', this.cloudSaves.length)
+        
+        return this.cloudSaves
+      } catch (error) {
+        console.error('❌ Ошибка при загрузке облачных сохранений:', error)
+        this.error = 'Не удалось загрузить облачные сохранения: ' + (error.message || 'ошибка соединения')
+        this.cloudSaves = []
+        return []
+      }
+    },
+    
+    /**
+     * Delete a cloud save
+     * @param {string} saveId - ID of the cloud save to delete
+     */
+    async deleteCloudSave(saveId) {
+      if (!this.playerId) {
+        throw new Error('Невозможно удалить из облака: отсутствует ID игрока')
+      }
+
+      try {
+        console.log('☁️ Удаление облачного сохранения:', saveId)
+        
+        await handleApiCall(
+          () => apiClient.delete(`/game/save/cloud/${this.playerId}/${saveId}`),
+          'удаление сохранения из облака'
+        )
+        
+        // Remove from local cache
+        this.cloudSaves = this.cloudSaves.filter(save => save.id !== saveId)
+        
+        console.log('✅ Облачное сохранение удалено:', saveId)
+        return true
+      } catch (error) {
+        console.error('❌ Ошибка при удалении облачного сохранения:', error)
+        this.error = 'Не удалось удалить облачное сохранение: ' + (error.message || 'ошибка соединения')
+        throw error
+      }
+    },
+    
+    /**
+     * Toggle cloud sync
+     */
+    toggleCloudSync() {
+      this.isCloudSyncEnabled = !this.isCloudSyncEnabled
+      console.log('☁️ Синхронизация с облаком:', this.isCloudSyncEnabled ? 'включена' : 'выключена')
+      
+      // If enabling, load cloud saves
+      if (this.isCloudSyncEnabled && this.playerId) {
+        this.loadCloudSaves()
+      }
+      
+      return this.isCloudSyncEnabled
+    },
+    
     /**
      * Load a saved game
      * @param {string} saveId - ID of the save to load
@@ -506,6 +890,9 @@ export const useGameStore = defineStore('game', {
         this.visitedScenes = new Set(saveData.visitedScenes || ['start'])
         this.choiceHistory = [...(saveData.choiceHistory || [])]
         this.statHistory = { ...(saveData.statHistory || {}) }
+        this.sceneTimeTracking = { ...(saveData.sceneTimeTracking || {}) }
+        this.statChangeHistory = [...(saveData.statChangeHistory || [])]
+        this.decisionPatterns = { ...(saveData.decisionPatterns || { aggressive: 0, diplomatic: 0, analytical: 0, caring: 0 }) }
 
         console.log('✅ Сохранение загружено:', saveData.name)
         return saveData
@@ -675,6 +1062,83 @@ export const useGameStore = defineStore('game', {
         console.error('❌ Ошибка при импорте:', error)
         this.error = 'Не удалось импортировать данные'
         throw error
+      }
+    },
+    
+    /**
+     * Load scene with caching
+     */
+    async loadScene(sceneId) {
+      // Check cache first
+      const cachedScene = this.getCachedScene(sceneId)
+      if (cachedScene) {
+        console.log(`📥 Scene loaded from cache: ${sceneId}`)
+        this.currentScene = cachedScene
+        return cachedScene
+      }
+      
+      try {
+        // Load from API if not in cache
+        const response = await sceneApi.getScene(sceneId)
+        const scene = response.data
+        
+        // Cache the scene
+        this.sceneCache.set(sceneId, scene)
+        this.cacheTimestamps.set(`scene-${sceneId}`, Date.now())
+        
+        this.currentScene = scene
+        return scene
+      } catch (error) {
+        console.error('Failed to load scene:', error)
+        throw error
+      }
+    },
+    
+    /**
+     * Load character with caching
+     */
+    async loadCharacter(characterId) {
+      // Check cache first
+      const cachedCharacter = this.getCachedCharacter(characterId)
+      if (cachedCharacter) {
+        console.log(`📥 Character loaded from cache: ${characterId}`)
+        return cachedCharacter
+      }
+      
+      try {
+        // Load from API if not in cache
+        const response = await characterApi.getCharacter(characterId)
+        const character = response.data
+        
+        // Cache the character
+        this.characterCache.set(characterId, character)
+        this.cacheTimestamps.set(`character-${characterId}`, Date.now())
+        
+        return character
+      } catch (error) {
+        console.error('Failed to load character:', error)
+        throw error
+      }
+    },
+    
+    /**
+     * Clear all caches
+     */
+    clearCaches() {
+      this.sceneCache.clear()
+      this.characterCache.clear()
+      this.cacheTimestamps.clear()
+      console.log('✅ All caches cleared')
+    },
+    
+    /**
+     * Get cache statistics
+     */
+    getCacheStats() {
+      return {
+        scenes: this.sceneCache.size,
+        characters: this.characterCache.size,
+        timestamps: this.cacheTimestamps.size
       }
     }
   }

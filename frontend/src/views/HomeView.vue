@@ -4,7 +4,7 @@
     <section class="hero">
       <!-- Animated Background -->
       <div class="hero-background">
-        <div class="star" v-for="i in 50" :key="i" :style="getStarStyle(i)"></div>
+        <div class="star" v-for="i in 50" :key="`hero-star-${i}`" :style="getStarStyle(i)"></div>
       </div>
       
       <div class="hero-content">
@@ -29,6 +29,11 @@
             📖 О проекте
           </button>
         </div>
+
+        <LoadingIndicator 
+          v-if="loading" 
+          message="Загрузка игры..."
+        />
 
         <div v-if="error" class="error-message">
           <span class="error-icon">❌</span>
@@ -241,6 +246,10 @@ import { useGameStore } from '../store/game'
 export default defineComponent({
   name: 'HomeView',
 
+  components: {
+    LoadingIndicator: () => import('../components/LoadingIndicator.vue')
+  },
+
   setup() {
     const router = useRouter()
     const gameStore = useGameStore()
@@ -254,59 +263,75 @@ export default defineComponent({
   data() {
     return {
       loading: false,
-      error: null
+      error: null,
+      // Pre-generate star styles to reduce computations
+      starStyles: this.generateStarStyles(50)
     }
   },
 
   methods: {
     /**
-     * Генерировать стиль для звезды
+     * Pre-generate star styles to reduce computations
+     */
+    generateStarStyles(count) {
+      const styles = []
+      for (let i = 0; i < count; i++) {
+        const size = Math.random() * 3 + 1
+        const top = Math.random() * 100
+        const left = Math.random() * 100
+        const opacity = Math.random() * 0.8 + 0.2
+        const animationDelay = Math.random() * 5
+        
+        styles.push({
+          width: `${size}px`,
+          height: `${size}px`,
+          top: `${top}%`,
+          left: `${left}%`,
+          opacity: opacity,
+          animationDelay: `${animationDelay}s`
+        })
+      }
+      return styles
+    },
+    
+    /**
+     * Генерировать стиль для звезды (fallback method)
      */
     getStarStyle(index) {
-      const size = Math.random() * 3 + 1;
-      const top = Math.random() * 100;
-      const left = Math.random() * 100;
-      const opacity = Math.random() * 0.8 + 0.2;
-      const animationDelay = Math.random() * 5;
-      
-      return {
-        width: `${size}px`,
-        height: `${size}px`,
-        top: `${top}%`,
-        left: `${left}%`,
-        opacity: opacity,
-        animationDelay: `${animationDelay}s`
-      };
+      return this.starStyles[index] || {}
     },
     
     /**
      * Обработчик начала игры
      */
     async handleStartGame() {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        this.$utils.log('info', 'Начало игры...');
+        this.$utils.log('info', 'Начало игры...')
         
         // Инициализируем игру через store
-        await this.gameStore.initializeGame();
+        await this.gameStore.initializeGame()
 
-        this.$utils.log('success', 'Игра инициализирована');
+        this.$utils.log('success', 'Игра инициализирована')
         
         // Переходим на игровой экран
-        await this.$router.push('/game');
+        await this.$router.push('/game')
       } catch (err) {
-        this.$utils.log('error', 'Ошибка при начале игры', err);
-        this.error = err.message || 'Ошибка подключения к серверу. Убедитесь, что backend запущен.';
+        this.$utils.log('error', 'Ошибка при начале игры', err)
+        this.error = err.message || 'Ошибка подключения к серверу. Убедитесь, что backend запущен.'
         
         // Показываем уведомление
         this.$root.showNotification(
           this.error,
           'error'
-        );
+        )
+        
+        // Play error sound
+        this.$utils.$audio.playSoundEffect('gameOver')
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 

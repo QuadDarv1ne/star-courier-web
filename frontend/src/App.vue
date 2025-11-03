@@ -51,6 +51,14 @@
         <button class="notification-close" @click="hideNotification">✕</button>
       </div>
     </transition>
+    
+    <!-- Cache Stats (Development only) -->
+    <div v-if="showCacheStats" class="cache-stats">
+      <div>Cache Stats:</div>
+      <div>Scenes: {{ cacheStats.scenes }}</div>
+      <div>Characters: {{ cacheStats.characters }}</div>
+      <button @click="clearAllCaches">Clear Cache</button>
+    </div>
   </div>
 </template>
 
@@ -85,39 +93,47 @@ export default defineComponent({
   computed: {
     apiUrl() {
       return this.$api
+    },
+    
+    // Show cache stats in development
+    showCacheStats() {
+      return import.meta.env.MODE === 'development'
+    },
+    
+    cacheStats() {
+      if (this.gameStore) {
+        return this.gameStore.getCacheStats()
+      }
+      return { scenes: 0, characters: 0, timestamps: 0 }
     }
   },
 
   methods: {
     /**
-     * Показать уведомление
-     * @param {string} message - Текст сообщения
-     * @param {string} type - Тип уведомления
-     * @param {number} duration - Длительность в мс
+     * Show notification
      */
-    showNotification(message, type = 'info', duration = 3000) {
+    showNotification(message, type = 'info') {
       this.notification = {
         show: true,
         message,
         type
       }
-
-      if (duration > 0) {
-        setTimeout(() => {
-          this.hideNotification()
-        }, duration)
-      }
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        this.hideNotification()
+      }, 5000)
     },
-
+    
     /**
-     * Скрыть уведомление
+     * Hide notification
      */
     hideNotification() {
       this.notification.show = false
     },
-
+    
     /**
-     * Получить иконку уведомления
+     * Get notification icon based on type
      */
     getNotificationIcon(type) {
       const icons = {
@@ -127,28 +143,26 @@ export default defineComponent({
         error: '❌'
       }
       return icons[type] || 'ℹ️'
+    },
+    
+    /**
+     * Clear all caches
+     */
+    clearAllCaches() {
+      this.gameStore.clearCaches()
+      this.$api.clearApiCache()
+      this.showNotification('Все кэши очищены', 'success')
     }
   },
-
+  
   mounted() {
-    this.$utils.log('info', 'App mounted', {
-      apiUrl: this.apiUrl,
-      gameStarted: this.gameStore.isGameStarted
-    })
-
-    // Глобальная обработка ошибок сети
-    window.addEventListener('offline', () => {
-      this.showNotification('Интернет соединение потеряно', 'error', 0)
-    })
-
-    window.addEventListener('online', () => {
-      this.showNotification('Интернет соединение восстановлено', 'success')
-    })
-  },
-
-  beforeUnmount() {
-    window.removeEventListener('offline', null)
-    window.removeEventListener('online', null)
+    // Make showNotification globally available
+    this.$root.showNotification = this.showNotification
+    
+    // Log startup info
+    console.log('🚀 StarCourier Web mounted')
+    console.log('🎮 Game Store:', this.gameStore ? 'Ready' : 'Not Ready')
+    console.log('🎨 UI Store:', this.uiStore ? 'Ready' : 'Not Ready')
   }
 })
 </script>
@@ -426,5 +440,34 @@ export default defineComponent({
   .footer-links {
     gap: 1rem;
   }
+}
+
+/* Cache Stats (Development only) */
+.cache-stats {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fbbf24;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.cache-stats button {
+  background: #fbbf24;
+  color: #0f172a;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+.cache-stats button:hover {
+  background: #f59e0b;
 }
 </style>

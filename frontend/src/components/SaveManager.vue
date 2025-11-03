@@ -78,7 +78,7 @@
         <div v-else class="saves-list">
           <div 
             v-for="save in savedGames" 
-            :key="save.id"
+            :key="`save-${save.id}`"
             class="save-item"
           >
             <div class="save-info">

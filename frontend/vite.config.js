@@ -94,6 +94,19 @@ export default defineConfig({
           }
           
           return `assets/[name]-[hash][extname]`
+        },
+        
+        // Manual chunks for better code splitting
+        manualChunks: {
+          // Vendor chunks
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          'utils-vendor': ['axios'],
+          // UI components that are used together
+          'game-components': [
+            './src/components/AchievementNotification.vue',
+            './src/components/AchievementsList.vue',
+            './src/components/SaveManager.vue'
+          ]
         }
       }
     },
@@ -108,7 +121,13 @@ export default defineConfig({
     commonjsOptions: {
       include: [/node_modules/],
       sourceMap: false
-    }
+    },
+    
+    // Enable brotli compression
+    brotliSize: true,
+    
+    // Chunk size warning limit
+    chunkSizeWarningLimit: 1000
   },
 
   // ============================================================================
