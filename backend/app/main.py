@@ -76,6 +76,9 @@ class GameStartResponse(BaseModel):
     status: str = "success"
     scene: SceneResponse
     stats: Dict[str, int]
+    relationships: Dict[str, int]
+
+
 # Add new Pydantic models for cloud saves
 class CloudSaveRequest(BaseModel):
     """Модель запроса облачного сохранения"""
@@ -100,13 +103,6 @@ class CloudSaveListResponse(BaseModel):
     """Модель ответа списка облачных сохранений"""
     status: str
     saves: List[dict]
-
-
-class SceneResponse(BaseModel):
-    """Модель ответа сцены"""
-    id: str
-    description: str
-    choices: Dict[str, str]
 
 
 class PlayerStats(BaseModel):
@@ -749,27 +745,37 @@ SCENES: Dict[str, dict] = {
     }
 }
 
-# Персонажи
-CHARACTERS: Dict[str, dict] = {
+# ============================================================================
+# DATA STORAGE
+# ============================================================================
+
+# Game progress storage (in-memory for now, would use database in production)
+game_progress = {}
+
+# Character data
+CHARACTERS = {
     "sara_nova": {
         "name": "Сара Нова",
         "role": "Главный научный офицер",
         "relationship": 50,
-        "description": "Холодная, расчётливая, но с добрым сердцем"
+        "description": "Холодная, расчётливая, но преданная своему делу."
     },
     "grisha_romanov": {
         "name": "Гриша Романов",
         "role": "Боевой офицер",
         "relationship": 60,
-        "description": "Верный боец, опытный воин"
+        "description": "Верный, опытный, всегда готов защитить команду."
     },
     "li_zheng": {
         "name": "Ли Чжэнь",
         "role": "Навигатор",
         "relationship": 45,
-        "description": "Загадочная, хранительница древних тайн"
+        "description": "Загадочная, с тайнами, обладает необычными способностями."
     }
 }
+
+# Cloud saves storage (in-memory for now, would use database in production)
+cloud_saves = {}
 
 # Сохранение прогресса игроков в памяти
 game_progress: Dict[str, dict] = {}

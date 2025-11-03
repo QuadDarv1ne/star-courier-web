@@ -9,6 +9,45 @@
     </div>
 
     <div class="modal-content">
+      <!-- Cloud sync status -->
+      <div class="cloud-sync-status" v-if="gameStore.playerId">
+        <div class="sync-header">
+          <h4>Облачное хранилище</h4>
+          <div class="sync-toggle">
+            <label class="switch">
+              <input 
+                type="checkbox" 
+                :checked="gameStore.isCloudSyncEnabled"
+                @change="toggleCloudSync"
+              >
+              <span class="slider"></span>
+            </label>
+            <span class="sync-label">{{ gameStore.isCloudSyncEnabled ? 'Включено' : 'Выключено' }}</span>
+          </div>
+        </div>
+        
+        <div class="sync-info" v-if="gameStore.isCloudSyncEnabled">
+          <div class="sync-status">
+            <span class="status-indicator" :class="{ 'connected': isCloudConnected, 'disconnected': !isCloudConnected }"></span>
+            <span class="status-text">{{ isCloudConnected ? 'Подключено к облаку' : 'Подключение...' }}</span>
+          </div>
+          
+          <div class="sync-actions">
+            <button 
+              class="btn btn-secondary btn-small" 
+              @click="syncWithCloud"
+              :disabled="isSyncing"
+              @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+            >
+              {{ isSyncing ? 'Синхронизация...' : 'Синхронизировать' }}
+            </button>
+            <span class="last-sync" v-if="gameStore.lastCloudSync">
+              Последняя синхронизация: {{ formatLastSync(gameStore.lastCloudSync) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
       <!-- Auto-save settings -->
       <div class="save-settings">
         <h4>Настройки автосохранения</h4>
@@ -66,45 +105,102 @@
             Сохранить
           </button>
         </div>
+        
+        <div class="cloud-save-option" v-if="gameStore.isCloudSyncEnabled">
+          <label class="setting-label">
+            <input 
+              type="checkbox" 
+              v-model="saveToCloud"
+            >
+            Также сохранить в облако
+          </label>
+        </div>
       </div>
       
       <!-- Saved games list -->
       <div class="saved-games">
         <h4>Сохранённые игры</h4>
-        <div v-if="savedGames.length === 0" class="no-saves">
+        <div v-if="savedGames.length === 0 && gameStore.cloudSaves.length === 0" class="no-saves">
           Нет сохранённых игр
         </div>
         
-        <div v-else class="saves-list">
-          <div 
-            v-for="save in savedGames" 
-            :key="`save-${save.id}`"
-            class="save-item"
-          >
-            <div class="save-info">
-              <div class="save-name">{{ save.name }}</div>
-              <div class="save-meta">
-                <span class="save-date">{{ formatDate(save.timestamp) }}</span>
-                <span class="save-time">{{ formatPlaytime(save.playtime) }}</span>
-                <span class="save-scene">{{ getSceneTitle(save.currentSceneId) }}</span>
+        <div v-else class="saves-container">
+          <!-- Local saves -->
+          <div v-if="savedGames.length > 0" class="saves-section">
+            <h5>Локальные сохранения</h5>
+            <div class="saves-list">
+              <div 
+                v-for="save in savedGames" 
+                :key="`save-${save.id}`"
+                class="save-item"
+              >
+                <div class="save-info">
+                  <div class="save-name">{{ save.name }}</div>
+                  <div class="save-meta">
+                    <span class="save-date">{{ formatDate(save.timestamp) }}</span>
+                    <span class="save-time">{{ formatPlaytime(save.playtime) }}</span>
+                    <span class="save-scene">{{ getSceneTitle(save.currentSceneId) }}</span>
+                  </div>
+                </div>
+                
+                <div class="save-actions">
+                  <button 
+                    class="btn btn-small btn-secondary" 
+                    @click="loadSave(save.id)"
+                    @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+                  >
+                    Загрузить
+                  </button>
+                  <button 
+                    class="btn btn-small btn-danger" 
+                    @click="deleteSave(save.id)"
+                    @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+                  >
+                    Удалить
+                  </button>
+                </div>
               </div>
             </div>
-            
-            <div class="save-actions">
-              <button 
-                class="btn btn-small btn-secondary" 
-                @click="loadSave(save.id)"
-                @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+          </div>
+          
+          <!-- Cloud saves -->
+          <div v-if="gameStore.isCloudSyncEnabled && gameStore.cloudSaves.length > 0" class="saves-section">
+            <h5>Облачные сохранения</h5>
+            <div class="saves-list">
+              <div 
+                v-for="save in gameStore.cloudSaves" 
+                :key="`cloud-${save.id}`"
+                class="save-item cloud-save"
               >
-                Загрузить
-              </button>
-              <button 
-                class="btn btn-small btn-danger" 
-                @click="deleteSave(save.id)"
-                @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
-              >
-                Удалить
-              </button>
+                <div class="save-info">
+                  <div class="save-name">
+                    <span class="cloud-icon">☁️</span>
+                    {{ save.name }}
+                  </div>
+                  <div class="save-meta">
+                    <span class="save-date">{{ formatDate(save.timestamp) }}</span>
+                    <span class="save-time">{{ formatPlaytime(save.data.playtime) }}</span>
+                    <span class="save-scene">{{ getSceneTitle(save.data.currentSceneId) }}</span>
+                  </div>
+                </div>
+                
+                <div class="save-actions">
+                  <button 
+                    class="btn btn-small btn-secondary" 
+                    @click="loadCloudSave(save.id)"
+                    @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+                  >
+                    Загрузить
+                  </button>
+                  <button 
+                    class="btn btn-small btn-danger" 
+                    @click="deleteCloudSave(save.id)"
+                    @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+                  >
+                    Удалить
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -168,17 +264,32 @@ export default defineComponent({
   data() {
     return {
       saveName: '',
-      savedGames: []
+      savedGames: [],
+      saveToCloud: true,
+      isSyncing: false,
+      isCloudConnected: true
     }
   },
 
   mounted() {
     this.loadSavedGames()
+    // Load cloud saves if cloud sync is enabled
+    if (this.gameStore.isCloudSyncEnabled && this.gameStore.playerId) {
+      this.loadCloudSaves()
+    }
   },
 
   methods: {
     loadSavedGames() {
       this.savedGames = this.gameStore.loadAllSavedGames()
+    },
+    
+    async loadCloudSaves() {
+      try {
+        await this.gameStore.loadCloudSaves()
+      } catch (error) {
+        this.$root.showNotification('Ошибка загрузки облачных сохранений: ' + error.message, 'error')
+      }
     },
     
     toggleAutoSave(event) {
@@ -191,17 +302,33 @@ export default defineComponent({
       }
     },
     
+    toggleCloudSync(event) {
+      const enabled = event.target.checked
+      this.gameStore.toggleCloudSync()
+      if (enabled && this.gameStore.playerId) {
+        this.loadCloudSaves()
+      }
+    },
+    
     setAutoSaveInterval(event) {
       const interval = parseInt(event.target.value)
       this.gameStore.setAutoSaveInterval(interval)
     },
     
-    saveGame() {
+    async saveGame() {
       try {
         const saveData = this.gameStore.saveGame(this.saveName || null)
+        
+        // Also save to cloud if enabled
+        if (this.saveToCloud && this.gameStore.isCloudSyncEnabled) {
+          await this.gameStore.saveToCloud(saveData)
+          this.$root.showNotification('Игра сохранена в облако: ' + saveData.name, 'success')
+        } else {
+          this.$root.showNotification('Игра сохранена локально: ' + saveData.name, 'success')
+        }
+        
         this.saveName = ''
         this.loadSavedGames()
-        this.$root.showNotification('Игра сохранена: ' + saveData.name, 'success')
       } catch (error) {
         this.$root.showNotification('Ошибка сохранения: ' + error.message, 'error')
       }
@@ -219,6 +346,18 @@ export default defineComponent({
       }
     },
     
+    async loadCloudSave(saveId) {
+      try {
+        await this.gameStore.loadFromCloud(saveId)
+        this.$root.showNotification('Игра загружена из облака', 'success')
+        this.$emit('close')
+        // Navigate to game view
+        this.$router.push('/game')
+      } catch (error) {
+        this.$root.showNotification('Ошибка загрузки из облака: ' + error.message, 'error')
+      }
+    },
+    
     deleteSave(saveId) {
       if (confirm('Вы уверены, что хотите удалить это сохранение?')) {
         try {
@@ -228,6 +367,30 @@ export default defineComponent({
         } catch (error) {
           this.$root.showNotification('Ошибка удаления: ' + error.message, 'error')
         }
+      }
+    },
+    
+    async deleteCloudSave(saveId) {
+      if (confirm('Вы уверены, что хотите удалить это облачное сохранение?')) {
+        try {
+          await this.gameStore.deleteCloudSave(saveId)
+          this.$root.showNotification('Облачное сохранение удалено', 'success')
+        } catch (error) {
+          this.$root.showNotification('Ошибка удаления облачного сохранения: ' + error.message, 'error')
+        }
+      }
+    },
+    
+    async syncWithCloud() {
+      this.isSyncing = true
+      try {
+        // Load latest cloud saves
+        await this.loadCloudSaves()
+        this.$root.showNotification('Синхронизация завершена', 'success')
+      } catch (error) {
+        this.$root.showNotification('Ошибка синхронизации: ' + error.message, 'error')
+      } finally {
+        this.isSyncing = false
       }
     },
     
@@ -291,6 +454,21 @@ export default defineComponent({
       const minutes = Math.floor(diff / 60000)
       
       if (minutes < 1) return 'меньше минуты назад'
+      if (minutes < 60) return `${minutes} минут${this.getPlural(minutes, 'у', 'ы', '')} назад`
+      
+      const hours = Math.floor(minutes / 60)
+      if (hours < 24) return `${hours} час${this.getPlural(hours, '', 'а', 'ов')} назад`
+      
+      const days = Math.floor(hours / 24)
+      return `${days} день${this.getPlural(days, '', 'я', 'ей')} назад`
+    },
+    
+    formatLastSync(timestamp) {
+      const now = Date.now()
+      const diff = now - timestamp
+      const minutes = Math.floor(diff / 60000)
+      
+      if (minutes < 1) return 'только что'
       if (minutes < 60) return `${minutes} минут${this.getPlural(minutes, 'у', 'ы', '')} назад`
       
       const hours = Math.floor(minutes / 60)
@@ -397,6 +575,7 @@ export default defineComponent({
   gap: 1.5rem;
 }
 
+.cloud-sync-status,
 .save-settings,
 .manual-save,
 .saved-games,
@@ -412,6 +591,120 @@ export default defineComponent({
   color: #fbbf24;
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
+}
+
+.modal-content h5 {
+  color: #fbbf24;
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+}
+
+.sync-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sync-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #78350f;
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #fbbf24;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.sync-label {
+  color: #d1d5db;
+  font-size: 0.875rem;
+}
+
+.sync-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-indicator.connected {
+  background-color: #10b981;
+}
+
+.status-indicator.disconnected {
+  background-color: #ef4444;
+}
+
+.status-text {
+  color: #d1d5db;
+  font-size: 0.875rem;
+}
+
+.sync-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.last-sync {
+  color: #9ca3af;
+  font-size: 0.8125rem;
+  font-style: italic;
 }
 
 .setting-row {
@@ -453,6 +746,11 @@ export default defineComponent({
 .save-input {
   display: flex;
   gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cloud-save-option {
+  margin-top: 0.5rem;
 }
 
 .save-name-input {
@@ -474,6 +772,18 @@ export default defineComponent({
   text-align: center;
   padding: 2rem;
   font-style: italic;
+}
+
+.saves-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.saves-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .saves-list {
@@ -498,6 +808,16 @@ export default defineComponent({
   background: rgba(30, 41, 59, 0.7);
 }
 
+.save-item.cloud-save {
+  border-color: #3b82f6;
+  background: rgba(30, 41, 59, 0.3);
+}
+
+.save-item.cloud-save:hover {
+  border-color: #60a5fa;
+  background: rgba(30, 41, 59, 0.5);
+}
+
 .save-info {
   flex: 1;
 }
@@ -506,6 +826,13 @@ export default defineComponent({
   color: #fbbf24;
   font-weight: 600;
   margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cloud-icon {
+  font-size: 0.875rem;
 }
 
 .save-meta {
@@ -614,6 +941,17 @@ export default defineComponent({
   .save-meta {
     flex-direction: column;
     gap: 0.25rem;
+  }
+  
+  .sync-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .sync-actions {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

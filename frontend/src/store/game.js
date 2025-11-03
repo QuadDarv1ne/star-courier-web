@@ -73,6 +73,11 @@ export const useGameStore = defineStore('game', {
     lastAutoSave: null,
     autoSaveTimer: null,
     
+    // Cloud save management
+    cloudSaves: [],
+    isCloudSyncEnabled: false,
+    lastCloudSync: null,
+    
     // ========================
     // ENHANCED STATISTICS
     // ========================
@@ -114,13 +119,7 @@ export const useGameStore = defineStore('game', {
     // Add cache for scenes and characters
     sceneCache: new Map(),
     characterCache: new Map(),
-    cacheTimestamps: new Map(),
-    
-    // Add cloud save state
-    cloudSaves: [],
-    isCloudSyncEnabled: false,
-    lastCloudSync: null,
-    
+    cacheTimestamps: new Map()
   }),
 
   getters: {
