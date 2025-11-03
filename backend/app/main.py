@@ -1133,6 +1133,31 @@ async def make_choice(request: GameChoiceRequest):
         next_scene = request.next_scene
         stats_changes = request.stats or {}
         
+        # Validate input parameters
+        if not player_id or not isinstance(player_id, str) or len(player_id.strip()) == 0:
+            logger.warning(f"⚠️ Неверный ID игрока: {player_id}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Неверный ID игрока"
+            )
+        
+        if not next_scene or not isinstance(next_scene, str) or len(next_scene.strip()) == 0:
+            logger.warning(f"⚠️ Неверный ID следующей сцены: {next_scene}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Неверный ID следующей сцены"
+            )
+        
+        if stats_changes and not isinstance(stats_changes, dict):
+            logger.warning(f"⚠️ Неверный формат изменений статистики: {stats_changes}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Неверный формат изменений статистики"
+            )
+        
+        player_id = player_id.strip()
+        next_scene = next_scene.strip()
+        
         logger.debug(f"Выбор от игрока {player_id}: переход на сцену {next_scene}")
         
         # Проверка что игра началась
@@ -1143,12 +1168,38 @@ async def make_choice(request: GameChoiceRequest):
                 detail="Игра не начата"
             )
         
+        # Validate stats changes
+        valid_stats = ['health', 'morale', 'knowledge', 'team', 'danger', 'security', 'fuel', 'money', 'psychic', 'trust']
+        for key, value in stats_changes.items():
+            if key not in valid_stats:
+                logger.warning(f"⚠️ Неизвестная статистика: {key}")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Неизвестная статистика: {key}"
+                )
+            
+            if not isinstance(value, (int, float)):
+                logger.warning(f"⚠️ Неверное значение статистики {key}: {value}")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Неверное значение статистики {key}: {value}"
+                )
+            
+            # Validate value range
+            if value < -1000 or value > 1000:
+                logger.warning(f"⚠️ Значение статистики {key} вне допустимого диапазона: {value}")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Значение статистики {key} вне допустимого диапазона: {value}"
+                )
+        
         # Обновление статистики
         for key, value in stats_changes.items():
             if key in game_progress[player_id]['stats']:
                 old_value = game_progress[player_id]['stats'][key]
-                game_progress[player_id]['stats'][key] = max(0, min(100, old_value + value))
-                logger.debug(f"  {key}: {old_value} → {game_progress[player_id]['stats'][key]}")
+                new_value = max(0, min(100, old_value + value))
+                game_progress[player_id]['stats'][key] = new_value
+                logger.debug(f"  {key}: {old_value} → {new_value}")
         
         # Обновление текущей сцены
         game_progress[player_id]['current_scene'] = next_scene
@@ -1166,9 +1217,12 @@ async def make_choice(request: GameChoiceRequest):
                 "choices_made": game_progress[player_id]['choices_made']
             }
         
+        # Validate and return scene data
+        scene_data = get_scene_data(next_scene)
+        
         return {
             "status": "success",
-            "scene": get_scene_data(next_scene),
+            "scene": scene_data,
             "stats": game_progress[player_id]['stats'],
             "relationships": game_progress[player_id]['relationships'],
             "choices_made": game_progress[player_id]['choices_made']
@@ -1177,6 +1231,10 @@ async def make_choice(request: GameChoiceRequest):
         raise
     except Exception as e:
         logger.error(f"❌ Ошибка при выборе: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при обработке выбора"
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ошибка при обработке выбора"
