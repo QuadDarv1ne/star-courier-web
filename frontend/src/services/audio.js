@@ -11,9 +11,17 @@ class AudioService {
     this.isMuted = false;
     this.musicVolume = 0.5;
     this.sfxVolume = 0.7;
+    this.isAudioSupported = this.checkAudioSupport();
     
     // Initialize audio context on first user interaction
     this.initAudioContext();
+  }
+  
+  /**
+   * Check if audio is supported in the browser
+   */
+  checkAudioSupport() {
+    return !!(window.AudioContext || window.webkitAudioContext);
   }
   
   /**
@@ -28,14 +36,17 @@ class AudioService {
    * Create audio context on user interaction
    */
   async createUserContext() {
-    if (!this.audioContext) {
+    if (!this.audioContext && this.isAudioSupported) {
       try {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         console.log('Audio context created');
+        return true;
       } catch (e) {
         console.warn('Web Audio API is not supported in this browser', e);
+        return false;
       }
     }
+    return !!this.audioContext;
   }
   
   /**
@@ -44,22 +55,31 @@ class AudioService {
    */
   loadBackgroundMusic(url) {
     return new Promise((resolve, reject) => {
+      // If we already have background music, clean it up
       if (this.backgroundMusic) {
         this.backgroundMusic.pause();
         this.backgroundMusic = null;
       }
       
+      // Create new audio element
       this.backgroundMusic = new Audio(url);
       this.backgroundMusic.loop = true;
       this.backgroundMusic.volume = this.musicVolume;
       
+      // Handle load events
       this.backgroundMusic.addEventListener('loadeddata', () => {
+        console.log('Background music loaded:', url);
         resolve(this.backgroundMusic);
       });
       
       this.backgroundMusic.addEventListener('error', (e) => {
-        reject(new Error(`Failed to load background music: ${e.message}`));
+        console.warn(`Failed to load background music: ${url}`, e);
+        // Don't reject, just resolve with null
+        resolve(null);
       });
+      
+      // Try to load the audio
+      this.backgroundMusic.load();
     });
   }
   
@@ -71,8 +91,13 @@ class AudioService {
     
     try {
       await this.createUserContext();
-      await this.backgroundMusic.play();
-      console.log('Background music playing');
+      // Check if audio is actually loaded
+      if (this.backgroundMusic.readyState >= 2) {
+        await this.backgroundMusic.play();
+        console.log('Background music playing');
+      } else {
+        console.warn('Background music not ready to play');
+      }
     } catch (e) {
       console.warn('Failed to play background music:', e);
     }
@@ -121,13 +146,19 @@ class AudioService {
       audio.volume = this.sfxVolume;
       
       audio.addEventListener('loadeddata', () => {
+        console.log('Sound effect loaded:', name, url);
         this.soundEffects.set(name, audio);
         resolve(audio);
       });
       
       audio.addEventListener('error', (e) => {
-        reject(new Error(`Failed to load sound effect '${name}': ${e.message}`));
+        console.warn(`Failed to load sound effect '${name}': ${url}`, e);
+        // Don't reject, just resolve with null
+        resolve(null);
       });
+      
+      // Try to load the audio
+      audio.load();
     });
   }
   
@@ -194,6 +225,38 @@ class AudioService {
       this.mute();
     }
     return this.isMuted;
+  }
+  
+  /**
+   * Preload all game audio
+   */
+  async preloadGameAudio() {
+    console.log('Preloading game audio...');
+    
+    try {
+      // Load sound effects
+      await this.loadSoundEffect('buttonClick', '/audio/sfx/button-click.mp3');
+      await this.loadSoundEffect('sceneChange', '/audio/sfx/scene-change.mp3');
+      await this.loadSoundEffect('gameOver', '/audio/sfx/game-over.mp3');
+      await this.loadSoundEffect('choiceMade', '/audio/sfx/choice-made.mp3');
+      await this.loadSoundEffect('achievementUnlocked', '/audio/sfx/achievement.mp3');
+      
+      // Load background music
+      await this.loadBackgroundMusic('/audio/music/background.mp3');
+      
+      console.log('Audio preloading complete');
+      return true;
+    } catch (error) {
+      console.warn('Failed to preload audio:', error);
+      return false;
+    }
+  }
+  
+  /**
+   * Check if all audio is loaded
+   */
+  isAudioLoaded() {
+    return this.backgroundMusic !== null && this.soundEffects.size > 0;
   }
 }
 

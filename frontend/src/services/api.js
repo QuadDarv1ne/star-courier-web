@@ -43,24 +43,24 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`📥 API Response: ${response.status}`, response.data)
-    return response
+    console.log(`📥 API Response: ${response.status}`, response.data);
+    return response;
   },
   (error) => {
     if (error.response) {
       // Server responded with error status
-      console.error(`❌ Response Error (${error.response.status}):`, error.response.data)
+      console.error(`❌ Response Error (${error.response.status}):`, error.response.data);
       
-      const message = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера'
-      throw new Error(message)
+      const message = error.response.data?.error || error.response.data?.detail || 'Ошибка сервера';
+      throw new Error(message);
     } else if (error.request) {
       // Request made but no response
-      console.error('❌ Network Error: No response from server')
-      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен.')
+      console.error('❌ Network Error: No response from server');
+      throw new Error('Ошибка подключения к серверу. Убедитесь, что backend запущен.');
     } else {
       // Error in request setup
-      console.error('❌ Error:', error.message)
-      throw new Error(error.message)
+      console.error('❌ Error:', error.message);
+      throw new Error(error.message);
     }
   }
 )
@@ -219,22 +219,34 @@ export async function isApiAvailable() {
  */
 export function formatErrorMessage(error) {
   if (typeof error === 'string') {
-    return error
+    return error;
   }
   
   if (error.response?.data?.error) {
-    return error.response.data.error
+    return error.response.data.error;
   }
   
   if (error.response?.data?.detail) {
-    return error.response.data.detail
+    return error.response.data.detail;
   }
   
   if (error.message) {
-    return error.message
+    return error.message;
   }
   
-  return 'Неизвестная ошибка'
+  return 'Неизвестная ошибка';
+}
+
+// Add a more robust error handler for API calls
+export async function handleApiCall(apiCall, errorMessage = 'Произошла ошибка') {
+  try {
+    const response = await apiCall();
+    return response.data;
+  } catch (error) {
+    const formattedError = formatErrorMessage(error);
+    console.error('API Error:', formattedError);
+    throw new Error(errorMessage + ': ' + formattedError);
+  }
 }
 
 // ============================================================================

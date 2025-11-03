@@ -1,10 +1,3 @@
-<!-- ================================================================ -->
-<!-- FILE 2: src/views/NotFoundView.vue -->
-<!-- ================================================================ -->
-
-<!-- NOTE: Create this as separate file src/views/NotFoundView.vue -->
-
-<!--
 <template>
   <div class="not-found-view">
     <div class="not-found-content">
@@ -125,4 +118,3 @@ export default {
   }
 }
 </style>
--->

@@ -12,9 +12,30 @@
     </div>
 
     <div class="modal-content">
+      <div class="achievements-tabs">
+        <button 
+          :class="['tab', { active: activeTab === 'all' }]"
+          @click="activeTab = 'all'"
+        >
+          Все
+        </button>
+        <button 
+          :class="['tab', { active: activeTab === 'unlocked' }]"
+          @click="activeTab = 'unlocked'"
+        >
+          Разблокированные
+        </button>
+        <button 
+          :class="['tab', { active: activeTab === 'locked' }]"
+          @click="activeTab = 'locked'"
+        >
+          Неразблокированные
+        </button>
+      </div>
+      
       <div class="achievements-grid">
         <div 
-          v-for="achievement in achievementsStore.allAchievements" 
+          v-for="achievement in filteredAchievements" 
           :key="achievement.id"
           :class="[
             'achievement-card',
@@ -40,6 +61,11 @@
                 {{ achievement.progress }} / {{ achievement.target }}
               </span>
             </div>
+            
+            <div v-if="!isUnlocked(achievement.id) && achievement.progress === undefined" class="achievement-hint">
+              <span v-if="!achievement.secret">Подсказка: {{ getHint(achievement.id) }}</span>
+              <span v-else>???</span>
+            </div>
           </div>
         </div>
       </div>
@@ -58,10 +84,47 @@ export default defineComponent({
     const achievementsStore = useAchievementsStore()
     return { achievementsStore }
   },
+  
+  data() {
+    return {
+      activeTab: 'all'
+    }
+  },
+  
+  computed: {
+    filteredAchievements() {
+      const all = this.achievementsStore.allAchievements
+      
+      switch (this.activeTab) {
+        case 'unlocked':
+          return all.filter(a => this.isUnlocked(a.id))
+        case 'locked':
+          return all.filter(a => !this.isUnlocked(a.id))
+        default:
+          return all
+      }
+    }
+  },
 
   methods: {
     isUnlocked(achievementId) {
       return this.achievementsStore.unlockedAchievements.has(achievementId)
+    },
+    
+    getHint(achievementId) {
+      const hints = {
+        first_choice: 'Сделайте первый выбор в игре',
+        explorer: 'Посетите разные сцены',
+        survivor: 'Выживите с низким здоровьем',
+        rich_courier: 'Заработайте больше денег',
+        trusted_friend: 'Повышайте доверие с персонажами',
+        knowledge_seeker: 'Повышайте уровень знаний',
+        team_player: 'Работайте с командой',
+        fuel_efficient: 'Экономьте топливо',
+        peace_maker: 'Сохраняйте высокую мораль',
+        danger_zone: 'Попадите в опасные ситуации'
+      }
+      return hints[achievementId] || 'Продолжайте играть'
     }
   }
 })
@@ -116,6 +179,36 @@ export default defineComponent({
   overflow-y: auto;
 }
 
+.achievements-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #44260e;
+  padding-bottom: 1rem;
+}
+
+.tab {
+  background: transparent;
+  border: 1px solid #78350f;
+  color: #9ca3af;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+.tab.active {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
 .achievements-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -130,11 +223,37 @@ export default defineComponent({
   display: flex;
   gap: 1rem;
   transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
+}
+
+.achievement-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.achievement-card:hover::before {
+  left: 100%;
 }
 
 .achievement-unlocked {
   border-color: #fbbf24;
   background: rgba(251, 191, 36, 0.1);
+}
+
+.achievement-unlocked .achievement-icon {
+  animation: pulse 2s infinite;
 }
 
 .achievement-secret .achievement-details h4,
@@ -166,19 +285,19 @@ export default defineComponent({
 
 .achievement-details p {
   color: #9ca3af;
-  margin: 0;
+  margin: 0 0 0.75rem 0;
   font-size: 0.875rem;
   line-height: 1.4;
 }
 
 .achievement-progress {
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .progress-bar {
   background: rgba(0, 0, 0, 0.2);
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
   overflow: hidden;
   margin-bottom: 0.25rem;
 }
@@ -192,5 +311,25 @@ export default defineComponent({
 .progress-text {
   color: #9ca3af;
   font-size: 0.75rem;
+}
+
+.achievement-hint {
+  color: #78350f;
+  font-size: 0.75rem;
+  font-style: italic;
+  border-top: 1px dashed #78350f;
+  padding-top: 0.5rem;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(251, 191, 36, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+  }
 }
 </style>

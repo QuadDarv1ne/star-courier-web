@@ -52,6 +52,7 @@ export const useUiStore = defineStore('ui', {
       textSize: 'medium', // small, medium, large
       animationsEnabled: true,
       autoSaveEnabled: true,
+      autoSaveInterval: 300000, // 5 minutes
       showTutorial: true,
       language: 'ru'
     }
@@ -290,6 +291,17 @@ export const useUiStore = defineStore('ui', {
         this.settings.textSize = size
         this.saveUiSettings()
       }
+    },
+    
+    /**
+     * Set auto-save settings
+     */
+    setAutoSaveSettings(enabled, interval) {
+      this.settings.autoSaveEnabled = enabled
+      if (interval) {
+        this.settings.autoSaveInterval = interval
+      }
+      this.saveUiSettings()
     },
 
     /**

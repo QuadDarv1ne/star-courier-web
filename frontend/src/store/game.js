@@ -6,7 +6,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { apiClient } from '../services/api'
+import { apiClient, handleApiCall, formatErrorMessage } from '../services/api'
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -68,7 +68,34 @@ export const useGameStore = defineStore('game', {
     // ========================
     
     savedGames: [],
-    autoSaveEnabled: false
+    autoSaveEnabled: true,
+    autoSaveInterval: 300000, // 5 minutes
+    lastAutoSave: null,
+    autoSaveTimer: null,
+    
+    // ========================
+    // ENHANCED STATISTICS
+    // ========================
+    
+    // Track min/max stats throughout the game
+    statHistory: {
+      health: { min: 100, max: 100 },
+      morale: { min: 75, max: 75 },
+      knowledge: { min: 30, max: 30 },
+      team: { min: 50, max: 50 },
+      danger: { min: 0, max: 0 },
+      security: { min: 20, max: 20 },
+      fuel: { min: 100, max: 100 },
+      money: { min: 1000, max: 1000 },
+      psychic: { min: 0, max: 0 },
+      trust: { min: 50, max: 50 }
+    },
+    
+    // Track choices made
+    choiceHistory: [],
+    
+    // Track achievements progress
+    achievementsProgress: {}
   }),
 
   getters: {
@@ -117,8 +144,39 @@ export const useGameStore = defineStore('game', {
         stats: state.stats,
         relationships: state.relationships,
         visitedScenes: Array.from(state.visitedScenes),
-        inventory: state.inventory
+        inventory: state.inventory,
+        playtime: state.playtime,
+        statHistory: state.statHistory,
+        choiceHistory: state.choiceHistory
       }
+    },
+    
+    /**
+     * Get favorite character based on relationships
+     */
+    favoriteCharacter: (state) => {
+      const entries = Object.entries(state.relationships)
+      if (entries.length === 0) return null
+      
+      const max = entries.reduce((max, entry) => entry[1] > max[1] ? entry : max)
+      return {
+        id: max[0],
+        name: max[0] === 'sara_nova' ? 'Сара Нова' : 
+              max[0] === 'grisha_romanov' ? 'Гриша Романов' : 
+              max[0] === 'li_zheng' ? 'Ли Чжэнь' : max[0],
+        relationship: max[1]
+      }
+    },
+    
+    /**
+     * Get game difficulty based on danger level
+     */
+    gameDifficulty: (state) => {
+      if (state.stats.danger >= 80) return 'Экстремальная'
+      if (state.stats.danger >= 60) return 'Высокая'
+      if (state.stats.danger >= 40) return 'Средняя'
+      if (state.stats.danger >= 20) return 'Низкая'
+      return 'Лёгкая'
     }
   },
 
@@ -128,46 +186,63 @@ export const useGameStore = defineStore('game', {
      * Connects to backend API to start game session
      */
     async initializeGame() {
-      this.isLoading = true
-      this.error = null
+      this.isLoading = true;
+      this.error = null;
 
       try {
         // Generate unique player ID
-        this.playerId = this.generatePlayerId()
+        this.playerId = this.generatePlayerId();
         
-        console.log('🎮 Инициализация игры для игрока:', this.playerId)
+        console.log('🎮 Инициализация игры для игрока:', this.playerId);
 
         // Call backend API to start game
-        const response = await apiClient.post('/game/start', {
-          player_id: this.playerId
-        })
+        const response = await handleApiCall(
+          () => apiClient.post('/game/start', {
+            player_id: this.playerId
+          }),
+          'Не удалось начать игру'
+        );
 
         // Update state from API response
-        this.currentSceneId = response.data.scene.id
-        this.currentScene = response.data.scene
-        this.stats = response.data.stats
-        this.relationships = response.data.relationships
+        this.currentSceneId = response.scene.id;
+        this.currentScene = response.scene;
+        this.stats = response.stats;
+        this.relationships = response.relationships;
 
         // Initialize game
-        this.isGameStarted = true
-        this.startTime = Date.now()
-        this.choicesMade = 0
-        this.visitedScenes = new Set(['start'])
+        this.isGameStarted = true;
+        this.startTime = Date.now();
+        this.choicesMade = 0;
+        this.visitedScenes = new Set(['start']);
+        this.choiceHistory = [];
+        
+        // Initialize stat history
+        Object.keys(this.stats).forEach(stat => {
+          this.statHistory[stat] = {
+            min: this.stats[stat],
+            max: this.stats[stat]
+          };
+        });
+        
+        // Start auto-save timer if enabled
+        if (this.autoSaveEnabled) {
+          this.startAutoSave();
+        }
 
-        console.log('✅ Игра инициализирована успешно')
+        console.log('✅ Игра инициализирована успешно');
         
         return {
           status: 'success',
-          scene: response.data.scene,
-          stats: response.data.stats,
-          relationships: response.data.relationships
-        }
+          scene: response.scene,
+          stats: response.stats,
+          relationships: response.relationships
+        };
       } catch (err) {
-        this.error = err.message || 'Ошибка при инициализации игры'
-        console.error('❌ Ошибка при инициализации:', err)
-        throw err
+        this.error = formatErrorMessage(err) || 'Ошибка при инициализации игры';
+        console.error('❌ Ошибка при инициализации:', err);
+        throw err;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -177,54 +252,94 @@ export const useGameStore = defineStore('game', {
      * @param {Object} statChanges - Changes to apply to stats
      */
     async makeChoice(nextSceneId, statChanges = {}) {
-      this.isLoading = true
-      this.error = null
+      this.isLoading = true;
+      this.error = null;
 
       try {
-        console.log(`📍 Переход на сцену: ${nextSceneId}`)
+        console.log(`📍 Переход на сцену: ${nextSceneId}`);
+
+        // Record choice in history
+        this.choiceHistory.push({
+          sceneId: this.currentSceneId,
+          nextSceneId,
+          statChanges,
+          timestamp: Date.now()
+        });
 
         // Call backend API
-        const response = await apiClient.post('/game/choose', {
-          player_id: this.playerId,
-          next_scene: nextSceneId,
-          stats: statChanges
-        })
+        const response = await handleApiCall(
+          () => apiClient.post('/game/choose', {
+            player_id: this.playerId,
+            next_scene: nextSceneId,
+            stats: statChanges
+          }),
+          'Не удалось выполнить выбор'
+        );
 
         // Handle game over
-        if (response.data.status === 'game_over') {
-          console.log('💀 Игра окончена:', response.data.reason)
+        if (response.status === 'game_over') {
+          console.log('💀 Игра окончена:', response.reason);
+          // Stop auto-save when game ends
+          this.stopAutoSave();
           return {
             status: 'game_over',
-            reason: response.data.reason,
-            choices_made: response.data.choices_made
-          }
+            reason: response.reason,
+            choices_made: response.choices_made
+          };
         }
 
         // Update state
-        this.currentSceneId = response.data.scene.id
-        this.currentScene = response.data.scene
-        this.stats = response.data.stats
-        this.relationships = response.data.relationships
-        this.choicesMade = response.data.choices_made
+        this.currentSceneId = response.scene.id;
+        this.currentScene = response.scene;
+        this.choicesMade = response.choices_made;
 
         // Track visited scenes
-        this.visitedScenes.add(nextSceneId)
+        this.visitedScenes.add(nextSceneId);
 
-        console.log('✅ Выбор обработан')
+        // Update stats and track history
+        Object.keys(statChanges).forEach(stat => {
+          if (this.stats.hasOwnProperty(stat)) {
+            const oldValue = this.stats[stat];
+            const change = statChanges[stat];
+            const newValue = Math.max(0, Math.min(100, oldValue + change));
+            
+            this.stats[stat] = newValue;
+            
+            // Update stat history
+            if (!this.statHistory[stat]) {
+              this.statHistory[stat] = { min: newValue, max: newValue };
+            } else {
+              this.statHistory[stat].min = Math.min(this.statHistory[stat].min, newValue);
+              this.statHistory[stat].max = Math.max(this.statHistory[stat].max, newValue);
+            }
+          }
+        });
+
+        // Update relationships if provided
+        if (response.relationships) {
+          this.relationships = response.relationships;
+        }
+        
+        // Auto-save after each choice if enabled
+        if (this.autoSaveEnabled) {
+          await this.autoSave();
+        }
+
+        console.log('✅ Выбор обработан');
 
         return {
           status: 'success',
-          scene: response.data.scene,
-          stats: response.data.stats,
-          relationships: response.data.relationships,
-          choices_made: response.data.choices_made
-        }
+          scene: response.scene,
+          stats: this.stats,
+          relationships: this.relationships,
+          choices_made: response.choices_made
+        };
       } catch (err) {
-        this.error = err.message || 'Ошибка при обработке выбора'
-        console.error('❌ Ошибка при выборе:', err)
-        throw err
+        this.error = formatErrorMessage(err) || 'Ошибка при обработке выбора';
+        console.error('❌ Ошибка при выборе:', err);
+        throw err;
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 
@@ -233,17 +348,21 @@ export const useGameStore = defineStore('game', {
      */
     async getPlayerStats() {
       try {
-        const response = await apiClient.get(`/game/stats/${this.playerId}`)
+        const response = await handleApiCall(
+          () => apiClient.get(`/game/stats/${this.playerId}`),
+          'Не удалось получить статистику игрока'
+        );
         
-        this.stats = response.data.stats
-        this.relationships = response.data.relationships
-        this.inventory = response.data.inventory
-        this.choicesMade = response.data.choices_made
+        this.stats = response.stats;
+        this.relationships = response.relationships;
+        this.inventory = response.inventory;
+        this.choicesMade = response.choices_made;
 
-        return response.data
+        return response;
       } catch (err) {
-        console.error('❌ Ошибка при получении статистики:', err)
-        throw err
+        console.error('❌ Ошибка при получении статистики:', err);
+        this.error = formatErrorMessage(err) || 'Ошибка при получении статистики';
+        throw err;
       }
     },
 
@@ -253,12 +372,16 @@ export const useGameStore = defineStore('game', {
      */
     async fetchScene(sceneId) {
       try {
-        const response = await apiClient.get(`/game/scene/${sceneId}`)
-        this.currentScene = response.data
-        return response.data
+        const response = await handleApiCall(
+          () => apiClient.get(`/game/scene/${sceneId}`),
+          'Не удалось загрузить сцену'
+        );
+        this.currentScene = response;
+        return response;
       } catch (err) {
-        console.error(`❌ Ошибка при загрузке сцены ${sceneId}:`, err)
-        throw err
+        console.error(`❌ Ошибка при загрузке сцены ${sceneId}:`, err);
+        this.error = formatErrorMessage(err) || `Ошибка при загрузке сцены ${sceneId}`;
+        throw err;
       }
     },
 
@@ -331,7 +454,10 @@ export const useGameStore = defineStore('game', {
           relationships: { ...this.relationships },
           inventory: [...this.inventory],
           startTime: this.startTime,
-          playtime: this.playtime
+          playtime: this.playtime,
+          visitedScenes: Array.from(this.visitedScenes),
+          choiceHistory: [...this.choiceHistory],
+          statHistory: { ...this.statHistory }
         }
 
         // Load existing saves
@@ -375,6 +501,11 @@ export const useGameStore = defineStore('game', {
         this.inventory = [...saveData.inventory]
         this.startTime = saveData.startTime
         this.isGameStarted = true
+        
+        // Restore enhanced data
+        this.visitedScenes = new Set(saveData.visitedScenes || ['start'])
+        this.choiceHistory = [...(saveData.choiceHistory || [])]
+        this.statHistory = { ...(saveData.statHistory || {}) }
 
         console.log('✅ Сохранение загружено:', saveData.name)
         return saveData
@@ -436,6 +567,77 @@ export const useGameStore = defineStore('game', {
         this.error = 'Не удалось очистить сохранения'
         throw error
       }
+    },
+
+    /**
+     * Start auto-save timer
+     */
+    startAutoSave() {
+      if (this.autoSaveTimer) {
+        clearInterval(this.autoSaveTimer);
+      }
+      
+      this.autoSaveTimer = setInterval(() => {
+        if (this.isGameStarted) {
+          this.autoSave();
+        }
+      }, this.autoSaveInterval);
+      
+      console.log('⏱️ Автосохранение включено (каждые ' + (this.autoSaveInterval / 1000 / 60) + ' минут)');
+    },
+    
+    /**
+     * Stop auto-save timer
+     */
+    stopAutoSave() {
+      if (this.autoSaveTimer) {
+        clearInterval(this.autoSaveTimer);
+        this.autoSaveTimer = null;
+        console.log('⏹️ Автосохранение отключено');
+      }
+    },
+    
+    /**
+     * Perform auto-save
+     */
+    async autoSave() {
+      if (!this.isGameStarted) return;
+      
+      try {
+        const saveData = this.saveGame('Автосохранение');
+        this.lastAutoSave = Date.now();
+        console.log('💾 Автосохранение выполнено:', saveData.name);
+        return saveData;
+      } catch (error) {
+        console.error('❌ Ошибка автосохранения:', error);
+        this.error = 'Ошибка автосохранения: ' + error.message;
+      }
+    },
+    
+    /**
+     * Set auto-save interval
+     * @param {number} interval - Interval in milliseconds
+     */
+    setAutoSaveInterval(interval) {
+      this.autoSaveInterval = interval;
+      if (this.autoSaveEnabled && this.isGameStarted) {
+        this.startAutoSave();
+      }
+    },
+    
+    /**
+     * Toggle auto-save
+     */
+    toggleAutoSave() {
+      this.autoSaveEnabled = !this.autoSaveEnabled;
+      
+      if (this.autoSaveEnabled && this.isGameStarted) {
+        this.startAutoSave();
+      } else {
+        this.stopAutoSave();
+      }
+      
+      return this.autoSaveEnabled;
     },
 
     /**

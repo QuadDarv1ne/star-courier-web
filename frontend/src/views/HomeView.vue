@@ -263,11 +263,11 @@ export default defineComponent({
      * Генерировать стиль для звезды
      */
     getStarStyle(index) {
-      const size = Math.random() * 3 + 1
-      const top = Math.random() * 100
-      const left = Math.random() * 100
-      const opacity = Math.random() * 0.8 + 0.2
-      const animationDelay = Math.random() * 5
+      const size = Math.random() * 3 + 1;
+      const top = Math.random() * 100;
+      const left = Math.random() * 100;
+      const opacity = Math.random() * 0.8 + 0.2;
+      const animationDelay = Math.random() * 5;
       
       return {
         width: `${size}px`,
@@ -276,37 +276,37 @@ export default defineComponent({
         left: `${left}%`,
         opacity: opacity,
         animationDelay: `${animationDelay}s`
-      }
+      };
     },
     
     /**
      * Обработчик начала игры
      */
     async handleStartGame() {
-      this.loading = true
-      this.error = null
+      this.loading = true;
+      this.error = null;
 
       try {
-        this.$utils.log('info', 'Начало игры...')
+        this.$utils.log('info', 'Начало игры...');
         
         // Инициализируем игру через store
-        await this.gameStore.initializeGame()
+        await this.gameStore.initializeGame();
 
-        this.$utils.log('success', 'Игра инициализирована')
+        this.$utils.log('success', 'Игра инициализирована');
         
         // Переходим на игровой экран
-        await this.$router.push('/game')
+        await this.$router.push('/game');
       } catch (err) {
-        this.$utils.log('error', 'Ошибка при начале игры', err)
-        this.error = 'Ошибка подключения к серверу. Убедитесь, что backend запущен.'
+        this.$utils.log('error', 'Ошибка при начале игры', err);
+        this.error = err.message || 'Ошибка подключения к серверу. Убедитесь, что backend запущен.';
         
         // Показываем уведомление
         this.$root.showNotification(
-          'Ошибка при подключении к серверу',
+          this.error,
           'error'
-        )
+        );
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 

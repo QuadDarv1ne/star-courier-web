@@ -2,6 +2,8 @@
  * StarCourier Web - Frontend
  * Главная точка входа Vue.js приложения
  * 
+ * star-courier-web\frontend\src\main.js
+ * 
  * Автор: QuadDarv1ne
  * Версия: 1.0.0
  */
@@ -41,6 +43,13 @@ app.use(pinia)
 
 // Router для навигации
 app.use(router)
+
+// Load UI settings on startup
+import { useUiStore } from './store/ui'
+app.config.globalProperties.$nextTick(() => {
+  const uiStore = useUiStore()
+  uiStore.loadUiSettings()
+})
 
 // ============================================================================
 // ГЛОБАЛЬНЫЕ СВОЙСТВА
@@ -137,6 +146,13 @@ app.config.warnHandler = (msg, instance, trace) => {
 // ============================================================================
 // МОНТИРОВАНИЕ ПРИЛОЖЕНИЯ
 // ============================================================================
+
+// Preload audio before mounting
+audioService.preloadGameAudio().then(() => {
+  console.log('Audio preloaded successfully')
+}).catch((error) => {
+  console.warn('Failed to preload audio:', error)
+})
 
 app.mount('#app')
 

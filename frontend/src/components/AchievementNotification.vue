@@ -1,7 +1,7 @@
 <!-- Achievement notification component -->
 <template>
   <Transition name="achievement">
-    <div v-if="show" class="achievement-notification" @click="dismiss">
+    <div v-if="show && achievement" class="achievement-notification" @click="dismiss">
       <div class="achievement-icon">{{ achievement.icon }}</div>
       <div class="achievement-info">
         <h4>{{ achievement.title }}</h4>
@@ -21,7 +21,7 @@ export default defineComponent({
   props: {
     achievement: {
       type: Object,
-      required: true
+      default: null
     },
     show: {
       type: Boolean,
@@ -34,6 +34,14 @@ export default defineComponent({
   methods: {
     dismiss() {
       this.$emit('dismiss')
+    }
+  },
+  
+  watch: {
+    show(newVal) {
+      if (newVal && this.achievement) {
+        console.log('🏆 Разблокировано достижение:', this.achievement.title)
+      }
     }
   }
 })
@@ -68,6 +76,7 @@ export default defineComponent({
   justify-content: center;
   background: rgba(251, 191, 36, 0.1);
   border-radius: 0.375rem;
+  animation: pulse 1s infinite;
 }
 
 .achievement-info {
@@ -130,6 +139,18 @@ export default defineComponent({
   to {
     transform: scale(0.5);
     opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
   }
 }
 </style>

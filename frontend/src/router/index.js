@@ -1,6 +1,8 @@
 /**
  * Vue Router Configuration for StarCourier Web
  * Manages application routing and navigation
+ * 
+ * frontend\src\router\index.js
  */
 
 import { createRouter, createWebHistory } from 'vue-router'

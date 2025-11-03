@@ -120,6 +120,22 @@
           <h2 class="scene-title">{{ currentScene.title }}</h2>
           
           <p class="scene-text">{{ currentScene.text }}</p>
+          
+          <!-- Game Stats Summary -->
+          <div class="game-stats-summary">
+            <div class="stat-summary-item">
+              <span class="stat-label">Сложность:</span>
+              <span class="stat-value">{{ gameStore.gameDifficulty }}</span>
+            </div>
+            <div class="stat-summary-item">
+              <span class="stat-label">Любимый персонаж:</span>
+              <span class="stat-value">{{ gameStore.favoriteCharacter?.name || 'Нет' }}</span>
+            </div>
+            <div class="stat-summary-item">
+              <span class="stat-label">Время игры:</span>
+              <span class="stat-value">{{ gameStore.playtimeFormatted }}</span>
+            </div>
+          </div>
         </section>
 
         <!-- Choices -->
@@ -162,6 +178,14 @@
           >
             🏆 Достижения
           </button>
+          <button 
+            class="action-btn"
+            @click="showSaveManager = true"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+            title="Сохранения"
+          >
+            💾 Сохранения
+          </button>
 
           <button 
             class="action-btn"
@@ -177,6 +201,13 @@
         <div v-if="showAchievements" class="modal-overlay" @click="showAchievements = false">
           <div class="modal achievements-container" @click.stop>
             <achievements-list @close="showAchievements = false" />
+          </div>
+        </div>
+
+        <!-- Save Manager Modal -->
+        <div v-if="showSaveManager" class="modal-overlay" @click="showSaveManager = false">
+          <div class="modal" @click.stop>
+            <save-manager @close="showSaveManager = false" />
           </div>
         </div>
 
@@ -239,13 +270,15 @@ import { useUiStore } from '../store/ui'
 import { useAchievementsStore } from '../store/achievements'
 import AchievementNotification from '../components/AchievementNotification.vue'
 import AchievementsList from '../components/AchievementsList.vue'
+import SaveManager from '../components/SaveManager.vue'
 
 export default defineComponent({
   name: 'GameView',
 
   components: {
     AchievementNotification,
-    AchievementsList
+    AchievementsList,
+    SaveManager
   },
 
   setup() {
@@ -264,18 +297,15 @@ export default defineComponent({
 
   async mounted() {
     // Initialize audio
-    await this.$utils.$audio.createUserContext();
-    
-    // Load sound effects
     try {
-      await this.$utils.$audio.loadSoundEffect('buttonClick', '/audio/sfx/button-click.mp3');
-      await this.$utils.$audio.loadSoundEffect('sceneChange', '/audio/sfx/scene-change.mp3');
-      await this.$utils.$audio.loadSoundEffect('gameOver', '/audio/sfx/game-over.mp3');
-      await this.$utils.$audio.loadSoundEffect('choiceMade', '/audio/sfx/choice-made.mp3');
-      await this.$utils.$audio.loadSoundEffect('achievementUnlocked', '/audio/sfx/achievement.mp3');
+      await this.$utils.$audio.createUserContext();
       
-      // Load background music
-      await this.$utils.$audio.loadBackgroundMusic('/audio/music/background.mp3');
+      // Load sound effects if not already loaded
+      if (this.$utils.$audio.soundEffects.size === 0) {
+        await this.$utils.$audio.preloadGameAudio();
+      }
+      
+      // Play background music
       await this.$utils.$audio.playBackgroundMusic();
       
       this.$utils.log('info', 'Audio system initialized');
@@ -291,6 +321,7 @@ export default defineComponent({
       showInventory: false,
       showExitConfirm: false,
       showAchievements: false,
+      showSaveManager: false,
       isGameOver: false,
       gameOverReason: '',
       startTime: null,
@@ -373,15 +404,22 @@ export default defineComponent({
      */
     async makeChoice(choice) {
       // Play sound effect
-      this.$utils.$audio.playSoundEffect('choiceMade');
+      this.$utils.$audio.playSoundEffect('choiceMade')
       
       this.loading = true
       this.loadingMessage = 'Загрузка следующей сцены...'
 
       try {
         // Проверяем достижения после выбора
-        this.checkAchievements()
+        const unlocked = this.achievementsStore.checkAchievements(this.gameStore)
         this.$utils.log('info', 'Выбор сделан', choice.text)
+        
+        // Показываем уведомления о новых достижениях
+        unlocked.forEach(achievement => {
+          if (achievement) {
+            this.showAchievement(achievement)
+          }
+        })
         
         // Отправляем выбор в store
         const response = await this.gameStore.makeChoice(
@@ -393,17 +431,25 @@ export default defineComponent({
         if (response.status === 'game_over') {
           this.isGameOver = true
           this.gameOverReason = response.reason
-          this.$root.showNotification('Игра окончена!', 'warning')
-          this.$utils.$audio.playSoundEffect('gameOver');
+          this.$root.showNotification('Игра окончена: ' + response.reason, 'warning')
+          this.$utils.$audio.playSoundEffect('gameOver')
+          
+          // Проверяем достижения в конце игры
+          const endGameAchievements = this.achievementsStore.checkEndGameAchievements(this.gameStore)
+          endGameAchievements.forEach(achievement => {
+            if (achievement) {
+              this.showAchievement(achievement)
+            }
+          })
         } else {
           // Play scene change sound
-          this.$utils.$audio.playSoundEffect('sceneChange');
+          this.$utils.$audio.playSoundEffect('sceneChange')
         }
 
         this.$utils.log('success', 'Сцена загружена')
       } catch (error) {
         this.$utils.log('error', 'Ошибка при выборе', error)
-        this.$root.showNotification('Ошибка при загрузке сцены', 'error')
+        this.$root.showNotification('Ошибка при загрузке сцены: ' + error.message, 'error')
       } finally {
         this.loading = false
       }
@@ -983,6 +1029,39 @@ export default defineComponent({
   padding: 1rem 0;
 }
 
+/* Game Stats Summary */
+.game-stats-summary {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #44260e;
+  flex-wrap: wrap;
+}
+
+.stat-summary-item {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid #78350f;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
 /* Choices */
 
 .choices {
@@ -1310,6 +1389,15 @@ export default defineComponent({
   }
 
   .action-btn {
+    width: 100%;
+  }
+
+  .game-stats-summary {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stat-summary-item {
     width: 100%;
   }
 }
