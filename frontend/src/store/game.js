@@ -116,10 +116,13 @@ export const useGameStore = defineStore('game', {
       caring: 0       // team/relationship choices
     },
     
-    // Add cache for scenes and characters
+    // Add cache for scenes and characters with timestamps
     sceneCache: new Map(),
     characterCache: new Map(),
-    cacheTimestamps: new Map()
+    cacheTimestamps: new Map(),
+    
+    // Cache expiration time (10 minutes)
+    cacheExpiration: 10 * 60 * 1000
   }),
 
   getters: {
@@ -264,30 +267,38 @@ export const useGameStore = defineStore('game', {
     },
     
     /**
-     * Get cached scene
+     * Get cached scene with expiration check
      */
     getCachedScene: (state) => (sceneId) => {
       const cached = state.sceneCache.get(sceneId)
       if (cached) {
         const timestamp = state.cacheTimestamps.get(`scene-${sceneId}`)
-        // Cache for 5 minutes
-        if (timestamp && Date.now() - timestamp < 5 * 60 * 1000) {
+        // Check if cache is still valid
+        if (timestamp && Date.now() - timestamp < state.cacheExpiration) {
           return cached
+        } else {
+          // Remove expired cache
+          state.sceneCache.delete(sceneId)
+          state.cacheTimestamps.delete(`scene-${sceneId}`)
         }
       }
       return null
     },
     
     /**
-     * Get cached character
+     * Get cached character with expiration check
      */
     getCachedCharacter: (state) => (charId) => {
       const cached = state.characterCache.get(charId)
       if (cached) {
         const timestamp = state.cacheTimestamps.get(`character-${charId}`)
-        // Cache for 10 minutes
-        if (timestamp && Date.now() - timestamp < 10 * 60 * 1000) {
+        // Check if cache is still valid
+        if (timestamp && Date.now() - timestamp < state.cacheExpiration) {
           return cached
+        } else {
+          // Remove expired cache
+          state.characterCache.delete(charId)
+          state.cacheTimestamps.delete(`character-${charId}`)
         }
       }
       return null
@@ -407,8 +418,6 @@ export const useGameStore = defineStore('game', {
           'выполнение выбора'
         );
 
-        ;
-
         // Handle game over
         if (response.status === 'game_over') {
           console.log('💀 Игра окончена:', response.reason);
@@ -524,15 +533,28 @@ export const useGameStore = defineStore('game', {
     },
 
     /**
-     * Fetch scene data from backend
+     * Fetch scene data from backend with caching
      * @param {string} sceneId - Scene ID to fetch
      */
     async fetchScene(sceneId) {
       try {
+        // Check cache first
+        const cachedScene = this.getCachedScene(sceneId);
+        if (cachedScene) {
+          console.log(`📥 Scene loaded from cache: ${sceneId}`);
+          this.currentScene = cachedScene;
+          return cachedScene;
+        }
+
         const response = await handleApiCall(
           () => apiClient.get(`/game/scene/${sceneId}`),
           'загрузка сцены'
         );
+        
+        // Cache the scene
+        this.sceneCache.set(sceneId, response);
+        this.cacheTimestamps.set(`scene-${sceneId}`, Date.now());
+        
         this.currentScene = response;
         return response;
       } catch (err) {
@@ -1078,7 +1100,7 @@ export const useGameStore = defineStore('game', {
       
       try {
         // Load from API if not in cache
-        const response = await sceneApi.getScene(sceneId)
+        const response = await apiClient.get(`/game/scene/${sceneId}`)
         const scene = response.data
         
         // Cache the scene
@@ -1106,7 +1128,7 @@ export const useGameStore = defineStore('game', {
       
       try {
         // Load from API if not in cache
-        const response = await characterApi.getCharacter(characterId)
+        const response = await apiClient.get(`/characters/${characterId}`)
         const character = response.data
         
         // Cache the character
@@ -1139,6 +1161,41 @@ export const useGameStore = defineStore('game', {
         characters: this.characterCache.size,
         timestamps: this.cacheTimestamps.size
       }
+    },
+    
+    /**
+     * Batch load scenes for better performance
+     */
+    async batchLoadScenes(sceneIds) {
+      const results = {}
+      const toLoad = []
+      
+      // Check cache first
+      sceneIds.forEach(id => {
+        const cached = this.getCachedScene(id)
+        if (cached) {
+          results[id] = cached
+        } else {
+          toLoad.push(id)
+        }
+      })
+      
+      // Load uncached scenes
+      if (toLoad.length > 0) {
+        try {
+          // In a real implementation, you might want to batch API calls
+          // For now, we'll load them individually
+          for (const id of toLoad) {
+            const scene = await this.fetchScene(id)
+            results[id] = scene
+          }
+        } catch (error) {
+          console.error('Failed to batch load scenes:', error)
+          throw error
+        }
+      }
+      
+      return results
     }
   }
 })

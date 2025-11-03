@@ -99,7 +99,60 @@ export const useAchievementsStore = defineStore('achievements', {
         secret: true,
         progress: 0,
         target: 90
+      },
+      // New achievements for version 2
+      psychic_power: {
+        id: 'psychic_power',
+        title: 'Психическая сила',
+        description: 'Развивайте психические способности до 75%',
+        icon: '🔮',
+        secret: false,
+        progress: 0,
+        target: 75
+      },
+      security_expert: {
+        id: 'security_expert',
+        title: 'Эксперт по безопасности',
+        description: 'Достигните 95% уровня безопасности',
+        icon: '🛡️',
+        secret: false,
+        progress: 0,
+        target: 95
+      },
+      master_negotiator: {
+        id: 'master_negotiator',
+        title: 'Мастер переговоров',
+        description: 'Пройдите 3 диалога, выбирая дипломатичные решения',
+        icon: '🤝',
+        secret: false,
+        progress: 0,
+        target: 3
+      },
+      time_traveler: {
+        id: 'time_traveler',
+        title: 'Путешественник во времени',
+        description: 'Посетите все концовки игры',
+        icon: '⏳',
+        secret: true,
+        progress: 0,
+        target: 5 // Number of different endings
+      },
+      collector: {
+        id: 'collector',
+        title: 'Коллекционер',
+        description: 'Соберите 10 предметов',
+        icon: '🎒',
+        secret: false,
+        progress: 0,
+        target: 10
       }
+    },
+    
+    // Track special game events for achievements
+    gameEvents: {
+      diplomaticChoices: 0,
+      endingsReached: new Set(),
+      itemsCollected: 0
     }
   }),
 
@@ -136,7 +189,29 @@ export const useAchievementsStore = defineStore('achievements', {
      */
     regularAchievements: (state) => (
       Object.values(state.achievements).filter(a => !a.secret)
-    )
+    ),
+    
+    /**
+     * Получить достижения по категориям
+     */
+    achievementsByCategory: (state) => {
+      const categories = {
+        exploration: ['explorer', 'time_traveler'],
+        survival: ['survivor', 'peace_maker'],
+        social: ['trusted_friend', 'master_negotiator'],
+        resources: ['rich_courier', 'fuel_efficient', 'collector'],
+        skills: ['knowledge_seeker', 'psychic_power', 'security_expert'],
+        teamwork: ['team_player'],
+        challenge: ['danger_zone']
+      }
+      
+      const result = {}
+      Object.keys(categories).forEach(category => {
+        result[category] = categories[category].map(id => state.achievements[id]).filter(Boolean)
+      })
+      
+      return result
+    }
   },
 
   actions: {
@@ -209,6 +284,22 @@ export const useAchievementsStore = defineStore('achievements', {
       const dangerZone = this.updateProgress('danger_zone', gameStore.stats.danger)
       if (dangerZone) unlocked.push(dangerZone)
       
+      // Психическая сила
+      const psychicPower = this.updateProgress('psychic_power', gameStore.stats.psychic)
+      if (psychicPower) unlocked.push(psychicPower)
+      
+      // Эксперт по безопасности
+      const securityExpert = this.updateProgress('security_expert', gameStore.stats.security)
+      if (securityExpert) unlocked.push(securityExpert)
+      
+      // Мастер переговоров
+      const masterNegotiator = this.updateProgress('master_negotiator', this.gameEvents.diplomaticChoices)
+      if (masterNegotiator) unlocked.push(masterNegotiator)
+      
+      // Коллекционер
+      const collector = this.updateProgress('collector', this.gameEvents.itemsCollected)
+      if (collector) unlocked.push(collector)
+      
       return unlocked
     },
     
@@ -242,6 +333,13 @@ export const useAchievementsStore = defineStore('achievements', {
           achievement.progress = 0
         }
       })
+      
+      // Reset game events
+      this.gameEvents = {
+        diplomaticChoices: 0,
+        endingsReached: new Set(),
+        itemsCollected: 0
+      }
     },
     
     /**
@@ -259,6 +357,56 @@ export const useAchievementsStore = defineStore('achievements', {
       if (!achievement) return 0
       if (achievement.progress === undefined) return this.isUnlocked(achievementId) ? 100 : 0
       return Math.round((achievement.progress / achievement.target) * 100)
+    },
+    
+    /**
+     * Record a diplomatic choice for achievements
+     */
+    recordDiplomaticChoice() {
+      this.gameEvents.diplomaticChoices++
+    },
+    
+    /**
+     * Record an item collection for achievements
+     */
+    recordItemCollection() {
+      this.gameEvents.itemsCollected++
+    },
+    
+    /**
+     * Record reaching an ending for achievements
+     * @param {string} endingId - Identifier for the ending reached
+     */
+    recordEnding(endingId) {
+      this.gameEvents.endingsReached.add(endingId)
+      this.updateProgress('time_traveler', this.gameEvents.endingsReached.size)
+    },
+    
+    /**
+     * Add an item to inventory and track for achievements
+     * @param {string} item - Item name to add
+     */
+    addItem(item) {
+      this.recordItemCollection()
+    },
+    
+    /**
+     * Get achievement statistics
+     */
+    getAchievementStats() {
+      const total = Object.keys(this.achievements).length
+      const unlocked = this.unlockedAchievements.size
+      const secret = Object.values(this.achievements).filter(a => a.secret).length
+      const unlockedSecret = Object.values(this.achievements).filter(a => a.secret && this.unlockedAchievements.has(a.id)).length
+      
+      return {
+        total,
+        unlocked,
+        locked: total - unlocked,
+        percentage: Math.round((unlocked / total) * 100),
+        secretTotal: secret,
+        secretUnlocked: unlockedSecret
+      }
     }
   }
 })

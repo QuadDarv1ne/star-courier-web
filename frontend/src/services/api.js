@@ -1,10 +1,3 @@
-/**
- * API Client for StarCourier Web
- * Handles all backend API requests
- * 
- * Uses Axios for HTTP requests
- */
-
 import axios from 'axios'
 
 // ============================================================================
@@ -23,11 +16,59 @@ export const apiClient = axios.create({
 })
 
 // ============================================================================
-// SIMPLE IN-MEMORY CACHE
+// ENHANCED CACHE WITH LRU EVICTION
 // ============================================================================
 
-const apiCache = new Map()
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+class LRUCache {
+  constructor(maxSize = 100, ttl = 5 * 60 * 1000) {
+    this.maxSize = maxSize
+    this.ttl = ttl
+    this.cache = new Map()
+  }
+
+  get(key) {
+    const item = this.cache.get(key)
+    
+    // Check if item exists and is not expired
+    if (item && Date.now() - item.timestamp < this.ttl) {
+      // Move to end (most recently used)
+      this.cache.delete(key)
+      this.cache.set(key, item)
+      return item.value
+    }
+    
+    // Remove expired item
+    if (item) {
+      this.cache.delete(key)
+    }
+    
+    return null
+  }
+
+  set(key, value) {
+    // Remove oldest items if cache is at max size
+    if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value
+      this.cache.delete(firstKey)
+    }
+    
+    // Add new item
+    this.cache.set(key, {
+      value,
+      timestamp: Date.now()
+    })
+  }
+
+  clear() {
+    this.cache.clear()
+  }
+
+  size() {
+    return this.cache.size
+  }
+}
+
+const apiCache = new LRUCache(100, 5 * 60 * 1000) // 100 items, 5 minutes TTL
 
 // ============================================================================
 // REQUEST INTERCEPTOR
@@ -42,9 +83,9 @@ apiClient.interceptors.request.use(
       const cacheKey = `${config.method}:${config.url}`
       const cached = apiCache.get(cacheKey)
       
-      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      if (cached) {
         console.log(`📥 API Response (cached): ${config.url}`)
-        return Promise.resolve(cached.response)
+        return Promise.resolve(cached)
       }
     }
     
@@ -67,10 +108,7 @@ apiClient.interceptors.response.use(
     // Cache GET responses
     if (response.config.method === 'get' && response.config.cache !== false) {
       const cacheKey = `${response.config.method}:${response.config.url}`
-      apiCache.set(cacheKey, {
-        response: response,
-        timestamp: Date.now()
-      })
+      apiCache.set(cacheKey, response)
     }
     
     return response
@@ -334,7 +372,7 @@ export function clearApiCache() {
  * Get cache size
  */
 export function getCacheSize() {
-  return apiCache.size
+  return apiCache.size()
 }
 
 // Add a more robust error handler for API calls

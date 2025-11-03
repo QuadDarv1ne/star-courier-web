@@ -5,6 +5,9 @@
       <h3>🏆 Достижения</h3>
       <div class="progress-info">
         {{ achievementsStore.completionPercentage }}% выполнено
+        <span class="achievement-count">
+          ({{ unlockedCount }}/{{ totalAchievements }})
+        </span>
       </div>
       <button class="modal-close" @click="$emit('close')" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">
         ✕
@@ -31,9 +34,63 @@
         >
           Неразблокированные
         </button>
+        <button 
+          :class="['tab', { active: activeTab === 'categories' }]"
+          @click="activeTab = 'categories'"
+        >
+          Категории
+        </button>
       </div>
       
-      <div class="achievements-grid">
+      <!-- Category View -->
+      <div v-if="activeTab === 'categories'" class="categories-view">
+        <div 
+          v-for="(achievements, category) in achievementsByCategory" 
+          :key="`category-${category}`"
+          class="category-section"
+        >
+          <h4 class="category-title">
+            {{ getCategoryName(category) }}
+            <span class="category-progress">
+              ({{ getUnlockedInCategory(achievements) }}/{{ achievements.length }})
+            </span>
+          </h4>
+          <div class="category-achievements">
+            <div 
+              v-for="achievement in achievements" 
+              :key="`achievement-${achievement.id}`"
+              :class="[
+                'achievement-card',
+                {
+                  'achievement-unlocked': isUnlocked(achievement.id),
+                  'achievement-secret': achievement.secret && !isUnlocked(achievement.id)
+                }
+              ]"
+            >
+              <div class="achievement-icon">{{ achievement.icon }}</div>
+              <div class="achievement-details">
+                <h5>{{ isUnlocked(achievement.id) || !achievement.secret ? achievement.title : '???' }}</h5>
+                <p>{{ isUnlocked(achievement.id) || !achievement.secret ? achievement.description : 'Секретное достижение' }}</p>
+                
+                <div v-if="achievement.progress !== undefined" class="achievement-progress">
+                  <div class="progress-bar">
+                    <div 
+                      class="progress-fill"
+                      :style="{ width: `${(achievement.progress / achievement.target) * 100}%` }"
+                    ></div>
+                  </div>
+                  <span class="progress-text">
+                    {{ achievement.progress }} / {{ achievement.target }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Standard Views -->
+      <div v-else class="achievements-grid">
         <div 
           v-for="achievement in filteredAchievements" 
           :key="`achievement-${achievement.id}`"
@@ -103,6 +160,18 @@ export default defineComponent({
         default:
           return all
       }
+    },
+    
+    achievementsByCategory() {
+      return this.achievementsStore.achievementsByCategory || {}
+    },
+    
+    unlockedCount() {
+      return this.achievementsStore.unlockedAchievements.size
+    },
+    
+    totalAchievements() {
+      return this.achievementsStore.allAchievements.length
     }
   },
 
@@ -122,9 +191,31 @@ export default defineComponent({
         team_player: 'Работайте с командой',
         fuel_efficient: 'Экономьте топливо',
         peace_maker: 'Сохраняйте высокую мораль',
-        danger_zone: 'Попадите в опасные ситуации'
+        danger_zone: 'Попадите в опасные ситуации',
+        psychic_power: 'Развивайте психические способности',
+        security_expert: 'Повышайте уровень безопасности',
+        master_negotiator: 'Выбирайте дипломатичные решения',
+        time_traveler: 'Достигните всех концовок',
+        collector: 'Соберите предметы'
       }
       return hints[achievementId] || 'Продолжайте играть'
+    },
+    
+    getCategoryName(category) {
+      const names = {
+        exploration: 'Исследование',
+        survival: 'Выживание',
+        social: 'Социальные',
+        resources: 'Ресурсы',
+        skills: 'Навыки',
+        teamwork: 'Командная работа',
+        challenge: 'Вызовы'
+      }
+      return names[category] || category
+    },
+    
+    getUnlockedInCategory(achievements) {
+      return achievements.filter(a => this.isUnlocked(a.id)).length
     }
   }
 })
@@ -158,6 +249,14 @@ export default defineComponent({
 .progress-info {
   color: #9ca3af;
   margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.achievement-count {
+  font-size: 0.9rem;
+  color: #fbbf24;
 }
 
 .modal-close {
@@ -185,6 +284,7 @@ export default defineComponent({
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #44260e;
   padding-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .tab {
@@ -195,6 +295,7 @@ export default defineComponent({
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.3s;
+  font-size: 0.9rem;
 }
 
 .tab:hover {
@@ -210,6 +311,30 @@ export default defineComponent({
 }
 
 .achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.category-section {
+  margin-bottom: 2rem;
+}
+
+.category-title {
+  color: #fbbf24;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-progress {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.category-achievements {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
@@ -257,6 +382,7 @@ export default defineComponent({
 }
 
 .achievement-secret .achievement-details h4,
+.achievement-secret .achievement-details h5,
 .achievement-secret .achievement-details p {
   filter: blur(3px);
 }
@@ -277,7 +403,8 @@ export default defineComponent({
   flex: 1;
 }
 
-.achievement-details h4 {
+.achievement-details h4,
+.achievement-details h5 {
   color: #fbbf24;
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
@@ -330,6 +457,22 @@ export default defineComponent({
   }
   100% {
     box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .achievements-grid,
+  .category-achievements {
+    grid-template-columns: 1fr;
+  }
+  
+  .achievements-tabs {
+    flex-direction: column;
+  }
+  
+  .tab {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

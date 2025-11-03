@@ -2,6 +2,10 @@
   <div class="settings-panel">
     <div class="modal-header">
       <h3>⚙️ Настройки</h3>
+      <div class="settings-stats" v-if="uiStore">
+        <span class="stat-item">FPS: {{ uiPerformance.fps }}</span>
+        <span class="stat-item">Ср. время: {{ uiPerformance.averageRenderTime.toFixed(1) }}ms</span>
+      </div>
       <button class="modal-close" @click="$emit('close')" @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')">
         ✕
       </button>
@@ -157,6 +161,16 @@
             Очистить кэш
           </button>
         </div>
+        
+        <div class="setting-row">
+          <button 
+            class="btn btn-secondary" 
+            @click="clearPerformanceMetrics"
+            @mouseenter="() => $utils.$audio.playSoundEffect('buttonClick')"
+          >
+            Сбросить метрики производительности
+          </button>
+        </div>
       </div>
       
       <!-- Reset Settings -->
@@ -205,6 +219,13 @@ export default defineComponent({
   computed: {
     cacheEnabled() {
       return true // Always enabled in this implementation
+    },
+    
+    uiPerformance() {
+      return this.uiStore.uiPerformance || {
+        fps: 0,
+        averageRenderTime: 0
+      }
     }
   },
 
@@ -289,6 +310,11 @@ export default defineComponent({
       }
     },
     
+    clearPerformanceMetrics() {
+      this.uiStore.clearPerformanceMetrics()
+      this.$root.showNotification('Метрики производительности сброшены', 'success')
+    },
+    
     resetSettings() {
       if (confirm('Вы уверены, что хотите сбросить все настройки к значениям по умолчанию?')) {
         this.uiStore.resetUiSettings()
@@ -323,6 +349,19 @@ export default defineComponent({
   color: #fbbf24;
   margin: 0;
   flex: 1;
+}
+
+.settings-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.stat-item {
+  background: rgba(17, 24, 39, 0.7);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
 
 .modal-close {
@@ -419,6 +458,8 @@ export default defineComponent({
   transition: all 0.3s;
   font-weight: 600;
   font-size: 0.875rem;
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .btn:disabled {
@@ -464,6 +505,11 @@ export default defineComponent({
   .volume-value {
     margin-left: 0;
     text-align: left;
+  }
+  
+  .settings-stats {
+    flex-direction: column;
+    gap: 0.25rem;
   }
 }
 </style>

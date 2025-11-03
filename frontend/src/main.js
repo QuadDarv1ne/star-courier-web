@@ -144,6 +144,41 @@ app.config.warnHandler = (msg, instance, trace) => {
 }
 
 // ============================================================================
+// PERFORMANCE MONITORING
+// ============================================================================
+
+// Track application performance
+let renderStartTime = 0
+
+// Add performance monitoring to global properties
+app.config.globalProperties.$perf = {
+  /**
+   * Start render timing
+   */
+  startRender() {
+    renderStartTime = performance.now()
+  },
+  
+  /**
+   * End render timing and report
+   */
+  endRender(componentName) {
+    if (renderStartTime > 0) {
+      const renderTime = performance.now() - renderStartTime
+      console.log(`⏱️ ${componentName} render time: ${renderTime.toFixed(2)}ms`)
+      
+      // Report to UI store if available
+      const uiStore = useUiStore()
+      if (uiStore) {
+        uiStore.trackRenderPerformance(renderTime)
+      }
+      
+      renderStartTime = 0
+    }
+  }
+}
+
+// ============================================================================
 // МОНТИРОВАНИЕ ПРИЛОЖЕНИЯ
 // ============================================================================
 
@@ -158,6 +193,12 @@ audioService.preloadGameAudio()
   .finally(() => {
     // Mount app regardless of audio preload status
     app.mount('#app')
+    
+    // Show app after mounting
+    const appElement = document.getElementById('app');
+    if (appElement) {
+      appElement.classList.add('app-loaded');
+    }
   })
 
 // ============================================================================
@@ -179,5 +220,18 @@ if ('performance' in window) {
       console.log(`  Load Time: ${perfData.loadEventEnd - perfData.loadEventStart}ms`)
       console.log(`  Total Time: ${perfData.loadEventEnd - perfData.fetchStart}ms`)
     }, 0);
+  });
+}
+
+// Add service worker registration for PWA support
+if ('serviceWorker' in navigator && import.meta.env.MODE === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('✅ ServiceWorker registered: ', registration.scope);
+      })
+      .catch((error) => {
+        console.log('❌ ServiceWorker registration failed: ', error);
+      });
   });
 }

@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-content">
-        <div class="header-logo">
+        <div class="header-logo" @click="goHome">
           <span class="logo-icon">🚀</span>
           <div class="logo-text">
             <h1>STAR COURIER</h1>
@@ -176,6 +176,15 @@ export default defineComponent({
       this.gameStore.clearCaches()
       this.$api.clearApiCache()
       this.showNotification('Все кэши очищены', 'success')
+    },
+    
+    /**
+     * Navigate to home
+     */
+    goHome() {
+      if (this.$route.path !== '/') {
+        this.$router.push('/')
+      }
     }
   },
   
@@ -187,6 +196,22 @@ export default defineComponent({
     console.log('🚀 StarCourier Web mounted')
     console.log('🎮 Game Store:', this.gameStore ? 'Ready' : 'Not Ready')
     console.log('🎨 UI Store:', this.uiStore ? 'Ready' : 'Not Ready')
+    
+    // Load UI settings
+    this.uiStore.loadUiSettings()
+    
+    // Load saved games
+    this.gameStore.loadAllSavedGames()
+    
+    // Check API health
+    this.$api.healthApi.checkHealth()
+      .then(() => {
+        console.log('✅ Backend API is healthy')
+      })
+      .catch((error) => {
+        console.warn('⚠️ Backend API is not available:', error.message)
+        this.showNotification('Сервер временно недоступен. Некоторые функции могут работать некорректно.', 'warning')
+      })
   }
 })
 </script>

@@ -27,11 +27,23 @@
             <span class="stat-label">Время игры:</span>
             <span class="stat-value">{{ formatGameTime() }}</span>
           </div>
+          <div class="stat-item">
+            <span class="stat-label">Стиль игры:</span>
+            <span class="stat-value">{{ gameStore.decisionStyle }}</span>
+          </div>
         </div>
         <button class="btn btn-primary" @click="goHome">
           🏠 Вернуться на главную
         </button>
       </div>
+    </div>
+
+    <!-- Mini Game -->
+    <div v-else-if="showMiniGame" class="mini-game-wrapper">
+      <MiniGame 
+        @close="closeMiniGame" 
+        @win="handleMiniGameWin"
+      />
     </div>
 
     <!-- Main Game Screen -->
@@ -102,6 +114,10 @@
             <span class="label">Сцена:</span>
             <span class="value">{{ gameStore.currentSceneId }}</span>
           </p>
+          <p class="info-item">
+            <span class="label">Сложность:</span>
+            <span class="value">{{ gameStore.gameDifficulty }}</span>
+          </p>
         </div>
       </aside>
 
@@ -132,6 +148,10 @@
             <div class="stat-summary-item">
               <span class="stat-label">Время игры:</span>
               <span class="stat-value">{{ gameStore.playtimeFormatted }}</span>
+            </div>
+            <div class="stat-summary-item">
+              <span class="stat-label">Стиль игры:</span>
+              <span class="stat-value">{{ gameStore.decisionStyle }}</span>
             </div>
           </div>
         </section>
@@ -297,6 +317,7 @@ import { useAchievementsStore } from '../store/achievements'
 const AchievementNotification = () => import('../components/AchievementNotification.vue')
 const AchievementsList = () => import('../components/AchievementsList.vue')
 const SaveManager = () => import('../components/SaveManager.vue')
+const MiniGame = () => import('../components/MiniGame.vue')
 
 export default defineComponent({
   name: 'GameView',
@@ -306,7 +327,8 @@ export default defineComponent({
     AchievementsList,
     SaveManager,
     StatisticsPanel: () => import('../components/StatisticsPanel.vue'),
-    LoadingIndicator: () => import('../components/LoadingIndicator.vue')
+    LoadingIndicator: () => import('../components/LoadingIndicator.vue'),
+    MiniGame
   },
 
   setup() {
@@ -351,6 +373,7 @@ export default defineComponent({
       showAchievements: false,
       showSaveManager: false,
       showStatistics: false,
+      showMiniGame: false,
       isGameOver: false,
       gameOverReason: '',
       startTime: null,
@@ -390,6 +413,43 @@ export default defineComponent({
     }
   },
 
+  computed: {
+    /**
+     * Get current scene data with fallback
+     */
+    currentScene() {
+      return this.gameStore.currentScene || {
+        id: 'start',
+        title: 'Пробуждение на Элее',
+        text: 'Загрузка...',
+        image: '🚀',
+        character: 'Система',
+        choices: []
+      }
+    },
+    
+    /**
+     * Get display stats for UI
+     */
+    displayStats() {
+      // Return a sorted version of stats for consistent UI
+      const sortedStats = {}
+      const statOrder = [
+        'health', 'morale', 'knowledge', 'team', 
+        'danger', 'security', 'fuel', 'money', 
+        'psychic', 'trust'
+      ]
+      
+      statOrder.forEach(stat => {
+        if (this.gameStore.stats.hasOwnProperty(stat)) {
+          sortedStats[stat] = this.gameStore.stats[stat]
+        }
+      })
+      
+      return sortedStats
+    }
+  },
+
   methods: {
     /**
      * Pre-generate star styles to reduce computations
@@ -426,6 +486,12 @@ export default defineComponent({
      * Сделать выбор
      */
     async makeChoice(choice) {
+      // Special handling for mini-game scene
+      if (this.gameStore.currentSceneId === 'start_hack') {
+        this.showMiniGame = true
+        return
+      }
+      
       // Play sound effect
       this.$utils.$audio.playSoundEffect('choiceMade')
       
@@ -436,6 +502,12 @@ export default defineComponent({
         // Проверяем достижения после выбора
         const unlocked = this.achievementsStore.checkAchievements(this.gameStore)
         this.$utils.log('info', 'Выбор сделан', choice.text)
+        
+        // Проверяем, является ли выбор дипломатичным
+        if (choice.text.includes('договор') || choice.text.includes('мир') || 
+            choice.text.includes('переговор') || choice.text.includes('довер')) {
+          this.achievementsStore.recordDiplomaticChoice()
+        }
         
         // Показываем уведомления о новых достижениях
         unlocked.forEach(achievement => {
@@ -588,6 +660,30 @@ export default defineComponent({
           this.showAchievement(achievement)
         }
       })
+    },
+    
+    /**
+     * Handle mini-game win
+     */
+    handleMiniGameWin(reward) {
+      this.showMiniGame = false
+      // Add reward to player's money
+      this.gameStore.stats.money += reward
+      // Show notification
+      this.$root.showNotification(`Поздравляем! Вы получили ${reward} кредитов за успешный взлом.`, 'success')
+      // Play win sound
+      this.$utils.$audio.playSoundEffect('achievementUnlocked')
+      // Continue to success scene
+      this.makeChoice({ next: 'hack_success', stats: { money: reward } })
+    },
+    
+    /**
+     * Close mini-game
+     */
+    closeMiniGame() {
+      this.showMiniGame = false
+      // Continue to failure scene
+      this.makeChoice({ next: 'hack_failure', stats: { security: -20, danger: 15 } })
     }
   },
 
@@ -1187,6 +1283,7 @@ export default defineComponent({
 .quick-actions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .action-btn {
@@ -1198,6 +1295,8 @@ export default defineComponent({
   cursor: pointer;
   transition: all 0.3s;
   font-weight: 600;
+  flex: 1;
+  min-width: 120px;
 }
 
 .action-btn:hover {

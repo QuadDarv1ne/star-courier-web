@@ -1,159 +1,62 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <!-- ================================================================ -->
-    <!-- META TAGS -->
-    <!-- ================================================================ -->
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея.">
+    <meta name="keywords" content="RPG, текстовая игра, космос, приключение, игра, Vue.js">
+    <meta name="author" content="QuadDarv1ne">
     
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
-    <meta name="keywords" content="RPG, игра, космос, текстовая игра, новелла, Vue.js, FastAPI" />
-    <meta name="author" content="QuadDarv1ne" />
-    <meta name="robots" content="index, follow" />
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#fbbf24">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="StarCourier">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://star-courier-web.example.com/" />
-    <meta property="og:title" content="StarCourier Web - Интерактивная космическая RPG" />
-    <meta property="og:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://starcourier.example.com/">
+    <meta property="og:title" content="StarCourier Web - Космическая RPG">
+    <meta property="og:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея.">
+    <meta property="og:image" content="/preview.png">
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://star-courier-web.example.com/" />
-    <meta property="twitter:title" content="StarCourier Web - Интерактивная космическая RPG" />
-    <meta property="twitter:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея." />
-    <meta property="twitter:image" content="/twitter-image.png" />
-    <meta name="twitter:creator" content="@QuadDarv1ne" />
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://starcourier.example.com/">
+    <meta property="twitter:title" content="StarCourier Web - Космическая RPG">
+    <meta property="twitter:description" content="Интерактивная текстовая RPG в космической тематике. Управляйте капитаном Максом Веллом на звездолёте Элея.">
+    <meta property="twitter:image" content="/preview.png">
     
-    <!-- ================================================================ -->
-    <!-- FAVICON & APP ICONS -->
-    <!-- ================================================================ -->
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
     
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     
-    <!-- ================================================================ -->
-    <!-- THEME COLOR -->
-    <!-- ================================================================ -->
+    <!-- Windows Tile -->
+    <meta name="msapplication-TileColor" content="#fbbf24">
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png">
     
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="color-scheme" content="dark" />
-    
-    <!-- ================================================================ -->
-    <!-- MANIFEST (PWA) -->
-    <!-- ================================================================ -->
-    
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- ================================================================ -->
-    <!-- PRECONNECT & DNS PREFETCH -->
-    <!-- ================================================================ -->
-    
-    <!-- Для быстрого подключения к API -->
-    <link rel="preconnect" href="http://localhost:8000" />
-    <link rel="dns-prefetch" href="http://localhost:8000" />
-    
-    <!-- ================================================================ -->
-    <!-- PRELOAD RESOURCES -->
-    <!-- ================================================================ -->
-    
-    <!-- Предзагрузка критических ресурсов -->
-    <link rel="preload" as="script" href="/src/main.js" />
-    
-    <!-- ================================================================ -->
-    <!-- STYLE TAG (для критического CSS если нужно) -->
-    <!-- ================================================================ -->
-    
-    <!-- Можно добавить inline критический CSS здесь -->
-    <style>
-      /* Предотвращение мигания содержимого */
-      #app {
-        visibility: hidden;
-      }
-      
-      /* Базовые стили для быстрой отрисовки */
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        background-color: #0f172a;
-        color: #e0e7ff;
-      }
-    </style>
-    
-    <!-- ================================================================ -->
-    <!-- TITLE -->
-    <!-- ================================================================ -->
-    
-    <title>StarCourier Web - Интерактивная космическая RPG</title>
+    <title>StarCourier Web - Космическая RPG</title>
   </head>
-  
   <body>
-    <!-- ================================================================ -->
-    <!-- NOSCRIPT WARNING -->
-    <!-- ================================================================ -->
-    
-    <noscript>
-      <div style="padding: 2rem; text-align: center;">
-        <h2>JavaScript требуется для работы приложения</h2>
-        <p>Пожалуйста, включите JavaScript в настройках вашего браузера.</p>
-        <div>
-          <a href="https://www.enable-javascript.com/ru/" target="_blank" rel="noopener">
-            Инструкции по включению JavaScript
-          </a>
-        </div>
-      </div>
-    </noscript>
-    
-    <!-- ================================================================ -->
-    <!-- MAIN APP CONTAINER -->
-    <!-- ================================================================ -->
-    
     <div id="app"></div>
-    
-    <!-- ================================================================ -->
-    <!-- VUE MAIN SCRIPT -->
-    <!-- ================================================================ -->
-    
-    <!-- Тип module для использования ES modules -->
     <script type="module" src="/src/main.js"></script>
     
-    <!-- ================================================================ -->
-    <!-- INLINE SCRIPT ДЛЯ ИНИЦИАЛИЗАЦИИ -->
-    <!-- ================================================================ -->
-    
+    <!-- Service Worker Registration -->
     <script>
-      /**
-       * Инициализация приложения
-       * Запускается ДО загрузки основного скрипта
-       */
-      
-      // Логирование в консоль
-      console.log('%c🚀 StarCourier Web', 'font-size: 20px; font-weight: bold; color: #fbbf24;');
-      console.log('%cЗагрузка приложения...', 'color: #60a5fa;');
-      
-      // Проверка поддержки ES modules
-      if (!window.fetch || !window.Promise) {
-        console.error('❌ Ваш браузер не поддерживает необходимые технологии');
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('✅ ServiceWorker registered: ', registration.scope);
+            })
+            .catch((error) => {
+              console.log('❌ ServiceWorker registration failed: ', error);
+            });
+        });
       }
-      
-      // Инициализация глобальных переменных
-      window.__STARCOURIER__ = {
-        version: '1.0.0',
-        environment: import.meta.env.MODE || 'development',
-        startTime: Date.now()
-      };
-      
-      // Показываем приложение после загрузки
-      window.addEventListener('load', function() {
-        const app = document.getElementById('app');
-        if (app) {
-          app.style.visibility = 'visible';
-        }
-      });
     </script>
   </body>
 </html>

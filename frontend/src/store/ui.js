@@ -55,7 +55,21 @@ export const useUiStore = defineStore('ui', {
       autoSaveInterval: 300000, // 5 minutes
       showTutorial: true,
       language: 'ru'
-    }
+    },
+    
+    // ========================
+    // PERFORMANCE
+    // ========================
+    
+    // Track UI performance metrics
+    performanceMetrics: {
+      lastRenderTime: 0,
+      averageRenderTime: 0,
+      renderCount: 0
+    },
+    
+    // Debounce timers for performance
+    debounceTimers: new Map()
   }),
 
   getters: {
@@ -78,6 +92,13 @@ export const useUiStore = defineStore('ui', {
      */
     textSizeClass: (state) => {
       return `text-${state.settings.textSize}`
+    },
+    
+    /**
+     * Get UI performance metrics
+     */
+    uiPerformance: (state) => {
+      return state.performanceMetrics
     }
   },
 
@@ -90,7 +111,7 @@ export const useUiStore = defineStore('ui', {
      * @param {number} notification.duration - Duration in ms (0 = infinite)
      */
     addNotification(notification) {
-      const id = Date.now().toString()
+      const id = Date.now().toString() + Math.random().toString(36).substr(2, 9)
       const notif = {
         id,
         message: notification.message,
@@ -421,11 +442,69 @@ export const useUiStore = defineStore('ui', {
         textSize: 'medium',
         animationsEnabled: true,
         autoSaveEnabled: true,
+        autoSaveInterval: 300000, // 5 minutes
         showTutorial: true,
         language: 'ru'
       }
       this.saveUiSettings()
       console.log('🔄 Настройки UI сброшены')
+    },
+    
+    /**
+     * Debounce function for performance optimization
+     * @param {string} key - Unique key for the debounce timer
+     * @param {Function} func - Function to execute
+     * @param {number} delay - Delay in milliseconds
+     */
+    debounce(key, func, delay = 300) {
+      // Clear existing timer
+      if (this.debounceTimers.has(key)) {
+        clearTimeout(this.debounceTimers.get(key))
+      }
+      
+      // Set new timer
+      const timer = setTimeout(() => {
+        func()
+        this.debounceTimers.delete(key)
+      }, delay)
+      
+      // Store timer
+      this.debounceTimers.set(key, timer)
+    },
+    
+    /**
+     * Track UI render performance
+     * @param {number} renderTime - Time taken to render in milliseconds
+     */
+    trackRenderPerformance(renderTime) {
+      this.performanceMetrics.lastRenderTime = renderTime
+      this.performanceMetrics.renderCount++
+      
+      // Calculate average render time
+      const totalRenderTime = this.performanceMetrics.averageRenderTime * (this.performanceMetrics.renderCount - 1) + renderTime
+      this.performanceMetrics.averageRenderTime = totalRenderTime / this.performanceMetrics.renderCount
+    },
+    
+    /**
+     * Get performance report
+     */
+    getPerformanceReport() {
+      return {
+        ...this.performanceMetrics,
+        fps: this.performanceMetrics.averageRenderTime > 0 ? 
+          Math.round(1000 / this.performanceMetrics.averageRenderTime) : 0
+      }
+    },
+    
+    /**
+     * Clear performance metrics
+     */
+    clearPerformanceMetrics() {
+      this.performanceMetrics = {
+        lastRenderTime: 0,
+        averageRenderTime: 0,
+        renderCount: 0
+      }
     }
   }
 })
