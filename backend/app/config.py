@@ -11,7 +11,7 @@ StarCourier Web - Configuration Settings
 Версия: 1.0.0
 """
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional, List
 from functools import lru_cache
 import logging
@@ -142,16 +142,14 @@ class Settings(BaseSettings):
     # PYDANTIC CONFIG
     # ========================
     
-    class Config:
-        """Конфигурация Pydantic Settings"""
-        # Путь к .env файлу
-        env_file = ".env"
-        # Порядок загрузки файлов
-        env_file_encoding = "utf-8"
-        # Приводить названия переменных к нижнему регистру
-        case_sensitive = False
-        # Экземпляр неизменяемый (immutable)
-        validate_assignment = True
+    # Pydantic v2 settings configuration
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        validate_default=True,
+        env_prefix="SC_",
+    )
     
     # ========================
     # СВОЙСТВА

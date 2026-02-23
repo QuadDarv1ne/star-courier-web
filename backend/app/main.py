@@ -17,7 +17,6 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.websockets import WebSocket
 from pydantic import BaseModel, Field
-from typing import List, Optional
 import time
 from collections import defaultdict
 
@@ -808,9 +807,6 @@ SCENES: Dict[str, dict] = {
 # DATA STORAGE
 # ============================================================================
 
-# Game progress storage (in-memory for now, would use database in production)
-game_progress = {}
-
 # WebSocket connections storage
 websocket_connections = defaultdict(set)
 
@@ -835,9 +831,6 @@ CHARACTERS = {
         "description": "Загадочная, с тайнами, обладает необычными способностями."
     }
 }
-
-# Cloud saves storage (in-memory for now, would use database in production)
-cloud_saves = {}
 
 # Сохранение прогресса игроков в памяти
 game_progress: Dict[str, dict] = {}
@@ -1096,10 +1089,6 @@ async def start_game(request: GameStartRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ошибка при начале игры"
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ошибка при начале игры"
-        )
 
 
 @app.get("/api/game/scene/{scene_id}", response_model=SceneResponse, tags=["Game"])
@@ -1231,10 +1220,6 @@ async def make_choice(request: GameChoiceRequest):
         raise
     except Exception as e:
         logger.error(f"❌ Ошибка при выборе: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ошибка при обработке выбора"
-        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ошибка при обработке выбора"

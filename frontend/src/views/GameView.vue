@@ -345,25 +345,6 @@ export default defineComponent({
     }
   },
 
-  async mounted() {
-    // Initialize audio
-    try {
-      await this.$utils.$audio.createUserContext();
-      
-      // Load sound effects if not already loaded
-      if (this.$utils.$audio.soundEffects.size === 0) {
-        await this.$utils.$audio.preloadGameAudio();
-      }
-      
-      // Play background music
-      await this.$utils.$audio.playBackgroundMusic();
-      
-      this.$utils.log('info', 'Audio system initialized');
-    } catch (error) {
-      this.$utils.log('warning', 'Failed to initialize audio system', error);
-    }
-  },
-
   data() {
     return {
       loading: false,
@@ -480,6 +461,29 @@ export default defineComponent({
      */
     getStarStyle(index) {
       return this.starStyles[index] || {}
+    },
+    
+    /**
+     * Initialize audio system for the game view
+     */
+    async initializeAudio() {
+      if (!this.$utils || !this.$utils.$audio) {
+        console.warn('[GameView] Audio utilities are not available')
+        return
+      }
+
+      try {
+        await this.$utils.$audio.createUserContext()
+
+        if (this.$utils.$audio.soundEffects.size === 0) {
+          await this.$utils.$audio.preloadGameAudio()
+        }
+
+        await this.$utils.$audio.playBackgroundMusic()
+        this.$utils.log('info', 'Audio system initialized')
+      } catch (error) {
+        this.$utils.log('warning', 'Failed to initialize audio system', error)
+      }
     },
     
     /**
@@ -689,6 +693,8 @@ export default defineComponent({
 
   async mounted() {
     this.$utils.log('info', 'GameView mounted')
+
+    await this.initializeAudio()
     
     this.startTime = Date.now()
 
