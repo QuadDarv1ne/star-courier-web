@@ -1,24 +1,138 @@
 version: '3.8'
 
 services:
+  # ==============================================================================
+  # BACKEND - FastAPI Application
+  # ==============================================================================
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: starcourier-backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      - SC_ENVIRONMENT=development
+      - SC_ENVIRONMENT=production
+      - SC_DEBUG=false
+      - SC_DATABASE_TYPE=sqlite
+      - SC_CACHE_ENABLED=true
+      - SC_CORS_ORIGINS=http://localhost,http://localhost:5173,http://localhost:3000
     volumes:
-      - ./backend:/app
+      - backend-data:/app/data
+      - ./backend/app:/app/app:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - starcourier-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+  # ==============================================================================
+  # FRONTEND - Vue.js Application (Development Server)
+  # ==============================================================================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
+    container_name: starcourier-frontend
+    restart: unless-stopped
     ports:
       - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - NODE_ENV=development
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+    networks:
+      - starcourier-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==============================================================================
+  # NGINX - Reverse Proxy (Production)
+  # ==============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: starcourier-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - frontend-build:/usr/share/nginx/html:ro
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://backend:8000
+      - frontend
+    networks:
+      - starcourier-network
+    profiles:
+      - production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==============================================================================
+  # REDIS - Caching Layer (Optional)
+  # ==============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: starcourier-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - starcourier-network
+    profiles:
+      - production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+networks:
+  starcourier-network:
+    driver: bridge
+    name: starcourier-network
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+volumes:
+  backend-data:
+    name: starcourier-backend-data
+  redis-data:
+    name: starcourier-redis-data
+  frontend-build:
+    name: starcourier-frontend-build

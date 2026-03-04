@@ -11,7 +11,8 @@ import axios from 'axios'
 // API CLIENT CONFIGURATION
 // ============================================================================
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+// Базовый URL без /api - маршруты уже имеют префикс /api на бэкенде
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 // Create axios instance
 export const apiClient = axios.create({
@@ -265,7 +266,7 @@ export const gameApi = {
       apiCache.clear()
       
       const response = await retryWithBackoff(() => 
-        apiClient.post('/game/start', {
+        apiClient.post('/api/game/start', {
           player_id: playerId
         })
       )
@@ -290,7 +291,7 @@ export const gameApi = {
       apiCache.clear()
       
       const response = await retryWithBackoff(() => 
-        apiClient.post('/game/choose', {
+        apiClient.post('/api/game/choose', {
           player_id: playerId,
           next_scene: nextScene,
           stats
@@ -312,7 +313,7 @@ export const gameApi = {
       validateSceneId(sceneId)
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/game/scene/${sceneId}`, { cache: true })
+        apiClient.get(`/api/game/scene/${sceneId}`, { cache: true })
       )
       
       return response
@@ -330,7 +331,7 @@ export const gameApi = {
       validatePlayerId(playerId)
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/game/stats/${playerId}`)
+        apiClient.get(`/api/game/stats/${playerId}`)
       )
       
       return response
@@ -352,7 +353,7 @@ export const characterApi = {
   async getAllCharacters() {
     try {
       const response = await retryWithBackoff(() => 
-        apiClient.get('/characters', { cache: true })
+        apiClient.get('/api/characters', { cache: true })
       )
       
       return response
@@ -372,7 +373,7 @@ export const characterApi = {
       }
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/characters/${characterId}`, { cache: true })
+        apiClient.get(`/api/characters/${characterId}`, { cache: true })
       )
       
       return response
@@ -399,7 +400,7 @@ export const characterApi = {
       })
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/characters/batch?character_ids=${characterIds.join(',')}`)
+        apiClient.get(`/api/characters/batch?character_ids=${characterIds.join(',')}`)
       )
       
       return response
@@ -421,7 +422,7 @@ export const sceneApi = {
   async getAllScenes() {
     try {
       const response = await retryWithBackoff(() => 
-        apiClient.get('/scenes', { cache: true })
+        apiClient.get('/api/scenes', { cache: true })
       )
       
       return response
@@ -439,7 +440,7 @@ export const sceneApi = {
       validateSceneId(sceneId)
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/scenes/${sceneId}`, { cache: true })
+        apiClient.get(`/api/scenes/${sceneId}`, { cache: true })
       )
       
       return response
@@ -466,7 +467,7 @@ export const sceneApi = {
       })
       
       const response = await retryWithBackoff(() => 
-        apiClient.get(`/scenes/batch?scene_ids=${sceneIds.join(',')}`)
+        apiClient.get(`/api/scenes/batch?scene_ids=${sceneIds.join(',')}`)
       )
       
       return response

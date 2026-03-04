@@ -13,6 +13,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import audioService from './services/audio'
+import i18n from './plugins/i18n'
 
 // Импорт стилей
 import './styles/main.css'
@@ -43,6 +44,9 @@ app.use(pinia)
 
 // Router для навигации
 app.use(router)
+
+// i18n для интернационализации
+app.use(i18n)
 
 // Load UI settings on startup
 import { useUiStore } from './store/ui'

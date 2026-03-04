@@ -1,0 +1,193 @@
+{
+  "app": {
+    "name": "StarCourier Web",
+    "description": "Interactive text RPG in space setting",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
+  },
+  "navigation": {
+    "home": "Home",
+    "game": "Play",
+    "about": "About",
+    "settings": "Settings",
+    "leaderboard": "Leaderboard",
+    "achievements": "Achievements"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginSuccess": "Successfully signed in!",
+    "registerSuccess": "Account created successfully!",
+    "logoutSuccess": "Successfully signed out!",
+    "invalidCredentials": "Invalid username or password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordRequirements": "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one digit"
+  },
+  "game": {
+    "start": "Start Game",
+    "continue": "Continue",
+    "newGame": "New Game",
+    "saveGame": "Save Game",
+    "loadGame": "Load Game",
+    "gameOver": "Game Over",
+    "victory": "Victory!",
+    "choices": "Choices",
+    "stats": "Statistics",
+    "inventory": "Inventory",
+    "relationships": "Relationships",
+    "scene": "Scene",
+    "chapter": "Chapter",
+    "playTime": "Play Time",
+    "autoSave": "Auto-save",
+    "saving": "Saving...",
+    "saved": "Saved!",
+    "loading": "Loading...",
+    "confirmNewGame": "Start a new game? All unsaved progress will be lost.",
+    "confirmLoadGame": "Load this save? Current progress will be lost."
+  },
+  "stats": {
+    "health": "Health",
+    "morale": "Morale",
+    "knowledge": "Knowledge",
+    "team": "Team",
+    "danger": "Danger",
+    "security": "Security",
+    "fuel": "Fuel",
+    "money": "Money",
+    "psychic": "Psychic",
+    "trust": "Trust"
+  },
+  "characters": {
+    "max": "Captain Max Vell",
+    "elena": "Dr. Elena Kozlova",
+    "viktor": "Viktor Chen",
+    "aria": "Aria Sol",
+    "marcus": "Marcus Kane"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "progress": "Progress",
+    "points": "Points",
+    "category": {
+      "story": "Story",
+      "exploration": "Exploration",
+      "combat": "Combat",
+      "social": "Social",
+      "secrets": "Secrets",
+      "collectibles": "Collectibles",
+      "challenges": "Challenges",
+      "meta": "Meta"
+    },
+    "rarity": {
+      "common": "Common",
+      "uncommon": "Uncommon",
+      "rare": "Rare",
+      "epic": "Epic",
+      "legendary": "Legendary"
+    },
+    "newUnlock": "New Achievement Unlocked!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "Rank",
+    "player": "Player",
+    "score": "Score",
+    "gamesPlayed": "Games",
+    "achievements": "Achievements",
+    "playTime": "Play Time",
+    "yourRank": "Your Rank",
+    "topPlayers": "Top Players",
+    "thisWeek": "This Week",
+    "allTime": "All Time"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "darkTheme": "Dark",
+    "lightTheme": "Light",
+    "autoTheme": "Auto",
+    "sound": "Sound",
+    "musicVolume": "Music Volume",
+    "sfxVolume": "Sound Effects",
+    "notifications": "Notifications",
+    "autoSave": "Auto-save",
+    "autoSaveInterval": "Auto-save interval",
+    "textSpeed": "Text Speed",
+    "slow": "Slow",
+    "normal": "Normal",
+    "fast": "Fast",
+    "instant": "Instant",
+    "resetProgress": "Reset Progress",
+    "confirmReset": "Are you sure? This will delete all your progress!",
+    "reset": "Reset"
+  },
+  "about": {
+    "title": "About StarCourier",
+    "description": "StarCourier is an interactive text RPG set in space. You take on the role of Captain Max Vell, commander of the starship 'Eleya'. Your mission: uncover the secrets of ancient artifacts and determine the fate of humanity.",
+    "features": {
+      "title": "Features",
+      "branching": "Branching storyline with multiple endings",
+      "characters": "Deep character relationships",
+      "choices": "Meaningful choices that matter",
+      "achievements": "Achievement system",
+      "pwa": "Works offline (PWA)"
+    },
+    "credits": {
+      "title": "Credits",
+      "developer": "Developer",
+      "version": "Version"
+    }
+  },
+  "errors": {
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized. Please sign in.",
+    "forbidden": "Access denied.",
+    "rateLimit": "Too many requests. Please wait.",
+    "unknown": "An unknown error occurred."
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "confirm": "Confirm",
+    "success": "Success!",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  "time": {
+    "seconds": "seconds",
+    "minutes": "minutes",
+    "hours": "hours",
+    "days": "days",
+    "ago": "ago",
+    "in": "in"
+  }
+}

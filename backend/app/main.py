@@ -19,10 +19,20 @@ from fastapi.responses import JSONResponse
 from app.config import settings
 
 # Импорт роутеров
-from app.api import game, characters, scenes
+from app.api import game, characters, scenes, websocket, auth, leaderboard, achievements, analytics, admin, data
 
 # Импорт сервисов
 from app.services import data_service
+
+# Импорт базы данных
+from app.database import init_db, close_db
+
+# Импорт middleware
+from app.middleware import RateLimitMiddleware, RequestLoggerMiddleware, SecurityMiddleware, rate_limiter
+from app.middleware.performance import PerformanceMiddleware, metrics
+
+# Импорт кэша
+from app.services.cache_service import init_cache
 
 # Импорт моделей
 from app.models import HealthCheckResponse, ErrorResponse
@@ -49,6 +59,14 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 Запуск StarCourier Web...")
     logger.info(f"📦 Среда: {settings.environment}")
     logger.info(f"🔧 Debug режим: {settings.debug}")
+    
+    # Инициализация базы данных
+    await init_db()
+    logger.info("💾 База данных инициализирована")
+    
+    # Инициализация кэша
+    await init_cache()
+    logger.info("⚡ Кэш инициализирован")
 
     # Предзагрузка данных
     data_service.reload_data()
@@ -59,6 +77,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown
+    await close_db()
     logger.info("🛑 Остановка StarCourier Web...")
 
 
@@ -79,6 +98,8 @@ app = FastAPI(
     - 👥 Система отношений с членами команды
     - 📊 Динамическая статистика
     - 🌌 Множество концовок
+    - 🏆 Таблица лидеров
+    - 🎖️ Система достижений
 
     ## Документация
     - [Swagger UI](/docs)
@@ -95,6 +116,18 @@ app = FastAPI(
 # ============================================================================
 # MIDDLEWARE
 # ============================================================================
+
+# Performance monitoring (первый для сбора метрик)
+app.add_middleware(PerformanceMiddleware)
+
+# Security middleware
+app.add_middleware(SecurityMiddleware, debug=settings.debug)
+
+# Rate limiting
+app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter)
+
+# Request logger
+app.add_middleware(RequestLoggerMiddleware)
 
 # GZip сжатие
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -131,9 +164,16 @@ async def global_exception_handler(request: Request, exc: Exception):
 # ROUTERS
 # ============================================================================
 
+app.include_router(auth.router, prefix="/api/auth", tags=["🔐 Аутентификация"])
 app.include_router(game.router, prefix="/api/game", tags=["🎮 Игра"])
 app.include_router(characters.router, prefix="/api/characters", tags=["👥 Персонажи"])
 app.include_router(scenes.router, prefix="/api/scenes", tags=["📋 Сцены"])
+app.include_router(leaderboard.router, prefix="/api/leaderboard", tags=["🏆 Лидеры"])
+app.include_router(achievements.router, prefix="/api/achievements", tags=["🎖️ Достижения"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["📊 Аналитика"])
+app.include_router(admin.router, prefix="/api/admin", tags=["👑 Администрирование"])
+app.include_router(data.router, prefix="/api/data", tags=["📦 Данные"])
+app.include_router(websocket.router, tags=["🔌 WebSocket"])
 
 
 # ============================================================================
@@ -158,6 +198,39 @@ async def health_check():
     )
 
 
+@app.get("/health/detailed", tags=["🏥 Health"], summary="Детальная проверка здоровья")
+async def health_check_detailed():
+    """
+    Детальная проверка здоровья всех компонентов системы.
+    
+    Включает:
+    - База данных
+    - Кэш (Redis/Memory)
+    - Дисковое пространство
+    - Память
+    - CPU
+    - Email сервис
+    - WebSocket
+    """
+    from app.services.health_service import health_check_service
+    return await health_check_service.check_all()
+
+
+@app.get("/metrics", tags=["📊 Metrics"], summary="Метрики производительности")
+async def get_metrics():
+    """
+    Получение метрик производительности приложения.
+    
+    Включает:
+    - Статистику запросов
+    - Время ответа по endpoints
+    - Медленные запросы
+    - Распределение по времени
+    """
+    from app.middleware.performance import get_performance_stats
+    return get_performance_stats()
+
+
 @app.get("/", tags=["🏠 Root"], summary="Корневой endpoint")
 async def root():
     """Корневой endpoint с информацией об API"""
@@ -166,7 +239,21 @@ async def root():
         "version": settings.app_version,
         "status": "running",
         "docs": "/docs" if settings.docs_enabled else None,
-        "health": "/health"
+        "health": "/health",
+        "health_detailed": "/health/detailed",
+        "metrics": "/metrics",
+        "features": {
+            "auth": "/api/auth",
+            "game": "/api/game",
+            "characters": "/api/characters",
+            "scenes": "/api/scenes",
+            "leaderboard": "/api/leaderboard",
+            "achievements": "/api/achievements",
+            "analytics": "/api/analytics",
+            "admin": "/api/admin",
+            "data": "/api/data",
+            "websocket": "/ws/{player_id}"
+        }
     }
 
 

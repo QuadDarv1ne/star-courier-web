@@ -1,0 +1,374 @@
+{
+  "achievements": {
+    "first_steps": {
+      "id": "first_steps",
+      "name": "Первые шаги",
+      "description": "Начните своё первое приключение",
+      "icon": "🚀",
+      "category": "story",
+      "points": 10,
+      "hidden": false,
+      "requirement": {
+        "type": "scenes_visited",
+        "count": 1
+      }
+    },
+    "explorer": {
+      "id": "explorer",
+      "name": "Исследователь",
+      "description": "Посетите 10 разных сцен",
+      "icon": "🗺️",
+      "category": "exploration",
+      "points": 30,
+      "hidden": false,
+      "requirement": {
+        "type": "scenes_visited",
+        "count": 10
+      }
+    },
+    "world_traveler": {
+      "id": "world_traveler",
+      "name": "Путешественник миров",
+      "description": "Посетите все сцены в игре",
+      "icon": "🌌",
+      "category": "exploration",
+      "points": 100,
+      "hidden": false,
+      "requirement": {
+        "type": "all_scenes_visited"
+      }
+    },
+    "diplomat": {
+      "id": "diplomat",
+      "name": "Дипломат",
+      "description": "Сделайте 5 дипломатических выборов",
+      "icon": "🤝",
+      "category": "gameplay",
+      "points": 25,
+      "hidden": false,
+      "requirement": {
+        "type": "choice_pattern",
+        "pattern": "diplomatic",
+        "count": 5
+      }
+    },
+    "warrior": {
+      "id": "warrior",
+      "name": "Воин",
+      "description": "Сделайте 5 агрессивных выборов",
+      "icon": "⚔️",
+      "category": "gameplay",
+      "points": 25,
+      "hidden": false,
+      "requirement": {
+        "type": "choice_pattern",
+        "pattern": "aggressive",
+        "count": 5
+      }
+    },
+    "scholar": {
+      "id": "scholar",
+      "name": "Учёный",
+      "description": "Сделайте 5 аналитических выборов",
+      "icon": "📚",
+      "category": "gameplay",
+      "points": 25,
+      "hidden": false,
+      "requirement": {
+        "type": "choice_pattern",
+        "pattern": "analytical",
+        "count": 5
+      }
+    },
+    "guardian": {
+      "id": "guardian",
+      "name": "Хранитель",
+      "description": "Сделайте 5 заботливых выборов",
+      "icon": "💖",
+      "category": "gameplay",
+      "points": 25,
+      "hidden": false,
+      "requirement": {
+        "type": "choice_pattern",
+        "pattern": "caring",
+        "count": 5
+      }
+    },
+    "healthy": {
+      "id": "healthy",
+      "name": "Здоровяк",
+      "description": "Завершите игру со здоровьем выше 90",
+      "icon": "❤️",
+      "category": "stats",
+      "points": 40,
+      "hidden": false,
+      "requirement": {
+        "type": "final_stat",
+        "stat": "health",
+        "min": 90
+      }
+    },
+    "optimist": {
+      "id": "optimist",
+      "name": "Оптимист",
+      "description": "Завершите игру с моралью выше 90",
+      "icon": "😊",
+      "category": "stats",
+      "points": 40,
+      "hidden": false,
+      "requirement": {
+        "type": "final_stat",
+        "stat": "morale",
+        "min": 90
+      }
+    },
+    "knowledge_seeker": {
+      "id": "knowledge_seeker",
+      "name": "Искатель знаний",
+      "description": "Достигните максимума знаний (100)",
+      "icon": "🧠",
+      "category": "stats",
+      "points": 50,
+      "hidden": false,
+      "requirement": {
+        "type": "stat_maxed",
+        "stat": "knowledge"
+      }
+    },
+    "wealthy": {
+      "id": "wealthy",
+      "name": "Богач",
+      "description": "Накопите более 5000 кредитов",
+      "icon": "💰",
+      "category": "stats",
+      "points": 30,
+      "hidden": false,
+      "requirement": {
+        "type": "stat_threshold",
+        "stat": "money",
+        "min": 5000
+      }
+    },
+    "sara_friend": {
+      "id": "sara_friend",
+      "name": "Друг Сары",
+      "description": "Достигните максимальных отношений с Сарой Новой",
+      "icon": "👩‍🔬",
+      "category": "relationships",
+      "points": 50,
+      "hidden": false,
+      "requirement": {
+        "type": "relationship_max",
+        "character": "sara_nova"
+      }
+    },
+    "grisha_friend": {
+      "id": "grisha_friend",
+      "name": "Братство с Гришей",
+      "description": "Достигните максимальных отношений с Гришей Романовым",
+      "icon": "🎖️",
+      "category": "relationships",
+      "points": 50,
+      "hidden": false,
+      "requirement": {
+        "type": "relationship_max",
+        "character": "grisha_romanov"
+      }
+    },
+    "li_friend": {
+      "id": "li_friend",
+      "name": "Тайны Ли Чжэнь",
+      "description": "Достигните максимальных отношений с Ли Чжэнь",
+      "icon": "🧭",
+      "category": "relationships",
+      "points": 50,
+      "hidden": false,
+      "requirement": {
+        "type": "relationship_max",
+        "character": "li_zheng"
+      }
+    },
+    "awakening": {
+      "id": "awakening",
+      "name": "Пробуждение Древних",
+      "description": "Завершите игру концовкой 'Пробуждение'",
+      "icon": "🌟",
+      "category": "endings",
+      "points": 100,
+      "hidden": true,
+      "requirement": {
+        "type": "ending",
+        "ending": "awakening"
+      }
+    },
+    "guardian_ending": {
+      "id": "guardian_ending",
+      "name": "Хранитель артефакта",
+      "description": "Завершите игру концовкой 'Хранитель'",
+      "icon": "🔮",
+      "category": "endings",
+      "points": 80,
+      "hidden": true,
+      "requirement": {
+        "type": "ending",
+        "ending": "guardian"
+      }
+    },
+    "sacrifice": {
+      "id": "sacrifice",
+      "name": "Жертва ради будущего",
+      "description": "Завершите игру концовкой 'Жертва'",
+      "icon": "💥",
+      "category": "endings",
+      "points": 70,
+      "hidden": true,
+      "requirement": {
+        "type": "ending",
+        "ending": "sacrifice"
+      }
+    },
+    "combat_victory": {
+      "id": "combat_victory",
+      "name": "Боевая победа",
+      "description": "Завершите игру концовкой 'Боевая победа'",
+      "icon": "🏆",
+      "category": "endings",
+      "points": 60,
+      "hidden": true,
+      "requirement": {
+        "type": "ending",
+        "ending": "combat_victory"
+      }
+    },
+    "speedrun": {
+      "id": "speedrun",
+      "name": "Спидраннер",
+      "description": "Завершите игру менее чем за 10 минут",
+      "icon": "⚡",
+      "category": "challenges",
+      "points": 75,
+      "hidden": false,
+      "requirement": {
+        "type": "playtime",
+        "max_minutes": 10
+      }
+    },
+    "survivor": {
+      "id": "survivor",
+      "name": "Выживший",
+      "description": "Завершите игру с критически низким здоровьем (< 20)",
+      "icon": "💪",
+      "category": "challenges",
+      "points": 60,
+      "hidden": false,
+      "requirement": {
+        "type": "final_stat",
+        "stat": "health",
+        "max": 20,
+        "min": 1
+      }
+    },
+    "pacifist": {
+      "id": "pacifist",
+      "name": "Пацифист",
+      "description": "Завершите игру без агрессивных выборов",
+      "icon": "☮️",
+      "category": "challenges",
+      "points": 100,
+      "hidden": false,
+      "requirement": {
+        "type": "no_pattern",
+        "pattern": "aggressive"
+      }
+    },
+    "completionist": {
+      "id": "completionist",
+      "name": "Перфекционист",
+      "description": "Откройте все достижения",
+      "icon": "🎖️",
+      "category": "meta",
+      "points": 200,
+      "hidden": true,
+      "requirement": {
+        "type": "all_achievements"
+      }
+    },
+    "veteran": {
+      "id": "veteran",
+      "name": "Ветеран космоса",
+      "description": "Завершите 5 игр",
+      "icon": "🏅",
+      "category": "meta",
+      "points": 50,
+      "hidden": false,
+      "requirement": {
+        "type": "games_completed",
+        "count": 5
+      }
+    }
+  },
+  "categories": {
+    "story": {
+      "name": "История",
+      "description": "Достижения за прогресс в сюжете",
+      "icon": "📖"
+    },
+    "exploration": {
+      "name": "Исследование",
+      "description": "Достижения за исследование мира",
+      "icon": "🗺️"
+    },
+    "gameplay": {
+      "name": "Геймплей",
+      "description": "Достижения за стиль игры",
+      "icon": "🎮"
+    },
+    "stats": {
+      "name": "Статистика",
+      "description": "Достижения за характеристики",
+      "icon": "📊"
+    },
+    "relationships": {
+      "name": "Отношения",
+      "description": "Достижения за отношения с персонажами",
+      "icon": "💕"
+    },
+    "endings": {
+      "name": "Концовки",
+      "description": "Достижения за различные концовки",
+      "icon": "🎬"
+    },
+    "challenges": {
+      "name": "Испытания",
+      "description": "Особые испытания",
+      "icon": "🏆"
+    },
+    "meta": {
+      "name": "Мета",
+      "description": "Мета-достижения",
+      "icon": "⭐"
+    }
+  },
+  "rarity": {
+    "common": {
+      "color": "#9ca3af",
+      "points_range": [0, 30]
+    },
+    "uncommon": {
+      "color": "#22c55e",
+      "points_range": [31, 50]
+    },
+    "rare": {
+      "color": "#3b82f6",
+      "points_range": [51, 75]
+    },
+    "epic": {
+      "color": "#a855f7",
+      "points_range": [76, 100]
+    },
+    "legendary": {
+      "color": "#f59e0b",
+      "points_range": [101, 999]
+    }
+  }
+}

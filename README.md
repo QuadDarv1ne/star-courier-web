@@ -1,133 +1,95 @@
 # 🚀 StarCourier Web
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
-[![Vue.js](https://img.shields.io/badge/Vue.js-3.3+-brightgreen.svg)](https://vuejs.org/)
+**Интерактивная текстовая RPG в космической тематике**
 
-**Интерактивная текстовая RPG в космической тематике с веб-интерфейсом**
+Управляйте капитаном Максом Веллом на звездолёте "Элея", раскрывайте тайны древних артефактов и определяйте судьбу человечества.
 
-Управляйте капитаном Максом Веллом на звездолёте "Элея", раскрывайте тайны древних артефактов, развивайте отношения с командой и определяйте судьбу человечества.
-
----
-
-## 📖 Содержание
-
-- [Обзор](#обзор)
-- [Особенности](#особенности)
-- [Требования](#требования)
-- [Установка](#установка)
-- [Запуск](#запуск)
-- [Структура проекта](#структура-проекта)
-- [API документация](#api-документация)
-- [Геймплей](#геймплей)
-- [Разработка](#разработка)
-- [Docker](#docker)
-- [Содействие](#содействие)
-- [Лицензия](#лицензия)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.13-green)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115.6-009688)
+![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D)
 
 ---
 
-## 🎮 Обзор
+## 📋 Содержание
 
-**StarCourier Web** — это полнофункциональная веб-игра, которая сочетает:
-
-- 🎯 **Интерактивные диалоги** с множественными развилками сюжета
-- 👥 **Систему отношений** с членами команды
-- 📊 **Динамическую статистику** (здоровье, мораль, знание и т.д.)
-- 🌌 **Атмосферу космического приключения** с элементами мистики
-- 🔮 **Несколько концовок** в зависимости от ваших выборов
-
-### Сюжет
-
-Вы — капитан **Макс Велл**, командир звездолёта "Элея". Перед вами стоит задача доставить таинственный артефакт, который способен изменить судьбу человечества. По пути вам предстоит:
-
-- Раскрывать тайны артефакта
-- Развивать отношения с командой (Сара Нова, Гриша Романов, Ли Чжэнь)
-- Принимать сложные решения
-- Сражаться с врагами
-- Изучать древние цивилизации
+- [Возможности](#-возможности)
+- [Технологии](#-технологии)
+- [Установка](#-установка)
+- [Запуск](#-запуск)
+- [API документация](#-api-документация)
+- [Структура проекта](#-структура-проекта)
+- [Функции](#-функции)
 
 ---
 
-## ✨ Особенности
+## ✨ Возможности
 
-### Геймплей
-- ✅ **15+ интерактивных сцен** с разветвлённым сюжетом
-- ✅ **Система выборов** влияющих на исход игры
-- ✅ **Динамические параметры**: здоровье, мораль, знание, команда, опасность и др.
-- ✅ **Несколько концовок** в зависимости от выборов
+### 🎮 Игра
+- Разветвлённый сюжет с множеством концовок
+- Система отношений с персонажами
+- Динамическая статистика персонажа
+- Система достижений (22 достижения в 8 категориях)
+- Таблица лидеров
 
-### Персонажи
-- 👩‍🔬 **Сара Нова** — главный научный офицер (холодная, расчётливая)
-- 🎖️ **Гриша Романов** — боевой офицер (верный, опытный)
-- 🧭 **Ли Чжэнь** — навигатор (загадочная, хранительница тайн)
-
-### Технология
-- 🔌 **FastAPI** — современный, быстрый backend
-- 🎨 **Vue.js 3** — реактивный, интуитивный frontend
-- 📡 **REST API** — чистая архитектура
-- 🐳 **Docker** — лёгкое развёртывание
-- 💾 **JSON БД** — простое расширение контента
+### 🔧 Технологии
+- **Backend**: FastAPI + SQLAlchemy + SQLite/PostgreSQL
+- **Frontend**: Vue.js 3 + Pinia + Vite
+- **PWA**: Офлайн поддержка
+- **Security**: JWT, Rate Limiting, Security Headers
 
 ---
 
-## 📋 Требования
+## 🛠 Технологии
 
-### Для системы
-- **Python** 3.10 или выше
-- **Node.js** 16 или выше
-- **npm** 7 или выше
+### Backend
+- **FastAPI** - асинхронный веб-фреймворк
+- **SQLAlchemy** - ORM с async поддержкой
+- **Alembic** - миграции базы данных
+- **PyJWT** - аутентификация
+- **bcrypt** - хэширование паролей
 
-### Для разработки (опционально)
-- **Git**
-- **Docker** и **Docker Compose**
-- **Visual Studio Code** или другой редактор
+### Frontend
+- **Vue.js 3** - Composition API
+- **Pinia** - state management
+- **Vite** - сборка
+- **PWA** - Service Worker
+
+### Инфраструктура
+- **Docker** - контейнеризация
+- **nginx** - reverse proxy
+- **Redis** - кэширование (опционально)
 
 ---
 
-## 🔧 Установка
+## 📦 Установка
 
-### 1️⃣ Клонирование репозитория
+### Требования
+- Python 3.10+
+- Node.js 18+
+- SQLite (по умолчанию) или PostgreSQL
 
-```bash
-git clone https://github.com/QuadDarv1ne/star-courier-web.git
-cd starcourier-web
-```
-
-### 2️⃣ Установка Backend
+### Backend
 
 ```bash
 cd backend
 
 # Создание виртуального окружения
 python -m venv venv
-
-# Активация окружения
-# Linux/macOS:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate  # Windows
 
 # Установка зависимостей
 pip install -r requirements.txt
 
-# Копирование переменных окружения
-cp .env.example .env
+# Миграции базы данных
+alembic upgrade head
+
+# Запуск
+uvicorn app.main:app --reload
 ```
 
-**requirements.txt:**
-```
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
-pydantic-settings==2.1.0
-python-dotenv==1.0.0
-aiofiles==23.2.1
-cors==1.0.1
-```
-
-### 3️⃣ Установка Frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -135,77 +97,71 @@ cd frontend
 # Установка зависимостей
 npm install
 
-# Копирование переменных окружения
-cp .env.example .env.local
+# Запуск в режиме разработки
+npm run dev
+
+# Сборка для продакшена
+npm run build
 ```
 
-**package.json (основные зависимости):**
-```json
-{
-  "dependencies": {
-    "vue": "^3.3.4",
-    "axios": "^1.6.2",
-    "pinia": "^2.1.6"
-  },
-  "devDependencies": {
-    "vite": "^5.0.0",
-    "@vitejs/plugin-vue": "^5.0.0"
-  }
-}
+### Docker
+
+```bash
+# Сборка и запуск
+docker-compose up -d
+
+# Просмотр логов
+docker-compose logs -f
 ```
 
 ---
 
 ## 🚀 Запуск
 
-### Запуск Backend
+### Режим разработки
 
 ```bash
-cd backend
+# Backend (порт 8000)
+cd backend && uvicorn app.main:app --reload
 
-# Активировать виртуальное окружение (если не активировано)
-source venv/bin/activate  # Linux/macOS
-# или
-venv\Scripts\activate     # Windows
-
-# Запуск сервера
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Frontend (порт 5173)
+cd frontend && npm run dev
 ```
 
-Backend будет доступен на: **http://localhost:8000**
-
-#### Полезные URL:
-- API документация Swagger: http://localhost:8000/docs
-- API документация ReDoc: http://localhost:8000/redoc
-- Health check: http://localhost:8000/health
-
-### Запуск Frontend
-
-В **отдельном терминале**:
+### Режим продакшена
 
 ```bash
-cd frontend
+# Сборка frontend
+cd frontend && npm run build
 
-# Запуск dev сервера
-npm run dev
+# Запуск backend
+cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Frontend будет доступен на: **http://localhost:5173** (или другой порт, указанный Vite)
+---
 
-### Полный запуск одновременно
+## 📚 API документация
 
-```bash
-# Терминал 1 - Backend
-cd backend
-source venv/bin/activate
-uvicorn app.main:app --reload
+После запуска backend доступна документация:
 
-# Терминал 2 - Frontend
-cd frontend
-npm run dev
-```
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **Health Check**: http://localhost:8000/health
+- **Metrics**: http://localhost:8000/metrics
 
-Откройте браузер и перейдите на http://localhost:5173
+### Основные endpoints
+
+| Endpoint | Описание |
+|----------|----------|
+| `/api/auth` | Аутентификация |
+| `/api/game` | Игровой процесс |
+| `/api/characters` | Персонажи |
+| `/api/scenes` | Сцены |
+| `/api/leaderboard` | Таблица лидеров |
+| `/api/achievements` | Достижения |
+| `/api/analytics` | Аналитика |
+| `/api/admin` | Администрирование |
+| `/api/data` | Экспорт/импорт данных |
 
 ---
 
@@ -213,530 +169,168 @@ npm run dev
 
 ```
 star-courier-web/
-├── backend/                    # FastAPI приложение
+├── backend/
+│   ├── alembic/                 # Миграции БД
+│   │   ├── versions/
+│   │   ├── env.py
+│   │   └── script.py.mako
 │   ├── app/
-│   │   ├── main.py            # Точка входа
-│   │   ├── api/               # Endpoints
-│   │   ├── models/            # Pydantic модели
-│   │   ├── services/          # Бизнес-логика
-│   │   └── data/              # JSON данные
+│   │   ├── api/                 # API endpoints
+│   │   │   ├── admin.py         # Админ-панель
+│   │   │   ├── analytics.py     # Аналитика
+│   │   │   ├── auth.py          # Аутентификация
+│   │   │   ├── data.py          # Экспорт/импорт
+│   │   │   ├── game.py          # Игра
+│   │   │   └── ...
+│   │   ├── database/            # База данных
+│   │   │   ├── models.py        # SQLAlchemy модели
+│   │   │   └── connection.py    # Подключение
+│   │   ├── middleware/          # Middleware
+│   │   │   ├── rate_limit.py    # Rate limiting
+│   │   │   ├── security.py      # Безопасность
+│   │   │   └── performance.py   # Метрики
+│   │   ├── models/              # Pydantic модели
+│   │   ├── services/            # Бизнес-логика
+│   │   │   ├── auth_service.py
+│   │   │   ├── cache_service.py
+│   │   │   ├── email_service.py
+│   │   │   ├── health_service.py
+│   │   │   ├── notification_service.py
+│   │   │   ├── score_service.py
+│   │   │   └── backup_service.py
+│   │   ├── data/                # Игровые данные
+│   │   ├── config.py            # Конфигурация
+│   │   └── main.py              # Точка входа
+│   ├── tests/                   # Тесты
 │   ├── requirements.txt
-│   ├── .env.example
-│   └── config.py
+│   └── alembic.ini
 │
-├── frontend/                   # Vue.js приложение
+├── frontend/
 │   ├── src/
-│   │   ├── main.js            # Точка входа
-│   │   ├── App.vue            # Корневой компонент
-│   │   ├── components/        # Компоненты
-│   │   ├── views/             # Страницы
-│   │   ├── services/          # API сервисы
-│   │   ├── store/             # Pinia store
-│   │   └── styles/            # CSS
-│   ├── package.json
-│   ├── vite.config.js
-│   └── .env.example
+│   │   ├── components/          # Vue компоненты
+│   │   ├── views/               # Страницы
+│   │   ├── store/               # Pinia stores
+│   │   ├── services/            # API сервисы
+│   │   ├── locales/             # Переводы (i18n)
+│   │   ├── plugins/             # Плагины
+│   │   └── main.js
+│   ├── public/
+│   │   ├── sw.js                # Service Worker
+│   │   └── manifest.json        # PWA manifest
+│   └── package.json
 │
-├── docs/                       # Документация
-├── tests/                      # Тесты
-├── docker-compose.yml          # Docker Compose
-├── LICENCE
-└── README.md                   # Этот файл
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
 
-## 🔌 API документация
-
-### Основные endpoints
-
-#### Game Endpoints
-
-**Начать новую игру**
-```
-POST /api/game/start
-Content-Type: application/json
-
-{
-  "player_id": "player_123"
-}
-
-Response:
-{
-  "status": "success",
-  "scene": {...},
-  "stats": {...},
-  "relationships": {...}
-}
-```
-
-**Получить сцену**
-```
-GET /api/game/scene/{scene_id}
-
-Response:
-{
-  "id": "start",
-  "title": "Пробуждение на Элее",
-  "text": "Вы — капитан Макс Велл...",
-  "image": "🚀",
-  "character": "Сара Нова",
-  "choices": [...]
-}
-```
-
-**Сделать выбор**
-```
-POST /api/game/choose
-Content-Type: application/json
-
-{
-  "player_id": "player_123",
-  "next_scene": "command_center",
-  "stats": {
-    "morale": 10,
-    "knowledge": 15
-  }
-}
-
-Response:
-{
-  "status": "success",
-  "scene": {...},
-  "stats": {...},
-  "relationships": {...},
-  "choices_made": 1
-}
-```
-
-**Получить статистику игрока**
-```
-GET /api/game/stats/{player_id}
-
-Response:
-{
-  "current_scene": "command_center",
-  "stats": {
-    "health": 100,
-    "morale": 75,
-    "knowledge": 30,
-    ...
-  },
-  "relationships": {...},
-  "inventory": [...],
-  "choices_made": 1
-}
-```
-
-#### Character Endpoints
-
-**Получить всех персонажей**
-```
-GET /api/characters
-
-Response:
-{
-  "sara_nova": {
-    "name": "Сара Нова",
-    "role": "Главный научный офицер",
-    "relationship": 50,
-    "description": "..."
-  },
-  ...
-}
-```
-
-**Получить персонажа по ID**
-```
-GET /api/characters/{character_id}
-
-Response:
-{
-  "id": "sara_nova",
-  "name": "Сара Нова",
-  "role": "Главный научный офицер",
-  "relationship": 50,
-  "description": "Холодная, расчётливая, но с добрым сердцем"
-}
-```
-
-#### Scene Endpoints
-
-**Получить все сцены (для отладки)**
-```
-GET /api/scenes
-
-Response:
-{
-  "start": "Пробуждение на Элее",
-  "command_center": "Центр управления Элеи",
-  ...
-}
-```
-
----
-
-## 🎮 Геймплей
-
-### Система статистики
-
-| Параметр | Описание | Диапазон |
-|----------|---------|----------|
-| ❤️ Здоровье | Ваше физическое состояние | 0-100 |
-| 💪 Мораль | Психическое состояние команды | 0-100 |
-| 🧠 Знание | Ваше понимание ситуации | 0-100 |
-| 👥 Команда | Численность и боевой дух команды | 0-100 |
-| ⚠️ Опасность | Уровень угрозы | 0-100 |
-| ⛽ Топливо | Запас топлива корабля | 0-100 |
-| 💰 Деньги | Ресурсы | 0-∞ |
-
-### Система отношений
-
-Отношения с персонажами влияют на возможные диалоги и исходы:
-
-- **Сара Нова** (Научный офицер) — знание, артефакт
-- **Гриша Романов** (Боевой офицер) — боевые операции
-- **Ли Чжэнь** (Навигатор) — секретные маршруты, тайны
-
-### Условия проигрыша
-
-- ❌ Здоровье ≤ 0
-- ❌ Мораль ≤ 0
-
-### Концовки
-
-Игра имеет **5+ разных концовок** в зависимости от ваших выборов:
-
-1. 🏆 **Победа** — активировать артефакт
-2. 🔒 **Хранитель** — спрятать артефакт
-3. 💥 **Жертва** — уничтожить артефакт
-4. 🎆 **Боевая победа** — победить пиратов
-5. 🌠 **Пробуждение** — пробудить Древних
-
----
-
-## 👨‍💻 Разработка
-
-### Структура Backend
-
-```python
-# app/main.py - Точка входа
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI()
-
-# Добавить CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Подключить роутеры
-from app.api import game, characters, scenes
-app.include_router(game.router, prefix="/api/game")
-app.include_router(characters.router, prefix="/api/characters")
-app.include_router(scenes.router, prefix="/api/scenes")
-```
-
-### Добавление новой сцены
-
-1. **Отредактируйте** `backend/app/data/scenes.json`:
-
-```json
-{
-  "my_scene": {
-    "title": "Название сцены",
-    "text": "Описание того, что происходит...",
-    "image": "🎨",
-    "character": "Имя персонажа",
-    "choices": [
-      {
-        "text": "Первый выбор",
-        "next": "next_scene",
-        "stats": {"morale": 10, "knowledge": 5}
-      }
-    ]
-  }
-}
-```
-
-2. **Обновите** `backend/app/services/scene_service.py`
-
-3. **Протестируйте** через API Docs: http://localhost:8000/docs
-
-### Добавление нового персонажа
-
-1. **Отредактируйте** `backend/app/data/characters.json`:
-
-```json
-{
-  "new_character": {
-    "name": "Имя персонажа",
-    "role": "Роль",
-    "relationship": 50,
-    "description": "Описание"
-  }
-}
-```
-
-2. **Обновите** систему отношений в `game_service.py`
-
-### Frontend компоненты
-
-**Создание нового компонента Vue:**
-
-```vue
-<!-- src/components/MyComponent.vue -->
-<template>
-  <div class="my-component">
-    <h2>{{ title }}</h2>
-    <p>{{ description }}</p>
-    <button @click="handleClick">Click me</button>
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'MyComponent',
-  props: {
-    title: String,
-    description: String
-  },
-  methods: {
-    handleClick() {
-      this.$emit('click-event');
-    }
-  }
-}
-</script>
-
-<style scoped>
-.my-component {
-  padding: 1rem;
-}
-</style>
-```
-
----
-
-## 🐳 Docker
-
-### Запуск с Docker Compose
-
-```bash
-docker-compose up
-```
-
-**Приложение будет доступно:**
-
-- Frontend: http://localhost:3000
-- Backend: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-### docker-compose.yml
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - DEBUG=True
-    volumes:
-      - ./backend:/app
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    environment:
-      - VITE_API_URL=http://backend:8000
-```
-
-### Сборка и развёртывание
-
-```bash
-# Сборка образов
-docker-compose build
-
-# Запуск контейнеров
-docker-compose up -d
-
-# Остановка
-docker-compose down
-
-# Логи
-docker-compose logs -f
-```
+## ⚡ Функции
+
+### 🔐 Аутентификация
+- JWT токены (access + refresh)
+- Регистрация с валидацией пароля
+- Восстановление пароля по email
+
+### 🛡 Безопасность
+- Rate limiting (защита от DDoS)
+- Security headers (CSP, XSS Protection)
+- Защита от SQL-инъекций
+- CORS
+
+### 📊 Аналитика
+- Отслеживание событий игры
+- Статистика по сценам
+- Воронка прохождения
+- Real-time метрики
+
+### 💾 База данных
+- SQLite (по умолчанию) / PostgreSQL
+- Async SQLAlchemy
+- Alembic миграции
+- Автоматические бэкапы
+
+### 📦 Данные пользователя (GDPR)
+- Экспорт в JSON/ZIP
+- Импорт данных
+- Полное удаление аккаунта
+
+### 📈 Мониторинг
+- Health checks
+- Performance metrics
+- Request timing
+- Slow request detection
+
+### 📧 Email
+- Приветственные письма
+- Уведомления о достижениях
+- Восстановление пароля
+- Еженедельные отчёты
+
+### 🔔 Уведомления
+- Real-time через WebSocket
+- Offline уведомления
+- Разные типы и приоритеты
 
 ---
 
 ## 🧪 Тестирование
 
-### Запуск тестов Backend
-
 ```bash
+# Backend тесты
 cd backend
+pytest tests/ -v --cov=app
 
-# Установить pytest
-pip install pytest pytest-asyncio
-
-# Запустить тесты
-pytest
-
-# С покрытием кода
-pytest --cov=app
-```
-
-### Примеры тестов
-
-```python
-# tests/test_game.py
-import pytest
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-def test_start_game():
-    response = client.post("/api/game/start", json={"player_id": "test_player"})
-    assert response.status_code == 200
-    assert response.json()["status"] == "success"
-
-def test_make_choice():
-    client.post("/api/game/start", json={"player_id": "test_player"})
-    response = client.post("/api/game/choose", json={
-        "player_id": "test_player",
-        "next_scene": "command_center",
-        "stats": {}
-    })
-    assert response.status_code == 200
+# Frontend тесты
+cd frontend
+npm run test
 ```
 
 ---
 
-## 📈 Оптимизация и масштабирование
+## 📝 Конфигурация
 
-### Для улучшения производительности:
+### Переменные окружения (backend/.env)
 
-1. **Добавить кэширование**
-   ```python
-   from fastapi_cache2 import FastAPICache2
-   from fastapi_cache2.backends.redis import RedisBackend
-   ```
+```env
+# Приложение
+SC_APP_NAME=StarCourier Web
+SC_ENVIRONMENT=development
+SC_DEBUG=true
 
-2. **Использовать БД вместо JSON**
-   ```python
-   from sqlalchemy import create_engine
-   from sqlalchemy.orm import sessionmaker
-   ```
+# База данных
+SC_DATABASE_TYPE=sqlite
+SC_DATABASE_URL=sqlite:///./starcourier.db
 
-3. **Добавить аутентификацию**
-   ```python
-   from fastapi.security import HTTPBearer
-   ```
+# JWT
+JWT_SECRET_KEY=your-secret-key
 
-4. **WebSocket для real-time обновлений**
-   ```python
-   from fastapi import WebSocket
-   ```
+# Email
+SC_EMAIL_ENABLED=false
+SC_SMTP_SERVER=smtp.gmail.com
+SC_SMTP_PORT=587
 
----
-
-## 🤝 Содействие
-
-Мы приветствуем вклады! Как начать:
-
-1. **Fork** репозиторий
-2. **Create** новую ветку: `git checkout -b feature/amazing-feature`
-3. **Commit** ваши изменения: `git commit -m 'Add amazing feature'`
-4. **Push** в ветку: `git push origin feature/amazing-feature`
-5. **Open** Pull Request
-
-### Коммит сообщения
-
-Используйте формат:
-```
-[type]: описание
-
-- [feat] для новых функций
-- [fix] для исправлений
-- [docs] для документации
-- [refactor] для рефакторинга
-```
-
-Пример:
-```
-[feat]: добавить новую сцену с боевой системой
+# Redis (опционально)
+SC_CACHE_ENABLED=false
+SC_CACHE_TYPE=memory
 ```
 
 ---
 
-## 📝 Лицензия
+## 👨‍💻 Автор
 
-Этот проект лицензирован под **MIT License** — см. файл [LICENSE](LICENSE) для деталей.
+**QuadDarv1ne** (Dupley Maxim Igorevich)
 
-```
+---
+
+## 📄 Лицензия
+
 MIT License
 
-Copyright (c) 2024 StarCourier Web Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software...
-```
-
 ---
 
-## 👥 Авторы
+## 🙏 Благодарности
 
-- **QuadDarv1ne** — Создатель проекта
-- **Contributors** — Спасибо всем, кто помогает!
-
----
-
-## 📧 Контакты и поддержка
-
-- 🐛 **Баги и ошибки**: [GitHub Issues](https://github.com/QuadDarv1ne/star-courier-web/issues)
-- 💬 **Обсуждения**: [GitHub Discussions](https://github.com/QuadDarv1ne/star-courier-web/discussions)
-- 📖 **Документация**: [Полная документация](./docs/)
-
----
-
-## 🎯 Дорожная карта
-
-- [x] Базовая архитектура Backend/Frontend
-- [x] Интерактивные сцены
-- [x] Система статистики
-- [x] Система отношений
-- [ ] Система достижений
-- [ ] Сохранение прогресса в БД
-- [ ] Мультиплеер режим
-- [ ] Мобильное приложение
-- [ ] Звуковое сопровождение
-- [ ] Переводы на другие языки
-
----
-
-## 🌟 Спасибо за интерес
-
-Если вам нравится проект, пожалуйста:
-- ⭐ **Star** репозиторий
-- 🍴 **Fork** для своих улучшений
-- 📢 **Поделитесь** с друзьями
-
-**Удачи в космическом путешествии ✨**
+- FastAPI за отличный фреймворк
+- Vue.js за реактивный frontend
+- Всем контрибьюторам
