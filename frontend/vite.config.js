@@ -1,6 +1,5 @@
 /**
- * Vite Configuration for StarCourier Web
- * Build configuration for Vue.js frontend
+ * Vite Configuration for StarCourier Web - FIXED
  */
 
 import { defineConfig } from 'vite'
@@ -8,10 +7,6 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
 export default defineConfig({
-  // ============================================================================
-  // PLUGINS
-  // ============================================================================
-
   plugins: [
     vue({
       template: {
@@ -22,10 +17,6 @@ export default defineConfig({
     })
   ],
 
-  // ============================================================================
-  // RESOLVE
-  // ============================================================================
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -34,25 +25,17 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
 
-  // ============================================================================
-  // DEV SERVER
-  // ============================================================================
-
   server: {
     port: 5173,
     host: 'localhost',
     open: true,
     cors: true,
-    
-    // HMR Configuration
     hmr: {
       protocol: 'ws',
       host: 'localhost',
       port: 5173,
       overlay: true
     },
-
-    // Proxy API requests to backend
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -63,101 +46,55 @@ export default defineConfig({
     }
   },
 
-  // ============================================================================
-  // BUILD
-  // ============================================================================
-
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     target: 'esnext',
     minify: 'terser',
-    
-    // Rollup options
     rollupOptions: {
       output: {
-        // Chunk file names
         chunkFileNames: 'assets/[name]-[hash].js',
-        // Entry file names
         entryFileNames: 'assets/[name]-[hash].js',
-        // Asset file names
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
-          
           if (/png|jpe?g|gif|tiff|bmp|ico/i.test(ext)) {
-            return `assets/images/[name]-[hash][extname]`
+            return 'assets/images/[name]-[hash][extname]'
           } else if (/woff|woff2|eot|ttf|otf/i.test(ext)) {
-            return `assets/fonts/[name]-[hash][extname]`
+            return 'assets/fonts/[name]-[hash][extname]'
           } else if (ext === 'css') {
-            return `assets/css/[name]-[hash][extname]`
+            return 'assets/css/[name]-[hash][extname]'
           }
-          
-          return `assets/[name]-[hash][extname]`
+          return 'assets/[name]-[hash][extname]'
         },
-        
-        // Manual chunks for better code splitting
         manualChunks: {
-          // Vendor chunks
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'utils-vendor': ['axios'],
-          // UI components that are used together
-          'game-components': [
-            './src/components/AchievementNotification.vue',
-            './src/components/AchievementsList.vue',
-            './src/components/SaveManager.vue'
-          ]
+          'utils-vendor': ['axios']
         }
       }
     },
-
-    // CSS code split
     cssCodeSplit: true,
-
-    // Source maps
-    sourcemap: false, // Set to true for development
-
-    // Optimization
+    sourcemap: false,
     commonjsOptions: {
       include: [/node_modules/],
       sourceMap: false
     },
-    
-    // Enable brotli compression
     brotliSize: true,
-    
-    // Chunk size warning limit
     chunkSizeWarningLimit: 1000
   },
-
-  // ============================================================================
-  // ENVIRONMENT VARIABLES
-  // ============================================================================
 
   define: {
     __APP_VERSION__: JSON.stringify('1.0.0'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
   },
 
-  // ============================================================================
-  // CSS OPTIONS
-  // ============================================================================
-
   css: {
     preprocessorOptions: {
       scss: {
         additionalData: `
-          $primary: #fbbf24;
-          $secondary: #ea580c;
-          $dark: #0f172a;
-        `
       }
     }
   },
-
-  // ============================================================================
-  // PREVIEW (for testing production build locally)
-  // ============================================================================
 
   preview: {
     port: 4173,

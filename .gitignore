@@ -408,3 +408,16 @@ temp/
 #
 # Просмотреть какие файлы игнорируются:
 # git check-ignore -v *
+
+# Critical - never commit these
+backend/app/.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
