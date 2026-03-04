@@ -891,10 +891,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # только разрешенные домены
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Content-Type", "Authorization"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 # Add GZip compression middleware
