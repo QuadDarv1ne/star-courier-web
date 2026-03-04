@@ -88,13 +88,7 @@ export default defineConfig({
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
   },
 
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: ``
-      }
-    }
-  },
+
 
   preview: {
     port: 4173,
