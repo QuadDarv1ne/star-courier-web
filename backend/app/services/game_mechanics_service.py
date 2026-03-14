@@ -374,17 +374,23 @@ class GameMechanicsManager:
         path = choice_data.get("path")
         progress = choice_data.get("progress", 10)
         choice_id = choice_data.get("choice_id", "")
-        
+
         # Если путь ещё не выбран, это влияет на выбор
         if not self.path_progress.path and path:
+            # Устанавливаем путь
+            path_enum = PathType(path) if isinstance(path, str) else path
+            self.path_progress.path = path_enum
             self.path_progress.add_progress(progress * 2, choice_id)  # Удвоенный прогресс для первого выбора
-        elif self.path_progress.path and self.path_progress.path.value == path:
-            self.path_progress.add_progress(progress, choice_id)
-        
+        elif self.path_progress.path:
+            # Сравниваем с учётом Enum
+            path_value = path.value if hasattr(path, 'value') else path
+            if self.path_progress.path.value == path_value:
+                self.path_progress.add_progress(progress, choice_id)
+
         # Проверка на разблокировку Treaty финала
         if self.path_progress.progress >= 50:
             self.ending_system.unlock_ending(EndingType.TREATY)
-        
+
         return {
             "path": self.path_progress.path.value if self.path_progress.path else None,
             "progress": self.path_progress.progress,
