@@ -1,0 +1,546 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "description": "Квесты Star Courier (главы 6-18)",
+    "total_quests": 45
+  },
+
+  "q6_01": {
+    "id": "q6_01",
+    "name": "Прибытие на Орбис-9",
+    "description": "Доставить артефакт на станцию Орбис-9 и встретиться с профессором Волковым.",
+    "chapter": 6,
+    "type": "main",
+    "objectives": [
+      "Прибыть на станцию Орбис-9",
+      "Встретиться с директором станции",
+      "Передать артефакт на исследование"
+    ],
+    "rewards": {
+      "credits": 1000,
+      "reputation": {"station": 20}
+    },
+    "unlocks": ["q6_02", "q6_03"]
+  },
+
+  "q6_02": {
+    "id": "q6_02",
+    "name": "Тайна проекта «Эхо»",
+    "description": "Расследовать секретный проект станции, связанный с артефактами.",
+    "chapter": 6,
+    "type": "main",
+    "objectives": [
+      "Обнаружить сектор Д-7",
+      "Получить данные о проекте «Эхо»",
+      "Узнать правду о экспериментах"
+    ],
+    "rewards": {
+      "knowledge": 50,
+      "evidence": "echo_project_files"
+    },
+    "requires": ["q6_01"]
+  },
+
+  "q6_03": {
+    "id": "q6_03",
+    "name": "Первый контакт с Орденом",
+    "description": "Встретиться с представителем Ордена Наблюдателей на станции.",
+    "chapter": 6,
+    "type": "main",
+    "npc": "zara",
+    "objectives": [
+      "Найти контактного лицо Ордена",
+      "Получить информацию о Хранителях",
+      "Узнать об аномалиях"
+    ],
+    "rewards": {
+      "psychic": 10,
+      "ancient_knowledge": true
+    },
+    "requires": ["q6_01"]
+  },
+
+  "q7_01": {
+    "id": "q7_01",
+    "name": "Предатель на борту",
+    "description": "Выявить шпиона, передающего информацию пиратам.",
+    "chapter": 7,
+    "type": "main",
+    "objectives": [
+      "Обнаружить зашифрованный канал",
+      "Выявить предателя",
+      "Принять решение о наказании"
+    ],
+    "rewards": {
+      "crew_loyalty": 20,
+      "intelligence": "pirate_base_coords"
+    },
+    "requires": ["q6_02"]
+  },
+
+  "q7_02": {
+    "id": "q7_02",
+    "name": "Спасение сестры",
+    "description": "Помочь Екатерине спасти её сестру Анну из плена пиратов.",
+    "chapter": 7,
+    "type": "side",
+    "npc": "ekaterina",
+    "objectives": [
+      "Получить координаты базы пиратов",
+      "Разработать план спасения",
+      "Вызвать Анну"
+    ],
+    "rewards": {
+      "ekaterina_relationship": 30,
+      "loyal_hacker": true
+    },
+    "requires": ["q7_01"]
+  },
+
+  "q8_01": {
+    "id": "q8_01",
+    "name": "Рейд на пиратскую базу",
+    "description": "Провести операцию по нейтрализации пиратской угрозы.",
+    "chapter": 8,
+    "type": "main",
+    "objectives": [
+      "Подготовить команду к рейду",
+      "Проникнуть на базу",
+      "Устранить лидера пиратов"
+    ],
+    "rewards": {
+      "credits": 5000,
+      "reputation": {"alliance": 30},
+      "loot": "pirate_treasury"
+    },
+    "requires": ["q7_01", "q7_02"]
+  },
+
+  "q9_01": {
+    "id": "q9_01",
+    "name": "Поиск древнего ключа",
+    "description": "Найти один из семи ключей Хранителей на заброшенной планете.",
+    "chapter": 9,
+    "type": "main",
+    "objectives": [
+      "Получить координаты планеты",
+      "Исследовать руины",
+      "Активировать ключ"
+    ],
+    "rewards": {
+      "ancient_key": 1,
+      "resonance_unlock": true
+    },
+    "requires": ["q8_01"]
+  },
+
+  "q10_01": {
+    "id": "q10_01",
+    "name": "Контакт с Эхом",
+    "description": "Установить первый контакт с древним ИИ Хранителей.",
+    "chapter": 10,
+    "type": "main",
+    "npc": "echo",
+    "objectives": [
+      "Найти источник сигнала",
+      "Активировать терминал Хранителей",
+      "Получить информацию о Сущности"
+    ],
+    "rewards": {
+      "knowledge": 100,
+      "echo_alliance": true,
+      "coordinates": "zone_silence"
+    },
+    "requires": ["q9_01"]
+  },
+
+  "q11_01": {
+    "id": "q11_01",
+    "name": "Пробуждение Эха",
+    "description": "Кристалл Хранителей начинает резонировать. Узнать, что хочет сообщить Эхо.",
+    "chapter": 11,
+    "type": "main",
+    "npc": "echo",
+    "objectives": [
+      "Активировать кристалл",
+      "Выслушать послание Эха",
+      "Получить координаты Координаты Нуля"
+    ],
+    "rewards": {
+      "knowledge": 150,
+      "quest_progress": "main_story",
+      "coordinates": "zone_silence"
+    },
+    "requires": ["q10_01"]
+  },
+
+  "q11_02": {
+    "id": "q11_02",
+    "name": "Исследование аномалий",
+    "description": "Изучить аномальные зоны для понимания природы Сущности.",
+    "chapter": 11,
+    "type": "side",
+    "objectives": [
+      "Посетить 3 аномальные зоны",
+      "Собрать данные об аномалиях",
+      "Создать карту аномалий"
+    ],
+    "rewards": {
+      "anomaly_maps": true,
+      "resonance_exp": 50
+    },
+    "requires": ["q11_01"]
+  },
+
+  "q12_01": {
+    "id": "q12_01",
+    "name": "Станция Горизонт",
+    "description": "Исследовать заброшенную станцию Веры для получения чертежей детекторов аномалий.",
+    "chapter": 12,
+    "type": "main",
+    "npc": "vera",
+    "objectives": [
+      "Найти станцию Горизонт",
+      "Проникнуть в лабораторию",
+      "Получить чертежи детекторов"
+    ],
+    "rewards": {
+      "blueprints": "anomaly_detector",
+      "vera_alliance": true,
+      "anomaly_containment_unlock": true
+    },
+    "requires": ["q11_01"]
+  },
+
+  "q12_02": {
+    "id": "q12_02",
+    "name": "Сбор образцов Сущности",
+    "description": "Собрать останки порождений Тьмы для исследований.",
+    "chapter": 12,
+    "type": "side",
+    "objectives": [
+      "Найти поле боя с порождениями",
+      "Собрать 5 образцов",
+      "Доставить в лабораторию"
+    ],
+    "rewards": {
+      "entity_samples": 5,
+      "alchemy_ingredients": true
+    },
+    "requires": ["q12_01"]
+  },
+
+  "q13_01": {
+    "id": "q13_01",
+    "name": "Выбор Пути",
+    "description": "Выбрать одну из трёх фракций для поддержки в борьбе с Сущностью.",
+    "chapter": 13,
+    "type": "main",
+    "choices": ["alliance", "observer", "independence"],
+    "objectives": [
+      "Выслушать предложения трёх фракций",
+      "Оценить преимущества каждого пути",
+      "Сделать окончательный выбор"
+    ],
+    "rewards": {
+      "path_unlocked": true,
+      "path_bonus": "depends_on_choice"
+    },
+    "requires": ["q12_01"]
+  },
+
+  "q13_alliance": {
+    "id": "q13_alliance",
+    "name": "Путь Альянса",
+    "description": "Получить поддержку флота Объединённых Миров.",
+    "chapter": 13,
+    "type": "path",
+    "path": "alliance",
+    "objectives": [
+      "Встретиться с командиром Ридом",
+      "Получить коды доступа к флоту",
+      "Интегрироваться в оперативную группу"
+    ],
+    "rewards": {
+      "fleet_access": true,
+      "credits": 5000,
+      "equipment_discount": 40
+    },
+    "requires": ["q13_01"]
+  },
+
+  "q13_observer": {
+    "id": "q13_observer",
+    "name": "Путь Наблюдателя",
+    "description": "Получить древние знания Ордена Наблюдателей.",
+    "chapter": 13,
+    "type": "path",
+    "path": "observer",
+    "npc": "zara",
+    "objectives": [
+      "Пройти ритуал посвящения",
+      "Получить доступ к архивам",
+      "Начать обучение Резонансу"
+    ],
+    "rewards": {
+      "psychic_boost": 20,
+      "ancient_knowledge": true,
+      "resonance_level": 2
+    },
+    "requires": ["q13_01"]
+  },
+
+  "q13_independence": {
+    "id": "q13_independence",
+    "name": "Путь Независимости",
+    "description": "Получить поддержку сети независимых агентов.",
+    "chapter": 13,
+    "type": "path",
+    "path": "independence",
+    "npc": "volkov",
+    "objectives": [
+      "Встретиться с Волковым",
+      "Получить зашифрованный коммуникатор",
+      "Активировать сеть контактов"
+    ],
+    "rewards": {
+      "network_access": true,
+      "smuggler_routes": true,
+      "mercenary_discount": 50
+    },
+    "requires": ["q13_01"]
+  },
+
+  "q14_01": {
+    "id": "q14_01",
+    "name": "Предвидение",
+    "description": "Развить способность видеть возможные исходы событий.",
+    "chapter": 14,
+    "type": "ability",
+    "branch": "psychic",
+    "level_required": 70,
+    "objectives": [
+      "Пройти медитацию с Зарой",
+      "Пережить видение будущего",
+      "Интерпретировать знаки"
+    ],
+    "rewards": {
+      "ability_unlock": "future_glimpse",
+      "psychic": 10
+    },
+    "requires": ["q13_observer"]
+  },
+
+  "q14_02": {
+    "id": "q14_02",
+    "name": "Координация флота",
+    "description": "Получить доступ к системе координации флота Альянса.",
+    "chapter": 14,
+    "type": "path",
+    "path": "alliance",
+    "objectives": [
+      "Пройти обучение тактике флота",
+      "Получить командный интерфейс",
+      "Участвовать в учениях"
+    ],
+    "rewards": {
+      "ability_unlock": "fleet_coordination",
+      "combat_advantage": 30
+    },
+    "requires": ["q13_alliance"]
+  },
+
+  "q15_01": {
+    "id": "q15_01",
+    "name": "Подготовка к финалу",
+    "description": "Собрать ресурсы и союзников для финальной битвы.",
+    "chapter": 15,
+    "type": "main",
+    "objectives": [
+      "Собрать припасы",
+      "Мобилизовать союзников",
+      "Разработать стратегию"
+    ],
+    "rewards": {
+      "supplies": 100,
+      "allies_morale": 50
+    },
+    "requires": ["q13_01"]
+  },
+
+  "q16_01": {
+    "id": "q16_01",
+    "name": "Вход в Зону Тишины",
+    "description": "Проникнуть в аномальную зону, где находится Сущность.",
+    "chapter": 16,
+    "type": "main",
+    "objectives": [
+      "Подготовить корабль к аномалиям",
+      "Пройти через периметр Зоны",
+      "Установить контакт с Сущностью"
+    ],
+    "rewards": {
+      "entity_contact": true,
+      "resonance_exp": 100
+    },
+    "requires": ["q15_01"]
+  },
+
+  "q16_02": {
+    "id": "q16_02",
+    "name": "Ментальный щит",
+    "description": "Создать защиту от ментального воздействия Сущности.",
+    "chapter": 16,
+    "type": "ability",
+    "branch": "alchemy",
+    "level_required": 70,
+    "objectives": [
+      "Собрать ингредиенты",
+      "Синтезировать сыворотку",
+      "Применить на команду"
+    ],
+    "rewards": {
+      "ability_unlock": "mental_shield_serum",
+      "team_protection": true
+    },
+    "requires": ["q16_01"]
+  },
+
+  "q17_01": {
+    "id": "q17_01",
+    "name": "Встреча со Стражем",
+    "description": "Встретиться с последним выжившим древней цивилизации.",
+    "chapter": 17,
+    "type": "main",
+    "npc": "guardian",
+    "objectives": [
+      "Найти покои Стража",
+      "Выслушать его предложение",
+      "Получить информацию о финальном выборе"
+    ],
+    "rewards": {
+      "final_choice_unlocked": true,
+      "knowledge": 200
+    },
+    "requires": ["q16_01"]
+  },
+
+  "q17_02": {
+    "id": "q17_02",
+    "name": "Восприятие Реальности",
+    "description": "Развить способность видеть истинную природу Сущности.",
+    "chapter": 17,
+    "type": "ability",
+    "branch": "psychic",
+    "level_required": 90,
+    "objectives": [
+      "Пройти ритуал пробуждения",
+      "Пережить трансцендентный опыт",
+      "Увидеть истинную форму Сущности"
+    ],
+    "rewards": {
+      "ability_unlock": "reality_perception",
+      "merge_ending_unlock": true
+    },
+    "requires": ["q17_01"]
+  },
+
+  "q17_03": {
+    "id": "q17_03",
+    "name": "Формула Трансценденции",
+    "description": "Создать легендарный препарат для финала Слияния.",
+    "chapter": 17,
+    "type": "ability",
+    "branch": "alchemy",
+    "level_required": 100,
+    "objectives": [
+      "Найти кристалл времени",
+      "Получить ядро Сущности",
+      "Синтезировать формулу"
+    ],
+    "rewards": {
+      "ability_unlock": "transcendence_formula",
+      "merge_ending_available": true
+    },
+    "requires": ["q17_02", "q12_02"]
+  },
+
+  "q18_01": {
+    "id": "q18_01",
+    "name": "Финальный выбор",
+    "description": "Сделать выбор, определяющий судьбу галактики.",
+    "chapter": 18,
+    "type": "main",
+    "ending_quest": true,
+    "choices": ["exile", "treaty", "merge"],
+    "objectives": [
+      "Достичь ядра станции",
+      "Оценить доступные варианты",
+      "Сделать окончательный выбор"
+    ],
+    "rewards": {
+      "ending": "depends_on_choice",
+      "game_complete": true
+    },
+    "requires": ["q17_01"]
+  },
+
+  "q18_exile": {
+    "id": "q18_exile",
+    "name": "Путь Изгнания",
+    "description": "Уничтожить якорь Сущности и изгнать её из реальности.",
+    "chapter": 18,
+    "type": "ending",
+    "ending": "exile",
+    "objectives": [
+      "Активировать протокол уничтожения",
+      "Победить в финальной битве",
+      "Принести жертву"
+    ],
+    "rewards": {
+      "ending_achieved": "exile",
+      "galaxy_saved": true
+    },
+    "requires": ["q18_01"]
+  },
+
+  "q18_treaty": {
+    "id": "q18_treaty",
+    "name": "Путь Договора",
+    "description": "Перенастроить станцию для соглашения с Сущностью.",
+    "chapter": 18,
+    "type": "ending",
+    "ending": "treaty",
+    "requirement": "psychic_70_or_empathy_80",
+    "objectives": [
+      "Перенастроить модули станции",
+      "Установить ментальную связь",
+      "Заключить договор"
+    ],
+    "rewards": {
+      "ending_achieved": "treaty",
+      "guardian_role": true
+    },
+    "requires": ["q18_01"]
+  },
+
+  "q18_merge": {
+    "id": "q18_merge",
+    "name": "Путь Слияния",
+    "description": "Интегрировать Сущность в собственное сознание.",
+    "chapter": 18,
+    "type": "ending",
+    "ending": "merge",
+    "requirement": "psychic_90_and_resonance_4",
+    "objectives": [
+      "Подготовить сознание",
+      "Принять Сущность",
+      "Трансцендировать"
+    ],
+    "rewards": {
+      "ending_achieved": "merge",
+      "transcendence": true
+    },
+    "requires": ["q18_01", "q17_03"]
+  }
+}

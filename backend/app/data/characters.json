@@ -1,11 +1,43 @@
 {
+  "metadata": {
+    "version": "3.0",
+    "description": "Персонажи Star Courier - полный список (26 персонажей) с механиками глав 11-18",
+    "last_updated": "2026",
+    "mechanics": {
+      "resonance": "Система Резонанса (уровни 1-4)",
+      "paths": "Система Путей (Альянс/Наблюдатель/Независимость)",
+      "endings": "Система финалов (Изгнание/Договор/Слияние)",
+      "mental_state": "Система ментального состояния"
+    }
+  },
+
+  "player_template": {
+    "_comment": "Шаблон игрока для новых механик",
+    "resonance_level": 1,
+    "resonance_experience": 0,
+    "mental_health": 100,
+    "entity_influence": 0,
+    "corruption_risk": 0,
+    "path": null,
+    "path_progress": {
+      "alliance": 0,
+      "observer": 0,
+      "independence": 0
+    },
+    "ending_available": ["exile"],
+    "merge_ending_unlocked": false,
+    "treaty_ending_unlocked": false
+  },
+
   "sara_nova": {
     "name": "Сара Нова",
     "role": "Главный научный офицер",
     "description": "Холодная, расчётливая, но с добрым сердцем. Эксперт по древним технологиям и артефактам.",
     "initial_relationship": 50,
     "traits": ["аналитический", "сдержанный", "преданный науке"],
-    "avatar": "👩‍🔬"
+    "avatar": "👩‍🔬",
+    "chapter_introduction": 1,
+    "resonance_bonus": 5
   },
   "grisha_romanov": {
     "name": "Гриша Романов",
@@ -13,7 +45,9 @@
     "description": "Верный, опытный, готов защищать команду до последнего. Бывший военный спецназа.",
     "initial_relationship": 60,
     "traits": ["храбрый", "тактичный", "надёжный"],
-    "avatar": "🎖️"
+    "avatar": "🎖️",
+    "chapter_introduction": 1,
+    "combat_bonus": 10
   },
   "li_zheng": {
     "name": "Ли Чжэнь",
@@ -21,7 +55,10 @@
     "description": "Загадочная, хранительница тайн. Последняя из ордена Хранителей древних знаний.",
     "initial_relationship": 45,
     "traits": ["мистический", "скрытный", "мудрый"],
-    "avatar": "🧭"
+    "avatar": "🧭",
+    "chapter_introduction": 1,
+    "psychic_bonus": 10,
+    "path_association": "observer"
   },
   "commander_kane": {
     "name": "Командир Кейн",
@@ -46,5 +83,217 @@
     "initial_relationship": 100,
     "traits": ["лидер", "решительный", "ответственный"],
     "avatar": "🚀"
+  },
+
+  "mia": {
+    "name": "Мия",
+    "role": "Тактик экипажа",
+    "description": "Бывший офицер спецназа Альянса. Специалист по тактике и боевым операциям. Романтическая линия доступна.",
+    "initial_relationship": 50,
+    "traits": ["тактик", "решительная", "преданная"],
+    "avatar": "👩‍✈️",
+    "romance_available": true,
+    "chapter_introduction": 1
+  },
+  "maria": {
+    "name": "Мария",
+    "role": "Медик экипажа",
+    "description": "Опытный врач с эмпатией. Способна лечить не только раны, но и душевные травмы. Романтическая линия доступна.",
+    "initial_relationship": 55,
+    "traits": ["эмпатичная", "заботливая", "умная"],
+    "avatar": "👩‍⚕️",
+    "romance_available": true,
+    "chapter_introduction": 1
+  },
+  "anna": {
+    "name": "Анна",
+    "role": "Навигатор",
+    "description": "Талантливый навигатор с интуитивным чувством пространства. Романтическая линия доступна.",
+    "initial_relationship": 45,
+    "traits": ["интуитивная", "скромная", "талантливая"],
+    "avatar": "🧭",
+    "romance_available": true,
+    "chapter_introduction": 1
+  },
+  "sergey": {
+    "name": "Сергей",
+    "role": "Инженер",
+    "description": "Гениальный инженер, способный починить что угодно. Предан кораблю и команде.",
+    "initial_relationship": 50,
+    "traits": ["технический", "преданный", "практичный"],
+    "avatar": "👨‍🔧",
+    "chapter_introduction": 1
+  },
+  "dmitry": {
+    "name": "Дмитрий",
+    "role": "Пилот",
+    "description": "Опытный пилот с рефлексами пилота-аса. Способен управлять любым кораблём.",
+    "initial_relationship": 50,
+    "traits": ["ловкий", "смелый", "надёжный"],
+    "avatar": "👨‍🚀",
+    "chapter_introduction": 1
+  },
+
+  "veronica": {
+    "name": "Вероника",
+    "role": "Информатор",
+    "description": "Связная в преступном мире. Обладает сетью контактов. Романтическая линия доступна.",
+    "initial_relationship": 30,
+    "traits": ["хитрая", "информированная", "независимая"],
+    "avatar": "🕵️‍♀️",
+    "romance_available": true,
+    "path_association": "independence",
+    "chapter_introduction": 6
+  },
+  "zara": {
+    "name": "Зара",
+    "role": "Рыцарь Ордена Наблюдателей",
+    "description": "Последняя из рыцарей древнего Ордена. Хранитель знаний о Сущности. Романтическая линия доступна.",
+    "initial_relationship": 40,
+    "traits": ["мистическая", "мудрая", "загадочная"],
+    "avatar": "🔮",
+    "romance_available": true,
+    "path_association": "observer",
+    "chapter_introduction": 6
+  },
+  "kira": {
+    "name": "Кира",
+    "role": "Курьер",
+    "description": "Независимый курьер с сетью контактов на границах. Романтическая линия доступна.",
+    "initial_relationship": 35,
+    "traits": ["быстрая", "независимая", "находчивая"],
+    "avatar": "📦",
+    "romance_available": true,
+    "path_association": "independence",
+    "chapter_introduction": 8
+  },
+  "rainer": {
+    "name": "Райнер",
+    "role": "Наёмник",
+    "description": "Опытный наёмник с тёмным прошлым. Нанят для особых миссий.",
+    "initial_relationship": 20,
+    "traits": ["опасный", "молчаливый", "эффективный"],
+    "avatar": "💀",
+    "chapter_introduction": 9
+  },
+  "volkov": {
+    "name": "Александр Волков",
+    "role": "Капитан, лидер независимых",
+    "description": "Профессор, директор станции Орбис-9. Лидер движения независимых миров.",
+    "initial_relationship": 30,
+    "traits": ["умный", "загадочный", "влиятельный"],
+    "avatar": "👨‍🔬",
+    "path_association": "independence",
+    "chapter_introduction": 6
+  },
+  "marcus_ride": {
+    "name": "Маркус Рид",
+    "role": "Командир Альянса",
+    "description": "Высокопоставленный офицер флота Объединённых Миров.",
+    "initial_relationship": 35,
+    "traits": ["авторитетный", "стратег", "официальный"],
+    "avatar": "🎖️",
+    "path_association": "alliance",
+    "chapter_introduction": 10
+  },
+  "vera": {
+    "name": "Вера",
+    "role": "Учёный",
+    "description": "Бывший исследователь проекта «Эхо». Сбежала после опасных экспериментов.",
+    "initial_relationship": 25,
+    "traits": ["умная", "напуганная", "раскаивающаяся"],
+    "avatar": "👩‍🔬",
+    "chapter_introduction": 12
+  },
+  "echo": {
+    "name": "Эхо",
+    "role": "Древний ИИ",
+    "description": "Искусственный интеллект, оставшийся от цивилизации Хранителей. Хранит знания о Сущности.",
+    "initial_relationship": 50,
+    "traits": ["древний", "мудрый", "загадочный"],
+    "avatar": "👻",
+    "chapter_introduction": 11
+  },
+  "guardian": {
+    "name": "Страж Ядра",
+    "role": "Последний выживший древней цивилизации",
+    "description": "Древнее существо, охраняющее ядро станции Сущности. Предлагает финальный выбор.",
+    "initial_relationship": 50,
+    "traits": ["древний", "нейтральный", "мудрый"],
+    "avatar": "🗿",
+    "chapter_introduction": 17
+  },
+  "entity": {
+    "name": "Сущность",
+    "role": "Древняя угроза",
+    "description": "Космическая сущность, поглощающая миры. Не зло — эволюция.",
+    "initial_relationship": 0,
+    "traits": ["древняя", "неизбежная", "трансцендентная"],
+    "avatar": "🌑",
+    "chapter_introduction": 16
+  },
+  "selena_ro": {
+    "name": "Селена Ро",
+    "role": "Пиратский лидер",
+    "description": "Опасная пиратка, контролирующая сектор пиратов. Похитила сестру Екатерины.",
+    "initial_relationship": -50,
+    "traits": ["коварная", "жестокая", "умная"],
+    "avatar": "🏴‍☠️",
+    "chapter_introduction": 7
+  },
+  "ekaterina": {
+    "name": "Екатерина",
+    "role": "Хакер",
+    "description": "Талантливый хакер. Была вынуждена сотрудничать с пиратами из-за похищенной сестры.",
+    "initial_relationship": 30,
+    "traits": ["техническая", "преданная семье", "искупляющая"],
+    "avatar": "💻",
+    "chapter_introduction": 5
+  },
+  "nadezhda": {
+    "name": "Надежда",
+    "role": "Офицер безопасности",
+    "description": "Специалист по безопасности с параноидальными наклонностями.",
+    "initial_relationship": 40,
+    "traits": ["бдительная", "строгая", "преданная"],
+    "avatar": "👮‍♀️",
+    "chapter_introduction": 3
+  },
+  "irina_lebedeva": {
+    "name": "Ирина Лебедева",
+    "role": "Учёный-исследователь",
+    "description": "Исследователь аномалий. Балансирует между научным интересом и осторожностью.",
+    "initial_relationship": 45,
+    "traits": ["любознательная", "осторожная", "умная"],
+    "avatar": "🔬",
+    "chapter_introduction": 6
+  },
+  "alia_naar": {
+    "name": "Алия Наар",
+    "role": "Пилот-навигатор",
+    "description": "Опытный пилот с чувствительностью к аномалиям. Возможна романтическая линия.",
+    "initial_relationship": 40,
+    "traits": ["чувствительная", "лояльная", "интуитивная"],
+    "avatar": "🚀",
+    "romance_available": true,
+    "chapter_introduction": 4
+  },
+  "athena": {
+    "name": "Афина",
+    "role": "Корабельный ИИ",
+    "description": "Искусственный интеллект корабля «Элея». Анализирует данные и помогает в навигации.",
+    "initial_relationship": 60,
+    "traits": ["логичная", "преданная", "аналитическая"],
+    "avatar": "🤖",
+    "chapter_introduction": 1
+  },
+  "rina": {
+    "name": "Рина",
+    "role": "Специалист по системам",
+    "description": "Инженер по системам корабля. Способна взламывать замки и обходить защиту.",
+    "initial_relationship": 45,
+    "traits": ["техническая", "находчивая", "дружелюбная"],
+    "avatar": "🔧",
+    "chapter_introduction": 2
   }
 }

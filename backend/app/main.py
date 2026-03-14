@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from app.config import settings
 
 # Импорт роутеров
-from app.api import game, characters, scenes, websocket, auth, leaderboard, achievements, analytics, admin, data
+from app.api import game, characters, scenes, websocket, auth, leaderboard, achievements, analytics, admin, data, abilities, quests, game_mechanics
 
 # Импорт сервисов
 from app.services import data_service
@@ -173,6 +173,9 @@ app.include_router(achievements.router, prefix="/api/achievements", tags=["🎖�
 app.include_router(analytics.router, prefix="/api/analytics", tags=["📊 Аналитика"])
 app.include_router(admin.router, prefix="/api/admin", tags=["👑 Администрирование"])
 app.include_router(data.router, prefix="/api/data", tags=["📦 Данные"])
+app.include_router(abilities.router, prefix="/api/abilities", tags=["⚡ Способности"])
+app.include_router(quests.router, prefix="/api/quests", tags=["📜 Квесты"])
+app.include_router(game_mechanics.router, prefix="/api/game-mechanics", tags=["🎮 Игровые механики"])
 app.include_router(websocket.router, tags=["🔌 WebSocket"])
 
 
