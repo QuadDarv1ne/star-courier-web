@@ -90,7 +90,7 @@ class MentalState:
             "normal": {"description": "Нормальное состояние", "penalties": {}},
             "hallucinations": {"description": "Лёгкие галлюцинации", "penalties": {"psychic": -5}},
             "visions": {"description": "Видения, снижение навыков", "penalties": {"all_skills": -10}},
-            "serious": {"description": "Серiousные нарушения", "penalties": {"all_skills": -20, "merge_risk": True}},
+            "serious": {"description": "Серьёзные нарушения", "penalties": {"all_skills": -20, "merge_risk": True}},
             "critical": {"description": "Потеря контроля", "penalties": {"auto_merge_ending": True}}
         }
         return effects.get(state, effects["normal"])
