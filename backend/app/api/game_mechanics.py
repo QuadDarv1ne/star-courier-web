@@ -5,16 +5,10 @@ API для управления игровыми механиками глав 1
 
 import logging
 from typing import Dict, Any, Optional
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from app.models import ResponseModel, ErrorResponse
-from app.services.game_mechanics_service import (
-    get_game_mechanics_manager,
-    GameMechanicsManager,
-    PathType,
-    EndingType
-)
+from app.services.game_mechanics_service import get_game_mechanics_manager, PathType, EndingType
 
 logger = logging.getLogger('api.game_mechanics')
 
@@ -70,7 +64,7 @@ class PlayerStatsUpdateRequest(BaseModel):
 # ENDPOINTS
 # ============================================================================
 
-@router.get("/state", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.get("/state", tags=["🎮 Игровые механики"])
 async def get_player_state():
     """
     Получить текущее состояние игрока.
@@ -95,7 +89,7 @@ async def get_player_state():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/resonance/gain", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/resonance/gain", tags=["🎮 Игровые механики"])
 async def gain_resonance_experience(request: ResonanceGainRequest):
     """
     Получить опыт Резонанса.
@@ -119,7 +113,7 @@ async def gain_resonance_experience(request: ResonanceGainRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/path/choose", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/path/choose", tags=["🎮 Игровые механики"])
 async def choose_path(request: PathChoiceRequest):
     """
     Выбрать путь развития.
@@ -148,7 +142,7 @@ async def choose_path(request: PathChoiceRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/path/progress", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/path/progress", tags=["🎮 Игровые механики"])
 async def update_path_progress(request: PathProgressRequest):
     """
     Обновить прогресс пути.
@@ -174,7 +168,7 @@ async def update_path_progress(request: PathProgressRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/mental-state/update", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/mental-state/update", tags=["🎮 Игровые механики"])
 async def update_mental_state(request: MentalStateUpdateRequest):
     """
     Обновить ментальное состояние.
@@ -203,7 +197,7 @@ async def update_mental_state(request: MentalStateUpdateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/ending/check", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/ending/check", tags=["🎮 Игровые механики"])
 async def check_ending_availability(request: EndingCheckRequest):
     """
     Проверить доступность финала.
@@ -227,7 +221,7 @@ async def check_ending_availability(request: EndingCheckRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/entity/contact", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/entity/contact", tags=["🎮 Игровые механики"])
 async def entity_contact(request: EntityContactRequest):
     """
     Установить контакт с Сущностью.
@@ -254,7 +248,7 @@ async def entity_contact(request: EntityContactRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/player-stats/update", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/player-stats/update", tags=["🎮 Игровые механики"])
 async def update_player_stats(request: PlayerStatsUpdateRequest):
     """
     Обновить статистику игрока.
@@ -293,7 +287,7 @@ async def update_player_stats(request: PlayerStatsUpdateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resonance/description", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.get("/resonance/description", tags=["🎮 Игровые механики"])
 async def get_resonance_description():
     """
     Получить описание текущего уровня Резонанса.
@@ -316,7 +310,7 @@ async def get_resonance_description():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/path/bonus/{bonus_type}", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.get("/path/bonus/{bonus_type}", tags=["🎮 Игровые механики"])
 async def get_path_bonus(bonus_type: str):
     """
     Получить бонус текущего пути.
@@ -344,7 +338,7 @@ async def get_path_bonus(bonus_type: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/endings", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.get("/endings", tags=["🎮 Игровые механики"])
 async def get_all_endings():
     """
     Получить информацию обо всех финалах.
@@ -366,7 +360,7 @@ async def get_all_endings():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/reset", response_model=ResponseModel, tags=["🎮 Игровые механики"])
+@router.post("/reset", tags=["🎮 Игровые механики"])
 async def reset_mechanics():
     """
     Сбросить все механики (для тестов или новой игры).
