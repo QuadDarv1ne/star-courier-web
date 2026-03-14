@@ -1728,5 +1728,352 @@
         }
       }
     ]
+  },
+
+  "chapter_11_echo_contact": {
+    "id": "scene_ch11_01",
+    "chapter": 11,
+    "title": "Пробуждение Эха",
+    "location": "Координата Нуля",
+    "description": "Кристалл, найденный в предыдущей главе, начинает резонировать. Голос из глубин веков пытается установить контакт.",
+    "image": "💎",
+    "character": "Эхо",
+    "choices": [
+      {
+        "text": "Я — Курьер. Ищу информацию об угрозе, поглощающей миры.",
+        "next": "scene_ch11_02",
+        "stats": {"knowledge": 10}
+      },
+      {
+        "text": "Что ты такое? Почему я слышу тебя?",
+        "next": "scene_ch11_03",
+        "stats": {"psychic": 5}
+      },
+      {
+        "text": "У меня нет времени на загадки. Говори прямо.",
+        "next": "scene_ch11_04",
+        "stats": {"determination": 5}
+      }
+    ]
+  },
+
+  "scene_ch11_02": {
+    "id": "scene_ch11_02",
+    "chapter": 11,
+    "title": "Информация об угрозе",
+    "location": "Координата Нуля",
+    "image": "👻",
+    "character": "Эхо",
+    "choices": [
+      {
+        "text": "Как вы пытались её контролировать?",
+        "next": "scene_ch11_05",
+        "stats": {}
+      },
+      {
+        "text": "Что произошло с твоим миром?",
+        "next": "scene_ch11_06",
+        "stats": {}
+      },
+      {
+        "text": "Как её можно остановить?",
+        "next": "scene_ch11_07",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch11_07": {
+    "id": "scene_ch11_07",
+    "chapter": 11,
+    "title": "Способ остановить",
+    "location": "Координата Нуля",
+    "image": "🌌",
+    "character": "Эхо",
+    "choices": [
+      {
+        "text": "Где находится Координата Нуля?",
+        "next": "scene_ch11_08",
+        "stats": {}
+      },
+      {
+        "text": "Что ты имеешь в виду под «пониманием»?",
+        "next": "scene_ch11_09",
+        "stats": {"psychic": 5}
+      },
+      {
+        "text": "Спасибо за информацию. Я отправлюсь туда.",
+        "next": "scene_ch11_10",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch12_station_approach": {
+    "id": "scene_ch12_01",
+    "chapter": 12,
+    "title": "Станция Горизонт",
+    "location": "Орбита станции Горизонт",
+    "description": "Заброшенная исследовательская станция Веры появляется на экранах.",
+    "image": "🛰️",
+    "character": "Вера",
+    "choices": [
+      {
+        "text": "Почему ты сбежала, Вера?",
+        "next": "scene_ch12_02",
+        "stats": {}
+      },
+      {
+        "text": "Какие опасности нас ждут внутри?",
+        "next": "scene_ch12_03",
+        "stats": {}
+      },
+      {
+        "text": "Приготовиться к высадке. Идём внутрь.",
+        "next": "scene_ch12_04",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch13_path_choice": {
+    "id": "scene_ch13_01",
+    "chapter": 13,
+    "title": "Выбор Пути",
+    "location": "Нейтральная станция «Перекрёсток»",
+    "description": "Представители трёх сил собрались, чтобы предложить свою поддержку в борьбе с Сущностью.",
+    "image": "⚖️",
+    "character": "Рассказчик",
+    "choices": [
+      {
+        "text": "Я выбираю путь Альянса.",
+        "next": "scene_ch13_alliance",
+        "stats": {"path": "alliance", "alliance_reputation": 50}
+      },
+      {
+        "text": "Я выбираю путь Наблюдателя.",
+        "next": "scene_ch13_observer",
+        "stats": {"path": "observer", "observer_reputation": 50}
+      },
+      {
+        "text": "Я выбираю путь Независимости.",
+        "next": "scene_ch13_independence",
+        "stats": {"path": "independence", "independence_reputation": 50}
+      },
+      {
+        "text": "Мне нужно больше времени подумать.",
+        "next": "scene_ch13_delay",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch13_alliance": {
+    "id": "scene_ch13_alliance",
+    "chapter": 13,
+    "title": "Путь Альянса",
+    "location": "Нейтральная станция «Перекрёсток»",
+    "image": "🎖️",
+    "character": "Представитель Альянса",
+    "choices": [
+      {
+        "text": "Принять ресурсы Альянса",
+        "next": "scene_ch14_start",
+        "stats": {"fleet_access": true, "credits": 5000}
+      }
+    ]
+  },
+
+  "scene_ch13_observer": {
+    "id": "scene_ch13_observer",
+    "chapter": 13,
+    "title": "Путь Наблюдателя",
+    "location": "Нейтральная станция «Перекрёсток»",
+    "image": "🔮",
+    "character": "Зара",
+    "choices": [
+      {
+        "text": "Принять знания Ордена",
+        "next": "scene_ch14_start",
+        "stats": {"psychic_boost": 20, "ancient_knowledge": true}
+      }
+    ]
+  },
+
+  "scene_ch13_independence": {
+    "id": "scene_ch13_independence",
+    "chapter": 13,
+    "title": "Путь Независимости",
+    "location": "Нейтральная станция «Перекрёсток»",
+    "image": "🏴",
+    "character": "Волков",
+    "choices": [
+      {
+        "text": "Принять поддержку независимых",
+        "next": "scene_ch14_start",
+        "stats": {"network_access": true, "smuggler_routes": true}
+      }
+    ]
+  },
+
+  "scene_ch16_zone_silence": {
+    "id": "scene_ch16_01",
+    "chapter": 16,
+    "title": "Зона Тишины",
+    "location": "Граница Зоны Тишины",
+    "description": "Корабль входит в аномальную область пространства, где физические законы искажены.",
+    "image": "🌑",
+    "character": "Анна",
+    "choices": [
+      {
+        "text": "[Psychic] Я тоже чувствую её. Попробую установить контроль.",
+        "next": "scene_ch16_psychic_contact",
+        "stats": {},
+        "skill_check": {"psychic": 60}
+      },
+      {
+        "text": "Продолжаем движение. Приготовиться к любым неожиданностям.",
+        "next": "scene_ch16_approach",
+        "stats": {}
+      },
+      {
+        "text": "Нам нужен совет. Собрать всю команду.",
+        "next": "scene_ch16_council",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch16_entity_contact": {
+    "id": "scene_ch16_entity",
+    "chapter": 16,
+    "title": "Контакт с Сущностью",
+    "location": "Зона Тишины",
+    "image": "🌑",
+    "character": "Сущность",
+    "choices": [
+      {
+        "text": "Ты — угроза всему живому. Я остановлю тебя любой ценой.",
+        "next": "scene_ch16_confrontation",
+        "stats": {"determination": 10}
+      },
+      {
+        "text": "Что ты такое на самом деле? Откуда пришла?",
+        "next": "scene_ch16_entity_origin",
+        "stats": {"knowledge": 15}
+      },
+      {
+        "text": "Если я соглашусь, каковы гарантии?",
+        "next": "scene_ch16_negotiation",
+        "stats": {}
+      }
+    ]
+  },
+
+  "scene_ch17_guardian": {
+    "id": "scene_ch17_guardian",
+    "chapter": 17,
+    "title": "Страж Ядра",
+    "location": "Покои Стража",
+    "description": "Древнее существо ожидает вас у входа в ядро станции.",
+    "image": "🗿",
+    "character": "Страж Ядра",
+    "choices": [
+      {
+        "text": "Даже одна спасённая жизнь стоит борьбы. Я выбираю изгнание.",
+        "next": "scene_ch17_exile_path",
+        "stats": {"exile_path": true}
+      },
+      {
+        "text": "Расскажи о возможности договора.",
+        "next": "scene_ch17_treaty_path",
+        "stats": {"treaty_path": true}
+      },
+      {
+        "text": "Возможно, слияние — это не конец, а начало.",
+        "next": "scene_ch17_merge_path",
+        "stats": {"merge_path": true},
+        "skill_check": {"psychic": 90}
+      }
+    ]
+  },
+
+  "scene_ch18_final_choice": {
+    "id": "scene_ch18_final",
+    "chapter": 18,
+    "title": "Финальный выбор",
+    "location": "Ядро станции",
+    "description": "Вы стоите перед якорем Сущности. Судьба галактики в ваших руках.",
+    "image": "⚡",
+    "character": "Сущность",
+    "choices": [
+      {
+        "text": "[Изгнание] Я изгоню тебя из этой реальности.",
+        "next": "ending_exile",
+        "stats": {"ending": "exile"}
+      },
+      {
+        "text": "[Договор] Мы можем сосуществовать. Установим границы.",
+        "next": "ending_treaty",
+        "stats": {"ending": "treaty"}
+      },
+      {
+        "text": "[Слияние] Я принимаю твоё предложение.",
+        "next": "ending_merge",
+        "stats": {"ending": "merge"},
+        "skill_check": {"psychic": 90}
+      }
+    ]
+  },
+
+  "ending_exile": {
+    "id": "ending_exile",
+    "chapter": 18,
+    "title": "Концовка: Изгнание",
+    "location": "Ядро станции",
+    "image": "✨",
+    "character": "Рассказчик",
+    "choices": [
+      {
+        "text": "Завершить игру",
+        "next": "credits",
+        "stats": {"ending_complete": true}
+      }
+    ],
+    "ending_type": "exile"
+  },
+
+  "ending_treaty": {
+    "id": "ending_treaty",
+    "chapter": 18,
+    "title": "Концовка: Договор",
+    "location": "Ядро станции",
+    "image": "🤝",
+    "character": "Рассказчик",
+    "choices": [
+      {
+        "text": "Завершить игру",
+        "next": "credits",
+        "stats": {"ending_complete": true}
+      }
+    ],
+    "ending_type": "treaty"
+  },
+
+  "ending_merge": {
+    "id": "ending_merge",
+    "chapter": 18,
+    "title": "Концовка: Слияние",
+    "location": "Ядро станции",
+    "image": "🌟",
+    "character": "Рассказчик",
+    "choices": [
+      {
+        "text": "Завершить игру",
+        "next": "credits",
+        "stats": {"ending_complete": true}
+      }
+    ],
+    "ending_type": "merge"
   }
 }
