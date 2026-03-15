@@ -3,12 +3,11 @@ StarCourier Web - Custom Validators
 Пользовательские валидаторы для данных
 
 Автор: QuadDarv1ne
-Версия: 2.0.0
+Версия: 2.1.0
 """
 
 import re
-from typing import Optional, List, Any
-from pydantic import field_validator, model_validator, ValidationInfo
+from typing import Optional, List, Any, Tuple
 from datetime import datetime, timedelta
 
 
@@ -18,10 +17,10 @@ from datetime import datetime, timedelta
 
 class PasswordValidator:
     """Валидаторы для паролей"""
-    
-    MIN_LENGTH = 8
-    MAX_LENGTH = 128
-    
+
+    MIN_LENGTH: int = 8
+    MAX_LENGTH: int = 128
+
     @staticmethod
     def validate_password(value: str) -> str:
         """
@@ -92,11 +91,11 @@ class PasswordValidator:
 
 class UsernameValidator:
     """Валидаторы для имён пользователей"""
-    
-    MIN_LENGTH = 3
-    MAX_LENGTH = 50
-    PATTERN = re.compile(r'^[a-zA-Z0-9_]+$')
-    
+
+    MIN_LENGTH: int = 3
+    MAX_LENGTH: int = 50
+    PATTERN: re.Pattern = re.compile(r'^[a-zA-Z0-9_]+$')
+
     @staticmethod
     def validate_username(value: str) -> str:
         """
@@ -137,9 +136,9 @@ class UsernameValidator:
 
 class EmailValidator:
     """Валидаторы для email"""
-    
-    PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-    
+
+    PATTERN: re.Pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+
     @staticmethod
     def validate_email(value: str) -> str:
         """
@@ -283,12 +282,12 @@ class DateTimeValidator:
 
 class PaginationValidator:
     """Валидаторы для пагинации"""
-    
-    MIN_PAGE = 1
-    MAX_PAGE = 10000
-    MIN_PER_PAGE = 1
-    MAX_PER_PAGE = 100
-    
+
+    MIN_PAGE: int = 1
+    MAX_PAGE: int = 10000
+    MIN_PER_PAGE: int = 1
+    MAX_PER_PAGE: int = 100
+
     @staticmethod
     def validate_page(value: int) -> int:
         """Проверка номера страницы"""
