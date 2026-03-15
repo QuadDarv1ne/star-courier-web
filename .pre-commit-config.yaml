@@ -1,0 +1,188 @@
+# Pre-commit configuration for StarCourier Web
+# See https://pre-commit.com for more information
+
+repos:
+  # ============================================================================
+  # GENERAL HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # File checks
+      - id: trailing-whitespace        # Удаление пробелов в конце строк
+      - id: end-of-file-fixer          # Проверка наличия newline в конце файла
+      - id: check-yaml                 # Валидация YAML файлов
+      - id: check-json                 # Валидация JSON файлов
+      - id: check-toml                 # Валидация TOML файлов
+      - id: check-merge-conflict       # Проверка на конфликты слияния
+      - id: check-added-large-files    # Проверка больших файлов
+        args: ['--maxkb=1024']
+      - id: detect-private-key         # Обнаружение приватных ключей
+      - id: detect-aws-credentials     # Обнаружение AWS ключей
+        args: ['--allow-missing-credentials']
+      
+      # Security
+      - id: check-case-conflict        # Проверка конфликтов регистра файлов
+      - id: check-symlinks             # Проверка symlink
+      - id: destroyed-symlinks         # Проверка уничтоженных symlink
+
+  # ============================================================================
+  # PYTHON HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        name: Black (Python formatter)
+        language_version: python3.13
+        args: [--line-length=100, --target-version=py313]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (Python imports sorter)
+        args: ["--profile", "black", "--line-length=100"]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        name: flake8 (Python linter)
+        args: [--max-line-length=100, --extend-ignore=E203, --per-file-ignores=__init__.py:F401]
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+          - flake8-docstrings
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.0
+    hooks:
+      - id: mypy
+        name: mypy (Python type checker)
+        args: [--ignore-missing-imports, --no-strict-optional]
+        additional_dependencies:
+          - types-requests
+          - types-PyJWT
+          - types-bcrypt
+          - pydantic
+          - fastapi
+
+  # ============================================================================
+  # SECURITY HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        name: bandit (Python security linter)
+        args: ["-r", "backend/app", "-ll"]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: detect-secrets (Secrets detector)
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+  # ============================================================================
+  # JAVASCRIPT/VUE HOOKS
+  # ============================================================================
+  
+  - repo: local
+    hooks:
+      - id: npm-lint
+        name: npm lint (Vue.js linter)
+        entry: npm run lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^frontend/.*\.(js|vue)$
+        verbose: true
+
+      - id: npm-format
+        name: npm format (Prettier)
+        entry: npm run format
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^frontend/.*\.(js|vue|json|css|scss)$
+        verbose: true
+
+  # ============================================================================
+  # DOCKER HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        name: hadolint (Dockerfile linter)
+        files: ^backend/Dockerfile$|^frontend/Dockerfile$
+
+  # ============================================================================
+  # COMMIT MESSAGE HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.2.1
+    hooks:
+      - id: commitizen
+        name: commitizen (Commit message linter)
+        stages: [commit-msg]
+
+  # ============================================================================
+  # GIT HOOKS
+  # ============================================================================
+  
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: git-check
+        name: git-check (Git repository validation)
+      - id: script-must-have-extension
+        name: script-must-have-extension
+
+  # ============================================================================
+  # ADDITIONAL OPTIONAL HOOKS
+  # ============================================================================
+  
+  # - repo: https://github.com/PyCQA/autoflake
+  #   rev: v2.3.1
+  #   hooks:
+  #     - id: autoflake
+  #       args: [--remove-all-unused-imports, --remove-unused-variables]
+  
+  # - repo: https://github.com/asottile/pyupgrade
+  #   rev: v3.19.0
+  #   hooks:
+  #     - id: pyupgrade
+  #       args: [--py313-plus]
+  
+  # - repo: https://github.com/sphinx-contrib/sphinx-lint
+  #   rev: v1.0.0
+  #   hooks:
+  #     - id: sphinx-lint
+  #       files: ^docs/
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+default_stages: [pre-commit, pre-push]
+default_language_version:
+  python: python3.13
+  node: system
+
+# Fail fast if any hook fails
+fail_fast: true
+
+# Show diff for failed hooks
+verbose: true
+
+# Color output
+color: true
