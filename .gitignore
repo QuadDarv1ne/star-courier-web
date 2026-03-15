@@ -379,6 +379,38 @@ temp/
 # IDE specific files
 .editorconfig
 
+# Pre-commit hooks
+.secrets.baseline
+.pre-commit-config.yaml
+
+# Coverage reports (detailed)
+coverage/
+.nyc_output/
+
+# Test results
+test-results/
+*.testresult
+*.trx
+
+# Build artifacts
+*.whl
+*.tar.gz
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# Local configuration overrides
+backend/setup.local.cfg
+frontend/.eslintrc.local.json
+frontend/.prettierrc.local
+
+# Development databases
+*.db
+*.sqlite
+*.sqlite3
+!backend/starcourier.db.example
+
 # ========================
 # KEEP THESE TRACKED
 # ========================

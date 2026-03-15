@@ -1,0 +1,66 @@
+# StarCourier Web - Flake8 configuration
+# Линтинг Python кода
+
+[flake8]
+# Максимальная длина строки
+max-line-length = 100
+
+# Игнорируемые ошибки
+# E203 - whitespace before ':' (конфликтует с Black)
+# W503 - line break before binary operator (конфликтует с Black)
+# E501 - line too long (проверяется Black)
+ignore = E203, W503, E501
+
+# Исключения
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    node_modules,
+    migrations,
+    alembic,
+    .mypy_cache,
+    .pytest_cache,
+    build,
+    dist
+
+# Расширения файлов
+filename = *.py,*.pyi
+
+# Дополнительные настройки
+show-source = true
+count = true
+statistics = true
+doctests = true
+per-file-ignores =
+    # Игнорировать F401 (unused import) в __init__.py
+    __init__.py: F401
+    # Игнорировать сложные импорты в main.py
+    app/main.py: F401,F403
+    # Игнорировать длинные строки в тестах
+    tests/*: E501,D103
+    # Игнорировать docstring в миграциях
+    alembic/versions/*: D100,D101,D103
+
+# Плагины
+# flake8-bugbear
+extend-select = B950
+
+# flake8-comprehensions
+extend-ignore = C408
+
+# flake8-docstrings
+docstring-convention = google
+
+# pep8-naming
+classmethod-decorators =
+    classmethod,
+    validator,
+    root_validator
+
+# Максимальная сложность
+max-complexity = 10
+
+# Проверка типов
+type-comments = true

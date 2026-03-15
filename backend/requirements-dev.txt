@@ -1,0 +1,151 @@
+#
+# StarCourier Web - Development Requirements
+# Дополнительные инструменты для разработки и тестирования
+#
+# Установка: pip install -r requirements-dev.txt
+#
+
+# ============================================================================
+# CODE QUALITY
+# ============================================================================
+
+# Linting
+flake8==7.1.1
+flake8-bugbear==24.12.12
+flake8-comprehensions==3.16.0
+flake8-docstrings==1.7.0
+pep8-naming==0.14.1
+
+# Type checking
+mypy==1.14.0
+types-requests==2.32.0.20241016
+types-PyJWT==2.10.0.20241016
+types-bcrypt==4.2.0.20241016
+
+# Formatting
+black==24.10.0
+isort==5.13.2
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+# Already in requirements.txt, duplicating for clarity
+pytest==8.3.3
+pytest-asyncio==0.24.0
+pytest-cov==5.0.0
+
+# Additional testing tools
+pytest-mock==3.14.0
+pytest-xdist==3.6.1
+hypothesis==6.123.0
+
+# HTTP testing
+httpx==0.27.2
+respx==0.21.1
+
+# ============================================================================
+# DEBUGGING
+# ============================================================================
+
+# Debugger
+debugpy==1.8.11
+
+# Profiling
+py-spy==0.4.0
+memory-profiler==0.61.0
+line-profiler==4.2.0
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+
+# API Documentation
+openapi-generator==7.10.0
+
+# Code documentation
+sphinx==8.1.3
+sphinx-rtd-theme==3.0.2
+sphinx-autodoc-typehints==2.5.0
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+
+# Database tools
+sqlite-utils==3.37.1
+
+# PostgreSQL (for production testing)
+# psycopg2-binary==2.9.10
+# asyncpg==0.30.0
+
+# ============================================================================
+# CACHE
+# ============================================================================
+
+# Redis (for production)
+# redis==5.2.0
+# hiredis==3.1.0
+
+# ============================================================================
+# SECURITY
+# ============================================================================
+
+# Security scanning
+bandit==1.8.0
+safety==3.2.14
+
+# Dependency checking
+pip-audit==2.7.3
+pip-licenses==5.0.0
+
+# ============================================================================
+# GIT HOOKS
+# ============================================================================
+
+# Pre-commit hooks
+pre-commit==4.0.1
+commitizen==4.2.1
+
+# ============================================================================
+# UTILITIES
+# ============================================================================
+
+# Environment management
+python-decouple==3.8
+dynaconf==3.2.6
+
+# Logging
+structlog==24.4.0
+python-json-logger==2.0.7
+
+# Monitoring
+sentry-sdk==2.20.0
+
+# ============================================================================
+# RECOMMENDED EXTENSIONS (VS Code)
+# ============================================================================
+#
+# Python (Microsoft)
+# Pylance
+# Black Formatter
+# isort
+# mypy
+# GitLens
+# Docker
+# Vue.volar
+# ESLint
+# Prettier
+#
+# settings.json recommendation:
+# {
+#   "python.formatting.provider": "black",
+#   "python.linting.enabled": true,
+#   "python.linting.flake8Enabled": true,
+#   "python.linting.mypyEnabled": true,
+#   "editor.formatOnSave": true,
+#   "editor.codeActionsOnSave": {
+#     "source.organizeImports": "explicit"
+#   }
+# }
+# ============================================================================
