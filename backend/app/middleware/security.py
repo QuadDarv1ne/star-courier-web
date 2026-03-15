@@ -21,16 +21,16 @@ logger = logging.getLogger(__name__)
 class SecurityMiddleware(BaseHTTPMiddleware):
     """
     Middleware для безопасности
-    
+
     Добавляет:
     - Security заголовки (CSP, XSS Protection, etc.)
     - Защиту от распространённых атак
     - Проверку User-Agent
     - CORS headers (если не используется CORSMiddleware)
     """
-    
+
     # Security headers по умолчанию
-    SECURITY_HEADERS = {
+    SECURITY_HEADERS: dict = {
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "DENY",
         "X-XSS-Protection": "1; mode=block",
@@ -38,9 +38,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
     }
-    
+
     # Content Security Policy
-    CSP_DIRECTIVES = {
+    CSP_DIRECTIVES: dict = {
         "default-src": ["'self'"],
         "script-src": ["'self'", "'unsafe-inline'"],
         "style-src": ["'self'", "'unsafe-inline'"],

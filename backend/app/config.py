@@ -8,7 +8,7 @@ StarCourier Web - Configuration Settings
 3. Значений по умолчанию
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict

@@ -63,15 +63,15 @@ class EndpointStats:
 
 class PerformanceMetrics:
     """Хранилище метрик производительности"""
-    
-    def __init__(self, max_metrics: int = 10000):
+
+    def __init__(self, max_metrics: int = 10000) -> None:
         self._metrics: List[RequestMetric] = []
         self._endpoint_stats: Dict[str, EndpointStats] = defaultdict(EndpointStats)
-        self._max_metrics = max_metrics
+        self._max_metrics: int = max_metrics
         self._slow_requests: List[RequestMetric] = []
-        self._slow_threshold_ms = 1000  # Запросы медленнее 1 сек
-    
-    def add_metric(self, metric: RequestMetric):
+        self._slow_threshold_ms: int = 1000  # Запросы медленнее 1 сек
+
+    def add_metric(self, metric: RequestMetric) -> None:
         """Добавление метрики"""
         # Основное хранилище
         self._metrics.append(metric)

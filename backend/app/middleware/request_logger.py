@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class RequestLoggerMiddleware(BaseHTTPMiddleware):
     """
     Middleware для логирования HTTP запросов
-    
+
     Логирует:
     - Метод и путь запроса
     - Время обработки
@@ -29,35 +29,35 @@ class RequestLoggerMiddleware(BaseHTTPMiddleware):
     - IP клиента
     - User-Agent
     """
-    
+
     # Пути, которые не нужно логировать
-    SKIP_PATHS = {
+    SKIP_PATHS: set = {
         "/health",
         "/metrics",
         "/favicon.ico",
     }
-    
+
     # Чувствительные заголовки, которые нужно скрыть
-    SENSITIVE_HEADERS = {
+    SENSITIVE_HEADERS: set = {
         "authorization",
         "cookie",
         "set-cookie",
         "x-api-key",
         "x-auth-token",
     }
-    
+
     def __init__(
-        self, 
+        self,
         app,
         log_request_body: bool = False,
         log_response_body: bool = False,
         skip_paths: set = None
-    ):
+    ) -> None:
         super().__init__(app)
-        self.log_request_body = log_request_body
-        self.log_response_body = log_response_body
-        self.skip_paths = skip_paths or self.SKIP_PATHS
-    
+        self.log_request_body: bool = log_request_body
+        self.log_response_body: bool = log_response_body
+        self.skip_paths: set = skip_paths or self.SKIP_PATHS
+
     def _get_client_ip(self, request: Request) -> str:
         """Получение IP клиента"""
         forwarded = request.headers.get("X-Forwarded-For")

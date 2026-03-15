@@ -25,12 +25,12 @@ logger = logging.getLogger(__name__)
 
 class InMemoryRateLimiter:
     """In-memory rate limiter с скользящим окном"""
-    
-    def __init__(self):
+
+    def __init__(self) -> None:
         self._requests: Dict[str, list] = defaultdict(list)
         self._blocked: Dict[str, datetime] = {}
-    
-    def _cleanup_old_requests(self, key: str, window_seconds: int):
+
+    def _cleanup_old_requests(self, key: str, window_seconds: int) -> None:
         """Очистка старых запросов"""
         cutoff = time.time() - window_seconds
         self._requests[key] = [
