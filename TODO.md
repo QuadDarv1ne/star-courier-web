@@ -3,7 +3,7 @@
 > Дорожная карта развития проекта StarCourier Web
 
 **Последнее обновление:** 15 марта 2026
-**Версия:** 3.2
+**Версия:** 3.3
 **Статус:** В разработке
 **Текущая ветка:** dev → main (синхронизированы)
 
@@ -23,7 +23,7 @@
 - [x] **Backend улучшения**
   - [x] Унифицировать response модели API (ResponseBuilder, APIError)
   - [x] Добавить глобальный обработчик ошибок (exceptions.py - 8 обработчиков)
-  - [ ] Улучшить типизацию (TypeHint) во всех модулях (validators.py - частично)
+  - [x] Улучшить типизацию (TypeHint) во всех модулях (validators.py, data_service.py, cache_service.py)
   - [ ] Добавить pydantic v2 валидацию
   - [ ] Рефакторинг middleware
 
@@ -138,7 +138,7 @@
 - [ ] Рефакторинг async/await паттернов
 - [x] Унификация обработки ошибок (exceptions.py)
 - [ ] Оптимизация SQL запросов
-- [ ] Добавить type hints в service слой
+- [x] Добавить type hints в service слой (data_service.py, cache_service.py)
 
 ### Frontend
 - [ ] Миграция на Vue 3.4+
@@ -255,8 +255,8 @@
 
 | Ветка | Статус | Изменения |
 |-------|--------|-----------|
-| `main` | ✅ Синхронизирована | Автовыбор порта, обновлён TODO |
-| `dev` | ✅ Синхронизирована | Автовыбор порта, обновлён TODO |
+| `main` | ✅ Ожидает слияния | Type hints в service слое |
+| `dev` | ✅ В работе | Type hints: data_service.py, cache_service.py |
 
 **Выполнено:**
 - [x] Завершить изменения в `main` (обработчик ошибок + автовыбор порта)
@@ -266,7 +266,9 @@
 - [x] Отправить изменения в `origin`
 
 **Текущие задачи:**
-- [ ] Добавить type hints в validators.py
+- [x] Добавить type hints в validators.py ✅
+- [x] Добавить type hints в data_service.py ✅
+- [x] Добавить type hints в cache_service.py ✅
 - [ ] Улучшить документацию API
 - [ ] Оптимизировать Pinia store
 

@@ -3,7 +3,7 @@ StarCourier Web - Data Service
 Сервис для загрузки и кэширования данных игры
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 import json
@@ -15,16 +15,16 @@ from functools import lru_cache
 logger = logging.getLogger(__name__)
 
 # Базовый путь к данным
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR: Path = Path(__file__).parent.parent / "data"
 
 
 class DataService:
     """Сервис для работы с данными игры"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._scenes_cache: Optional[Dict[str, Any]] = None
         self._characters_cache: Optional[Dict[str, Any]] = None
-        self._cache_valid = False
+        self._cache_valid: bool = False
 
     def _load_json(self, filename: str) -> Dict[str, Any]:
         """Загрузка JSON файла"""
@@ -110,7 +110,7 @@ class DataService:
 
 
 # Глобальный экземпляр сервиса
-data_service = DataService()
+data_service: DataService = DataService()
 
 
 # Удобные функции-обёртки

@@ -28,19 +28,19 @@ logger = logging.getLogger(__name__)
 class InMemoryCache:
     """
     In-memory кэш с LRU eviction и TTL
-    
+
     Используется как fallback, когда Redis недоступен
     """
-    
-    def __init__(self, max_size: int = 1000, default_ttl: int = 300):
-        self._cache: OrderedDict = OrderedDict()
+
+    def __init__(self, max_size: int = 1000, default_ttl: int = 300) -> None:
+        self._cache: OrderedDict[str, Any] = OrderedDict()
         self._expiry: Dict[str, datetime] = {}
-        self._max_size = max_size
-        self._default_ttl = default_ttl
-        self._hits = 0
-        self._misses = 0
-    
-    def _evict_expired(self):
+        self._max_size: int = max_size
+        self._default_ttl: int = default_ttl
+        self._hits: int = 0
+        self._misses: int = 0
+
+    def _evict_expired(self) -> None:
         """Удаление истёкших записей"""
         now = datetime.utcnow()
         expired_keys = [
@@ -71,15 +71,21 @@ class InMemoryCache:
         self._misses += 1
         return None
     
-    def set(self, key: str, value: Any, ttl: int = None):
-        """Установка значения в кэш"""
+    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+        """Установка значения в кэш
+        
+        Args:
+            key: Кэш ключ
+            value: Значение для кэширования
+            ttl: Время жизни в секундах (по умолчанию default_ttl)
+        """
         self._evict_expired()
         self._evict_lru()
-        
+
         ttl = ttl or self._default_ttl
         self._cache[key] = value
         self._expiry[key] = datetime.utcnow() + timedelta(seconds=ttl)
-    
+
     def delete(self, key: str) -> bool:
         """Удаление значения из кэша"""
         if key in self._cache:
@@ -88,11 +94,11 @@ class InMemoryCache:
             return True
         return False
     
-    def clear(self):
+    def clear(self) -> None:
         """Очистка всего кэша"""
         self._cache.clear()
         self._expiry.clear()
-    
+
     def exists(self, key: str) -> bool:
         """Проверка существования ключа"""
         self._evict_expired()
