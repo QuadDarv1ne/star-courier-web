@@ -22,7 +22,7 @@ from app.config import settings
 from app.api import (
     game, characters, scenes, websocket, auth, leaderboard,
     achievements, analytics, admin, data, abilities, quests,
-    game_mechanics, inventory, combat
+    game_mechanics, inventory, combat, game_integration
 )
 
 # Импорт сервисов
@@ -195,6 +195,7 @@ app.include_router(quests.router, prefix="/api/quests", tags=["📜 Квесты
 app.include_router(game_mechanics.router, prefix="/api/game-mechanics", tags=["🎮 Игровые механики"])
 app.include_router(inventory.router, prefix="/api/inventory", tags=["🎒 Инвентарь"])
 app.include_router(combat.router, prefix="/api/combat", tags=["⚔️ Бой"])
+app.include_router(game_integration.router, prefix="/api/game-integration", tags=["🎮 Интеграция"])
 app.include_router(websocket.router, tags=["🔌 WebSocket"])
 
 
