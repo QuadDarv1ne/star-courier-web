@@ -3,7 +3,7 @@ StarCourier Web - Characters API Router
 API endpoints для персонажей
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 import logging
@@ -21,14 +21,17 @@ router = APIRouter()
 
 @router.get("", response_model=Dict[str, CharacterInfo],
             summary="Получить всех персонажей")
-async def list_characters():
+async def list_characters() -> Dict[str, CharacterInfo]:
     """
     Получить список всех персонажей игры.
 
     Возвращает словарь с информацией о всех персонажах.
+    
+    Returns:
+        Dict[str, CharacterInfo]: Словарь персонажей по ID
     """
-    characters = get_characters()
-    result = {}
+    characters: Dict[str, dict] = get_characters()
+    result: Dict[str, CharacterInfo] = {}
 
     for char_id, char_data in characters.items():
         result[char_id] = CharacterInfo(
@@ -45,13 +48,20 @@ async def list_characters():
 
 @router.get("/{character_id}", response_model=CharacterInfo,
             summary="Получить персонажа по ID")
-async def get_character_by_id(character_id: str):
+async def get_character_by_id(character_id: str) -> CharacterInfo:
     """
     Получить детальную информацию о персонаже по его ID.
 
-    - **character_id**: Уникальный идентификатор персонажа
+    Args:
+        character_id: Уникальный идентификатор персонажа
+        
+    Returns:
+        CharacterInfo: Информация о персонаже
+        
+    Raises:
+        HTTPException: 404 если персонаж не найден
     """
-    char_data = get_character(character_id)
+    char_data: Dict = get_character(character_id)
 
     if not char_data:
         raise HTTPException(

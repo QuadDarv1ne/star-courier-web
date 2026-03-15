@@ -282,10 +282,94 @@ class TestGameHelpers:
         # Отрицательное изменение
         new_stats = apply_stat_changes(stats, {"health": -50})
         assert new_stats["health"] == 50
-        
+
         # Изменение за пределами диапазона
         new_stats = apply_stat_changes(stats, {"health": -150})
         assert new_stats["health"] == 0  # capped at 0
+
+
+# ============================================================================
+# CHARACTERS API TESTS
+# ============================================================================
+
+class TestCharactersAPI:
+    """Тесты Characters API"""
+
+    def test_list_characters(self):
+        """Тест получения списка персонажей"""
+        response = client.get("/api/characters")
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, dict)
+        # Должен быть хотя бы один персонаж
+        assert len(data) >= 1
+
+    def test_character_has_required_fields(self):
+        """Проверка полей персонажа"""
+        response = client.get("/api/characters")
+        data = response.json()
+        
+        for char_id, char_data in data.items():
+            assert "id" in char_data
+            assert "name" in char_data
+            assert "role" in char_data
+            assert "description" in char_data
+
+    def test_get_character_by_id(self):
+        """Тест получения персонажа по ID"""
+        # Получаем список персонажей
+        response = client.get("/api/characters")
+        characters = response.json()
+        
+        if characters:
+            # Берём первый ID персонажа
+            char_id = list(characters.keys())[0]
+            response = client.get(f"/api/characters/{char_id}")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["id"] == char_id
+
+    def test_get_character_not_found(self):
+        """Тест 404 для несуществующего персонажа"""
+        response = client.get("/api/characters/nonexistent_character")
+        assert response.status_code == 404
+
+
+# ============================================================================
+# SCENES API TESTS
+# ============================================================================
+
+class TestScenesAPI:
+    """Тесты Scenes API"""
+
+    def test_list_scenes(self):
+        """Тест получения списка сцен"""
+        response = client.get("/api/scenes")
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, dict)
+        # Должно быть хотя бы 10 сцен
+        assert len(data) >= 10
+
+    def test_scenes_count(self):
+        """Тест подсчёта сцен"""
+        response = client.get("/api/scenes/count")
+        assert response.status_code == 200
+        data = response.json()
+        assert "total" in data
+        assert "endings" in data
+        assert data["total"] >= 10
+        assert data["endings"] >= 0
+
+    def test_scenes_count_matches_list(self):
+        """Проверка что count совпадает с количеством сцен в списке"""
+        scenes_response = client.get("/api/scenes")
+        count_response = client.get("/api/scenes/count")
+        
+        scenes = scenes_response.json()
+        count = count_response.json()
+        
+        assert count["total"] == len(scenes)
 
 
 if __name__ == "__main__":
