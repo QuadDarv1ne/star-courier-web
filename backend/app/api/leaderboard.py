@@ -3,7 +3,7 @@ StarCourier Web - Leaderboard API Router
 API endpoints для таблицы лидеров
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 import logging
@@ -20,13 +20,20 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Путь к файлу статистики
-DATA_DIR = Path(__file__).parent.parent / "data"
-PLAYER_STATS_FILE = DATA_DIR / "player_stats.json"
-USERS_FILE = DATA_DIR / "users.json"
+DATA_DIR: Path = Path(__file__).parent.parent / "data"
+PLAYER_STATS_FILE: Path = DATA_DIR / "player_stats.json"
+USERS_FILE: Path = DATA_DIR / "users.json"
 
 
 def _load_json(filepath: Path) -> dict:
-    """Загрузка JSON файла"""
+    """Загрузка JSON файла
+    
+    Args:
+        filepath: Путь к JSON файлу
+        
+    Returns:
+        dict: Данные из файла или пустой словарь
+    """
     if not filepath.exists():
         return {}
     try:
@@ -44,12 +51,18 @@ def _load_json(filepath: Path) -> dict:
 def calculate_score(stats: dict) -> int:
     """
     Расчёт очков для таблицы лидеров.
-    
+
     Формула:
     - Базовые очки за каждую пройденную сцену
     - Бонус за достижения
     - Штраф за низкие характеристики в конце
     - Бонус за специфичные концовки
+    
+    Args:
+        stats: Статистика игрока
+        
+    Returns:
+        int: Рассчитанные очки
     """
     base_score = stats.get("choices_made", 0) * 100
     
@@ -93,22 +106,26 @@ def calculate_score(stats: dict) -> int:
 
 
 def get_leaderboard_data() -> List[dict]:
-    """Получение данных для таблицы лидеров"""
-    player_stats = _load_json(PLAYER_STATS_FILE)
-    users = _load_json(USERS_FILE)
+    """Получение данных для таблицы лидеров
     
-    leaderboard = []
-    
+    Returns:
+        List[dict]: Список игроков с очками, отсортированный по score
+    """
+    player_stats: dict = _load_json(PLAYER_STATS_FILE)
+    users: dict = _load_json(USERS_FILE)
+
+    leaderboard: List[dict] = []
+
     for player_id, stats in player_stats.items():
         # Пропускаем незавершённые игры
         if not stats.get("ending_type"):
             continue
-        
-        user_id = stats.get("user_id")
-        user = users.get(user_id, {})
-        
-        score = calculate_score(stats)
-        
+
+        user_id: str = stats.get("user_id")
+        user: dict = users.get(user_id, {})
+
+        score: int = calculate_score(stats)
+
         leaderboard.append({
             "player_id": player_id,
             "username": user.get("username", "Anonymous"),
@@ -119,10 +136,10 @@ def get_leaderboard_data() -> List[dict]:
             "ending_type": stats.get("ending_type"),
             "completed_at": stats.get("updated_at", "")
         })
-    
+
     # Сортировка по очкам
     leaderboard.sort(key=lambda x: x["score"], reverse=True)
-    
+
     return leaderboard
 
 
@@ -137,17 +154,25 @@ async def get_leaderboard(
     offset: int = Query(0, ge=0, description="Смещение для пагинации"),
     sort_by: str = Query("score", regex="^(score|playtime|achievements)$",
                           description="Сортировка: score, playtime, achievements")
-):
+) -> List[LeaderboardEntry]:
     """
     Получение таблицы лидеров.
-    
+
     Параметры сортировки:
     - **score**: по очкам (по умолчанию)
     - **playtime**: по времени игры (меньше = лучше)
     - **achievements**: по количеству достижений
-    """
-    leaderboard = get_leaderboard_data()
     
+    Args:
+        limit: Количество записей (1-100)
+        offset: Смещение для пагинации
+        sort_by: Критерий сортировки
+        
+    Returns:
+        List[LeaderboardEntry]: Список игроков с рангами
+    """
+    leaderboard: List[dict] = get_leaderboard_data()
+
     # Применение сортировки
     if sort_by == "playtime":
         leaderboard.sort(key=lambda x: x["playtime"])
@@ -155,12 +180,12 @@ async def get_leaderboard(
         leaderboard.sort(key=lambda x: x["achievements"], reverse=True)
     else:  # score
         leaderboard.sort(key=lambda x: x["score"], reverse=True)
-    
+
     # Применение пагинации
     paginated = leaderboard[offset:offset + limit]
-    
+
     # Добавление ранга
-    result = []
+    result: List[LeaderboardEntry] = []
     for i, entry in enumerate(paginated):
         result.append(LeaderboardEntry(
             rank=offset + i + 1,
@@ -170,7 +195,7 @@ async def get_leaderboard(
             achievements=entry["achievements"],
             playtime=entry["playtime"]
         ))
-    
+
     return result
 
 

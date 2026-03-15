@@ -3,7 +3,7 @@ StarCourier Web - Auth API Router
 API endpoints для аутентификации
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 import logging
@@ -29,20 +29,29 @@ router = APIRouter()
 @router.post("/register", response_model=UserResponse,
              status_code=status.HTTP_201_CREATED,
              summary="Регистрация нового пользователя")
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate) -> UserResponse:
     """
     Регистрация нового пользователя.
-    
+
     Требования к паролю:
     - Минимум 8 символов
     - Хотя бы одна заглавная буква
     - Хотя бы одна строчная буква
     - Хотя бы одна цифра
-    
+
     Username может содержать только буквы, цифры и подчёркивание.
+    
+    Args:
+        user_data: Данные пользователя для регистрации
+        
+    Returns:
+        UserResponse: Данные зарегистрированного пользователя
+        
+    Raises:
+        HTTPException: 500 при ошибке регистрации
     """
     try:
-        user = auth_service.create_user(user_data)
+        user: UserResponse = auth_service.create_user(user_data)
         logger.info(f"✅ Пользователь зарегистрирован: {user.username}")
         return user
     except HTTPException:
@@ -61,16 +70,25 @@ async def register(user_data: UserCreate):
 
 @router.post("/login", response_model=Token,
              summary="Вход в систему")
-async def login(login_data: UserLogin):
+async def login(login_data: UserLogin) -> Token:
     """
     Вход в систему по username и паролю.
-    
+
     Возвращает access_token и refresh_token.
     Access token действителен 30 минут.
     Refresh token действителен 7 дней.
+    
+    Args:
+        login_data: Данные для входа (username, password)
+        
+    Returns:
+        Token: Access и refresh токены
+        
+    Raises:
+        HTTPException: 500 при ошибке входа
     """
     try:
-        tokens = auth_service.login(login_data)
+        tokens: Token = auth_service.login(login_data)
         logger.info(f"✅ Пользователь вошёл: {login_data.username}")
         return tokens
     except HTTPException:
@@ -89,14 +107,23 @@ async def login(login_data: UserLogin):
 
 @router.post("/refresh", response_model=Token,
              summary="Обновление токенов")
-async def refresh_token(refresh_token: str):
+async def refresh_token(refresh_token: str) -> Token:
     """
     Обновление access токена с помощью refresh токена.
-    
+
     Используйте refresh_token, полученный при входе.
+    
+    Args:
+        refresh_token: Refresh токен для обновления
+        
+    Returns:
+        Token: Новые access и refresh токены
+        
+    Raises:
+        HTTPException: 500 при ошибке обновления
     """
     try:
-        tokens = auth_service.refresh_token(refresh_token)
+        tokens: Token = auth_service.refresh_token(refresh_token)
         logger.info("✅ Токены обновлены")
         return tokens
     except HTTPException:

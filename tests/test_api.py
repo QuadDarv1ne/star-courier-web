@@ -372,5 +372,48 @@ class TestScenesAPI:
         assert count["total"] == len(scenes)
 
 
+# ============================================================================
+# LEADERBOARD API TESTS
+# ============================================================================
+
+class TestLeaderboardAPI:
+    """Тесты Leaderboard API"""
+
+    def test_get_leaderboard(self):
+        """Тест получения таблицы лидеров"""
+        response = client.get("/api/leaderboard/")
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, list)
+
+    def test_leaderboard_limit_parameter(self):
+        """Тест параметра limit"""
+        response = client.get("/api/leaderboard/?limit=5")
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) <= 5
+
+    def test_leaderboard_default_limit(self):
+        """Тест limit по умолчанию (10)"""
+        response = client.get("/api/leaderboard/")
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) <= 10
+
+    def test_leaderboard_entry_has_fields(self):
+        """Проверка полей записи в таблице лидеров"""
+        response = client.get("/api/leaderboard/")
+        data = response.json()
+        
+        if data:
+            entry = data[0]
+            assert "rank" in entry
+            assert "username" in entry
+            assert "score" in entry
+            assert "games_completed" in entry
+            assert "achievements" in entry
+            assert "playtime" in entry
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
