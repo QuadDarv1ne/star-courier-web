@@ -202,23 +202,53 @@ class Settings(BaseSettings):
     def get_database_url(self, with_echo: bool = False) -> str:
         """
         Получить URL БД
-        
+
         Args:
             with_echo: Логировать ли SQL запросы
-            
+
         Returns:
             Строка подключения к БД
         """
         url = self.database_connection_string
-        
+
         if with_echo and self.database_echo:
             if "?" in url:
                 url += "&echo=true"
             else:
                 url += "?echo=true"
-        
+
         return url
-    
+
+    def get_available_port(self, start_port: int = None, max_attempts: int = 10) -> int:
+        """
+        Найти свободный порт для запуска
+
+        Args:
+            start_port: Начальный порт (по умолчанию server_port)
+            max_attempts: Максимальное количество попыток
+
+        Returns:
+            int: Свободный порт
+        """
+        import socket
+        
+        port = start_port or self.server_port
+        
+        for attempt in range(max_attempts):
+            check_port = port + attempt
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    s.bind(('0.0.0.0', check_port))
+                    return check_port
+            except OSError:
+                continue
+        
+        raise OSError(
+            f"Не удалось найти свободный порт в диапазоне "
+            f"{port}-{port + max_attempts - 1}"
+        )
+
     def log_config(self) -> None:
         """Логировать текущую конфигурацию (без чувствительных данных)"""
         logger.info("=" * 80)

@@ -286,9 +286,21 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
+    
+    # Проверка и выбор свободного порта
+    try:
+        port = settings.get_available_port(settings.server_port)
+        if port != settings.server_port:
+            print(f"⚠️  Порт {settings.server_port} занят, используем порт {port}")
+    except OSError as e:
+        print(f"❌ Ошибка: {e}")
+        exit(1)
+    
+    print(f"🚀 Запуск сервера на http://{settings.server_host}:{port}")
+    
     uvicorn.run(
         "app.main:app",
         host=settings.server_host,
-        port=settings.server_port,
+        port=port,
         reload=settings.debug
     )
