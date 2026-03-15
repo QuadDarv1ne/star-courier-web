@@ -1,0 +1,549 @@
+{
+  "scenes": {
+    "chapter_11_echo_contact": {
+      "id": "scene_ch11_01",
+      "chapter": 11,
+      "title": "Пробуждение Эха",
+      "location": "Координата Нуля",
+      "description": "Кристалл, найденный в предыдущей главе, начинает резонировать. Голос из глубин веков пытается установить контакт.",
+      "background": "ancient_temple",
+      "characters": ["player", "echo", "mia"],
+      "dialogues": [
+        {
+          "speaker": "narrator",
+          "text": "Кристалл в ваших руках начинает пульсировать голубоватым светом. Пространство вокруг искажается, и вы слышите голос — древний, усталый, но полный решимости.",
+          "effects": {}
+        },
+        {
+          "speaker": "echo",
+          "text": "Ты слышишь меня... Интересно. Долгие века никто не мог воспринимать мои слова. Кто ты, путник, способный слышать голос погибшего мира?",
+          "portrait": "echo_hologram"
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_11_01a",
+          "text": "Я — Курьер. Ищу информацию об угрозе, поглощающей миры.",
+          "next_scene": "scene_ch11_02",
+          "effects": {"knowledge": 10},
+          "skill_check": null
+        },
+        {
+          "id": "choice_11_01b",
+          "text": "Что ты такое? Почему я слышу тебя?",
+          "next_scene": "scene_ch11_03",
+          "effects": {"psychic": 5},
+          "skill_check": {"psychic": 30}
+        },
+        {
+          "id": "choice_11_01c",
+          "text": "У меня нет времени на загадки. Говори прямо.",
+          "next_scene": "scene_ch11_04",
+          "effects": {"determination": 5},
+          "skill_check": null
+        }
+      ]
+    },
+    
+    "scene_ch11_02": {
+      "id": "scene_ch11_02",
+      "chapter": 11,
+      "title": "Информация об угрозе",
+      "location": "Координата Нуля",
+      "dialogues": [
+        {
+          "speaker": "echo",
+          "text": "Угроза... Да, мы тоже столкнулись с ней. Мы называли её Голод — потому что она пожирает всё: материю, энергию, даже время. Мы думали, что можем контролировать её. Мы ошиблись.",
+          "portrait": "echo_hologram"
+        },
+        {
+          "speaker": "mia",
+          "text": "«Контролировать»? Значит, вы нашли способ взаимодействовать с ней?",
+          "portrait": "mia_concerned"
+        },
+        {
+          "speaker": "echo",
+          "text": "Мы нашли способ привлечь её внимание. Это стоило нам нашего мира. Но мы сохранили знания — для тех, кто придёт после. Возможно, вы сможете использовать их мудрее."
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_11_02a",
+          "text": "Как вы пытались её контролировать?",
+          "next_scene": "scene_ch11_05",
+          "effects": {}
+        },
+        {
+          "id": "choice_11_02b",
+          "text": "Что произошло с твоим миром?",
+          "next_scene": "scene_ch11_06",
+          "effects": {}
+        },
+        {
+          "id": "choice_11_02c",
+          "text": "Как её можно остановить?",
+          "next_scene": "scene_ch11_07",
+          "effects": {}
+        }
+      ]
+    },
+    
+    "scene_ch11_07": {
+      "id": "scene_ch11_07",
+      "chapter": 11,
+      "title": "Способ остановить",
+      "location": "Координата Нуля",
+      "dialogues": [
+        {
+          "speaker": "echo",
+          "text": "Остановить... Мы не знаем. Но мы знаем, где искать ответ. Координата Нуля — место, где всё началось. Там находится источник. Там — единственный шанс на победу или... на понимание.",
+          "portrait": "echo_hologram"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Голограмма Эха показывает карту с отмеченной точкой в центре аномальной зоны, известной как Зона Тишины.",
+          "effects": {"quest_progress": "q11_01", "coordinates": "zone_silence"}
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_11_07a",
+          "text": "Где находится Координата Нуля?",
+          "next_scene": "scene_ch11_08",
+          "effects": {}
+        },
+        {
+          "id": "choice_11_07b",
+          "text": "Что ты имеешь в виду под «пониманием»?",
+          "next_scene": "scene_ch11_09",
+          "effects": {"psychic": 5}
+        },
+        {
+          "id": "choice_11_07c",
+          "text": "Спасибо за информацию. Я отправлюсь туда.",
+          "next_scene": "scene_ch11_10",
+          "effects": {}
+        }
+      ]
+    },
+    
+    "scene_ch12_station_approach": {
+      "id": "scene_ch12_01",
+      "chapter": 12,
+      "title": "Станция Горизонт",
+      "location": "Орбита станции Горизонт",
+      "description": "Заброшенная исследовательская станция Веры появляется на экранах. Она выглядит мёртвой, но датчики фиксируют признаки активности.",
+      "background": "abandoned_station",
+      "characters": ["player", "vera", "sergey", "anna"],
+      "dialogues": [
+        {
+          "speaker": "vera",
+          "text": "Вот она... Станция «Горизонт». Мой последний проект перед побегом. Там находятся чертежи устройств, способных обнаруживать аномалии до их проявления.",
+          "portrait": "vera_nervous"
+        },
+        {
+          "speaker": "sergey",
+          "text": "Датчики показывают странные показания. Станция не мертва — что-то питает её системы. Но это не стандартный реактор.",
+          "portrait": "sergey_technical"
+        },
+        {
+          "speaker": "anna",
+          "text": "Сканирование показывает, что коридоры изменились с момента последнего известного плана. Станция... перестроила себя?",
+          "portrait": "anna_surprised"
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_12_01a",
+          "text": "Почему ты сбежала, Вера?",
+          "next_scene": "scene_ch12_02",
+          "effects": {},
+          "skill_check": null
+        },
+        {
+          "id": "choice_12_01b",
+          "text": "Какие опасности нас ждут внутри?",
+          "next_scene": "scene_ch12_03",
+          "effects": {},
+          "skill_check": null
+        },
+        {
+          "id": "choice_12_01c",
+          "text": "Приготовиться к высадке. Идём внутрь.",
+          "next_scene": "scene_ch12_04",
+          "effects": {},
+          "skill_check": null
+        }
+      ]
+    },
+    
+    "scene_ch13_path_choice": {
+      "id": "scene_ch13_01",
+      "chapter": 13,
+      "title": "Выбор Пути",
+      "location": "Нейтральная станция «Перекрёсток»",
+      "description": "Представители трёх сил собрались, чтобы предложить свою поддержку в борьбе с Сущностью. Ваше решение определит будущее.",
+      "background": "neutral_station",
+      "characters": ["player", "alliance_representative", "zara", "volkov"],
+      "dialogues": [
+        {
+          "speaker": "narrator",
+          "text": "Три фигуры стоят в разных концах зала. Каждая представляет силу, способную изменить ход грядущей битвы.",
+          "effects": {}
+        },
+        {
+          "speaker": "alliance_representative",
+          "text": "Объединённые Миры предлагают ресурсы галактического масштаба: флот, технологии, информацию. Взамен мы просим сотрудничества в защите всех обитаемых миров. Вместе мы сильнее любой угрозы.",
+          "portrait": "alliance_official"
+        },
+        {
+          "speaker": "zara",
+          "text": "Орден Наблюдателей существует тысячи лет. Мы храним знания о древних угрозах и методах борьбы с ними. Мы предлагаем не армию, а мудрость. Не оружие, а понимание.",
+          "portrait": "zara_mystical"
+        },
+        {
+          "speaker": "volkov",
+          "text": "Мы — свободные миры, отказавшиеся подчиняться империям и корпорациям. Никаких хозяев, никаких обязательств. Мы предлагаем свободу действий и сеть независимых агентов. Решать тебе.",
+          "portrait": "volkov_stern"
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_13_01a",
+          "text": "Я выбираю путь Альянса.",
+          "next_scene": "scene_ch13_alliance",
+          "effects": {"path": "alliance", "alliance_reputation": 50},
+          "skill_check": null
+        },
+        {
+          "id": "choice_13_01b",
+          "text": "Я выбираю путь Наблюдателя.",
+          "next_scene": "scene_ch13_observer",
+          "effects": {"path": "observer", "observer_reputation": 50},
+          "skill_check": null
+        },
+        {
+          "id": "choice_13_01c",
+          "text": "Я выбираю путь Независимости.",
+          "next_scene": "scene_ch13_independence",
+          "effects": {"path": "independence", "independence_reputation": 50},
+          "skill_check": null
+        },
+        {
+          "id": "choice_13_01d",
+          "text": "Мне нужно больше времени подумать.",
+          "next_scene": "scene_ch13_delay",
+          "effects": {},
+          "skill_check": null
+        }
+      ]
+    },
+    
+    "scene_ch13_alliance": {
+      "id": "scene_ch13_alliance",
+      "chapter": 13,
+      "title": "Путь Альянса",
+      "location": "Нейтральная станция «Перекрёсток»",
+      "dialogues": [
+        {
+          "speaker": "alliance_representative",
+          "text": "Отличный выбор, Курьер. Координаты места сбора флота переданы. Ваш корабль будет интегрирован в оперативную группу «Рассвет». Вместе мы победим.",
+          "portrait": "alliance_official_pleased"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Представитель Альянса передаёт вам datapad с координатами и кодами доступа. Теперь у вас есть поддержка самого мощного флота в галактике.",
+          "effects": {"fleet_access": true, "credits": 5000}
+        }
+      ],
+      "next_chapter": 14
+    },
+    
+    "scene_ch13_observer": {
+      "id": "scene_ch13_observer",
+      "chapter": 13,
+      "title": "Путь Наблюдателя",
+      "location": "Нейтральная станция «Перекрёсток»",
+      "dialogues": [
+        {
+          "speaker": "zara",
+          "text": "Добро пожаловать в Орден, брат. Твоё обучение начнётся немедленно. Есть вещи, которые ты должен узнать перед битвой — о природе Сущности и твоём потенциале.",
+          "portrait": "zara_welcoming"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Зара кладёт руку вам на плечо, и вы чувствуете прилив силы. Древние знания Ордена теперь доступны вам.",
+          "effects": {"psychic_boost": 20, "ancient_knowledge": true}
+        }
+      ],
+      "next_chapter": 14
+    },
+    
+    "scene_ch13_independence": {
+      "id": "scene_ch13_independence",
+      "chapter": 13,
+      "title": "Путь Независимости",
+      "location": "Нейтральная станция «Перекрёсток»",
+      "dialogues": [
+        {
+          "speaker": "volkov",
+          "text": "Хорошо. Свободные люди ценят выбор. Я передам по сети, что ты с нами. Но помни — у независимости есть цена: ты отвечаешь только за себя и свой экипаж.",
+          "portrait": "volkov_respectful"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Волков передаёт вам зашифрованный коммуникатор. Теперь вы связаны с сетью независимых агентов по всей галактике.",
+          "effects": {"network_access": true, "smuggler_routes": true}
+        }
+      ],
+      "next_chapter": 14
+    },
+    
+    "scene_ch16_zone_silence": {
+      "id": "scene_ch16_01",
+      "chapter": 16,
+      "title": "Зона Тишины",
+      "location": "Граница Зоны Тишины",
+      "description": "Корабль входит в аномальную область пространства, где физические законы искажены присутствием Сущности.",
+      "background": "anomaly_zone",
+      "characters": ["player", "mia", "maria", "anna"],
+      "dialogues": [
+        {
+          "speaker": "anna",
+          "text": "Датчики не работают. Мы слепы и глухи. Единственное, что я вижу — это путь вперёд, подсвеченный... чем-то.",
+          "portrait": "anna_focused"
+        },
+        {
+          "speaker": "maria",
+          "text": "Уровень стресса у экипажа критический. Но все готовы. Мы знаем, что нужно сделать.",
+          "portrait": "maria_determined"
+        },
+        {
+          "speaker": "mia",
+          "text": "Капитан, я чувствую... присутствие. Оно в моей голове. Нет — оно везде. Сущность знает о нашем приближении.",
+          "portrait": "mia_psychic"
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_16_01a",
+          "text": "[Psychic] Я тоже чувствую её. Попробую установить контроль.",
+          "next_scene": "scene_ch16_psychic_contact",
+          "effects": {},
+          "skill_check": {"psychic": 60}
+        },
+        {
+          "id": "choice_16_01b",
+          "text": "Продолжаем движение. Приготовиться к любым неожиданностям.",
+          "next_scene": "scene_ch16_approach",
+          "effects": {},
+          "skill_check": null
+        },
+        {
+          "id": "choice_16_01c",
+          "text": "Нам нужен совет. Собрать всю команду.",
+          "next_scene": "scene_ch16_council",
+          "effects": {},
+          "skill_check": null
+        }
+      ]
+    },
+    
+    "scene_ch16_entity_contact": {
+      "id": "scene_ch16_entity",
+      "chapter": 16,
+      "title": "Контакт с Сущностью",
+      "location": "Зона Тишины",
+      "dialogues": [
+        {
+          "speaker": "entity",
+          "text": "Ты слышишь меня, маленький курьер. Я не враг. Я — эволюция. Следующий шаг. Присоединись ко мне добровольно, и твои близкие будут в безопасности. Сопротивление лишь продлит их страдания.",
+          "portrait": "entity_void"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Голос звучит не в ушах, а прямо в сознании. Он одновременно пугающий и... успокаивающий. Сущность не лжёт — она предлагает то, что считает благом.",
+          "effects": {"entity_contact": true}
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_16_entity_a",
+          "text": "Ты — угроза всему живому. Я остановлю тебя любой ценой.",
+          "next_scene": "scene_ch16_confrontation",
+          "effects": {"determination": 10, "mia_relationship": 10, "maria_relationship": 10}
+        },
+        {
+          "id": "choice_16_entity_b",
+          "text": "Что ты такое на самом деле? Откуда пришла?",
+          "next_scene": "scene_ch16_entity_origin",
+          "effects": {"knowledge": 15}
+        },
+        {
+          "id": "choice_16_entity_c",
+          "text": "Если я соглашусь, каковы гарантии?",
+          "next_scene": "scene_ch16_negotiation",
+          "effects": {}
+        }
+      ]
+    },
+    
+    "scene_ch17_guardian": {
+      "id": "scene_ch17_guardian",
+      "chapter": 17,
+      "title": "Страж Ядра",
+      "location": "Покои Стража",
+      "description": "Древнее существо ожидает вас у входа в ядро станции. Оно не атакует — оно предлагает выбор.",
+      "background": "guardian_chamber",
+      "characters": ["player", "guardian"],
+      "dialogues": [
+        {
+          "speaker": "guardian",
+          "text": "Ваши учёные думают категориями добра и зла. Сущность вне этих понятий. Она — inevitability, неизбежность. Вы можете оттянуть конец, но не предотвратить его. Вопрос лишь в том, сколько жизней вы спасёте до этого момента.",
+          "portrait": "guardian_ancient"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Страж показывает вам три пути: уничтожение якоря, перенастройка для договора, или слияние с Сущностью.",
+          "effects": {"final_choice_unlocked": true}
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_17_guard_a",
+          "text": "Даже одна спасённая жизнь стоит борьбы. Я выбираю изгнание.",
+          "next_scene": "scene_ch17_exile_path",
+          "effects": {"exile_path": true}
+        },
+        {
+          "id": "choice_17_guard_b",
+          "text": "Расскажи о возможности договора.",
+          "next_scene": "scene_ch17_treaty_path",
+          "effects": {"treaty_path": true}
+        },
+        {
+          "id": "choice_17_guard_c",
+          "text": "Возможно, слияние — это не конец, а начало.",
+          "next_scene": "scene_ch17_merge_path",
+          "effects": {"merge_path": true},
+          "skill_check": {"psychic": 90}
+        }
+      ]
+    },
+    
+    "scene_ch18_final_choice": {
+      "id": "scene_ch18_final",
+      "chapter": 18,
+      "title": "Финальный выбор",
+      "location": "Ядро станции",
+      "description": "Вы стоите перед якорем Сущности. Судьба галактики в ваших руках.",
+      "background": "station_core",
+      "characters": ["player", "entity"],
+      "dialogues": [
+        {
+          "speaker": "entity",
+          "text": "Ты пришёл так далеко, маленький курьер. Я видела твои страхи и надежды, твою любовь и ненависть. Теперь ты стоишь на пороге решения, которое определит судьбу миллионов. Выбирай мудро — или выбирай сердцем. Иногда это одно и то же.",
+          "portrait": "entity_void"
+        }
+      ],
+      "choices": [
+        {
+          "id": "choice_18_exile",
+          "text": "[Изгнание] Я изгоню тебя из этой реальности.",
+          "next_scene": "scene_ending_exile",
+          "effects": {"ending": "exile"}
+        },
+        {
+          "id": "choice_18_treaty",
+          "text": "[Договор] Мы можем сосуществовать. Установим границы.",
+          "next_scene": "scene_ending_treaty",
+          "effects": {"ending": "treaty"}
+        },
+        {
+          "id": "choice_18_merge",
+          "text": "[Слияние] Я принимаю твоё предложение.",
+          "next_scene": "scene_ending_merge",
+          "effects": {"ending": "merge"},
+          "skill_check": {"psychic": 90}
+        }
+      ]
+    },
+    
+    "scene_ending_exile": {
+      "id": "ending_exile",
+      "chapter": 18,
+      "title": "Концовка: Изгнание",
+      "location": "Ядро станции",
+      "dialogues": [
+        {
+          "speaker": "narrator",
+          "text": "Вы активируете протокол уничтожения якоря. Энергия древней станции перегружается, создавая волну, которая разрывает связь Сущности с вашим измерением."
+        },
+        {
+          "speaker": "entity",
+          "text": "Ты выбираешь благородный путь... но дорого. Кто останется у якоря? Кто пожертвует собой? Эта энергия требует направляющего сознания."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Эпическая битва разворачивается в ядре станции. Сущность изгнана, но цена была высока. Галактика спасена — ценой вечной связи с этим местом."
+        }
+      ],
+      "ending_type": "exile",
+      "epilogue": "ending_exile_epilogue"
+    },
+    
+    "scene_ending_treaty": {
+      "id": "ending_treaty",
+      "chapter": 18,
+      "title": "Концовка: Договор",
+      "location": "Ядро станции",
+      "dialogues": [
+        {
+          "speaker": "narrator",
+          "text": "Вы перенастраиваете станцию, создавая мост между измерениями. Контрольные модули вспыхивают новой энергией."
+        },
+        {
+          "speaker": "entity",
+          "text": "Разумный выбор. Договор заключён. Я получу доступ к энергии умирающих звёзд, ты станешь Хранителем границы. Галактика будет жить... пока звёзды не погаснут сами."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Вы становитесь Хранителем Границы — навсегда связанным с этим местом, но давшим галактике время."
+        }
+      ],
+      "ending_type": "treaty",
+      "epilogue": "ending_treaty_epilogue"
+    },
+    
+    "scene_ending_merge": {
+      "id": "ending_merge",
+      "chapter": 18,
+      "title": "Концовка: Слияние",
+      "location": "Ядро станции",
+      "dialogues": [
+        {
+          "speaker": "entity",
+          "text": "Ты единственный за миллионы лет, кто понял. Слияние не уничтожает — оно преобразует. Ты не потеряешь себя. Ты обретёшь... большее."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ваше сознание расширяется за пределы человеческого понимания. Вы становитесь чем-то большим — хранителем эволюции, мостом между смертью и жизнью."
+        },
+        {
+          "speaker": "narrator",
+          "text": "Галактика изменилась навсегда. Появилась новая сила, которой предстоит определить будущее цивилизаций."
+        }
+      ],
+      "ending_type": "merge",
+      "epilogue": "ending_merge_epilogue"
+    }
+  },
+  
+  "metadata": {
+    "version": "2.0",
+    "chapters_included": [11, 12, 13, 14, 15, 16, 17, 18],
+    "total_scenes": 18,
+    "endings": 3,
+    "author": "Star Courier Development Team"
+  }
+}

@@ -128,8 +128,8 @@ app = FastAPI(
 # Performance monitoring (первый для сбора метрик)
 app.add_middleware(PerformanceMiddleware)
 
-# Security middleware
-app.add_middleware(SecurityMiddleware, debug=settings.debug)
+# Security middleware (с отключенной проверкой атак для разработки)
+app.add_middleware(SecurityMiddleware, debug=settings.debug, enable_attack_detection=False)
 
 # Rate limiting
 app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter)
@@ -156,25 +156,6 @@ app.add_middleware(
 
 # Регистрация глобальных обработчиков исключений
 register_exception_handlers(app)
-
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    """
-    Глобальный обработчик ошибок (резервный)
-    
-    Примечание: Основные обработчики зарегистрированы через register_exception_handlers()
-    """
-    # Этот обработчик остаётся как резервный
-    logger.error(f"❌ Необработанная ошибка: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content=ErrorResponse(
-            status="error",
-            message="Внутренняя ошибка сервера",
-            details={"error": str(exc)} if settings.debug else None
-        ).model_dump()
-    )
 
 
 # ============================================================================

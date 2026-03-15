@@ -48,13 +48,6 @@ app.use(router)
 // i18n для интернационализации
 app.use(i18n)
 
-// Load UI settings on startup
-import { useUiStore } from './store/ui'
-app.config.globalProperties.$nextTick(() => {
-  const uiStore = useUiStore()
-  uiStore.loadUiSettings()
-})
-
 // ============================================================================
 // ГЛОБАЛЬНЫЕ СВОЙСТВА
 // ============================================================================

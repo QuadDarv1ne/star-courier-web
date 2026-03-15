@@ -241,50 +241,52 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Обработка запроса"""
         path = request.url.path
-        
+
         # Пропуск исключённых путей
         if not self._should_track(path):
             return await call_next(request)
-        
+
         # Начало отсчёта
         start_time = time.time()
         error = None
-        
+        response = None
+
         try:
             response = await call_next(request)
-            
+
         except Exception as e:
             error = str(e)
             raise
-        
+
         finally:
             # Расчёт времени
             duration_ms = (time.time() - start_time) * 1000
-            
-            # Создание метрики
-            metric = RequestMetric(
-                path=path,
-                method=request.method,
-                status_code=response.status_code if 'response' in locals() else 500,
-                duration_ms=duration_ms,
-                user_agent=request.headers.get("User-Agent"),
-                ip_address=self._get_client_ip(request),
-                error=error
-            )
-            
-            # Сохранение метрики
-            metrics.add_metric(metric)
-            
-            # Добавление заголовка с временем
-            if 'response' in locals():
+
+            # Сохранение метрики только если response существует
+            if response is not None:
+                # Создание метрики
+                metric = RequestMetric(
+                    path=path,
+                    method=request.method,
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                    user_agent=request.headers.get("User-Agent"),
+                    ip_address=self._get_client_ip(request),
+                    error=error
+                )
+
+                # Сохранение метрики
+                metrics.add_metric(metric)
+
+                # Добавление заголовка с временем
                 response.headers["X-Response-Time"] = f"{duration_ms:.2f}ms"
-                
+
                 # Предупреждение для медленных запросов
                 if duration_ms > self.slow_threshold_ms:
                     logger.warning(
                         f"⚠️ Slow request: {request.method} {path} - {duration_ms:.2f}ms"
                     )
-        
+
         return response
 
 

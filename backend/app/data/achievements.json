@@ -1,374 +1,758 @@
-{
-  "achievements": {
-    "first_steps": {
-      "id": "first_steps",
-      "name": "Первые шаги",
-      "description": "Начните своё первое приключение",
-      "icon": "🚀",
-      "category": "story",
-      "points": 10,
-      "hidden": false,
-      "requirement": {
-        "type": "scenes_visited",
-        "count": 1
-      }
-    },
-    "explorer": {
-      "id": "explorer",
-      "name": "Исследователь",
-      "description": "Посетите 10 разных сцен",
-      "icon": "🗺️",
-      "category": "exploration",
-      "points": 30,
-      "hidden": false,
-      "requirement": {
-        "type": "scenes_visited",
-        "count": 10
-      }
-    },
-    "world_traveler": {
-      "id": "world_traveler",
-      "name": "Путешественник миров",
-      "description": "Посетите все сцены в игре",
-      "icon": "🌌",
-      "category": "exploration",
-      "points": 100,
-      "hidden": false,
-      "requirement": {
-        "type": "all_scenes_visited"
-      }
-    },
-    "diplomat": {
-      "id": "diplomat",
-      "name": "Дипломат",
-      "description": "Сделайте 5 дипломатических выборов",
-      "icon": "🤝",
-      "category": "gameplay",
-      "points": 25,
-      "hidden": false,
-      "requirement": {
-        "type": "choice_pattern",
-        "pattern": "diplomatic",
-        "count": 5
-      }
-    },
-    "warrior": {
-      "id": "warrior",
-      "name": "Воин",
-      "description": "Сделайте 5 агрессивных выборов",
-      "icon": "⚔️",
-      "category": "gameplay",
-      "points": 25,
-      "hidden": false,
-      "requirement": {
-        "type": "choice_pattern",
-        "pattern": "aggressive",
-        "count": 5
-      }
-    },
-    "scholar": {
-      "id": "scholar",
-      "name": "Учёный",
-      "description": "Сделайте 5 аналитических выборов",
-      "icon": "📚",
-      "category": "gameplay",
-      "points": 25,
-      "hidden": false,
-      "requirement": {
-        "type": "choice_pattern",
-        "pattern": "analytical",
-        "count": 5
-      }
-    },
-    "guardian": {
-      "id": "guardian",
-      "name": "Хранитель",
-      "description": "Сделайте 5 заботливых выборов",
-      "icon": "💖",
-      "category": "gameplay",
-      "points": 25,
-      "hidden": false,
-      "requirement": {
-        "type": "choice_pattern",
-        "pattern": "caring",
-        "count": 5
-      }
-    },
-    "healthy": {
-      "id": "healthy",
-      "name": "Здоровяк",
-      "description": "Завершите игру со здоровьем выше 90",
-      "icon": "❤️",
-      "category": "stats",
-      "points": 40,
-      "hidden": false,
-      "requirement": {
-        "type": "final_stat",
-        "stat": "health",
-        "min": 90
-      }
-    },
-    "optimist": {
-      "id": "optimist",
-      "name": "Оптимист",
-      "description": "Завершите игру с моралью выше 90",
-      "icon": "😊",
-      "category": "stats",
-      "points": 40,
-      "hidden": false,
-      "requirement": {
-        "type": "final_stat",
-        "stat": "morale",
-        "min": 90
-      }
-    },
-    "knowledge_seeker": {
-      "id": "knowledge_seeker",
-      "name": "Искатель знаний",
-      "description": "Достигните максимума знаний (100)",
-      "icon": "🧠",
-      "category": "stats",
-      "points": 50,
-      "hidden": false,
-      "requirement": {
-        "type": "stat_maxed",
-        "stat": "knowledge"
-      }
-    },
-    "wealthy": {
-      "id": "wealthy",
-      "name": "Богач",
-      "description": "Накопите более 5000 кредитов",
-      "icon": "💰",
-      "category": "stats",
-      "points": 30,
-      "hidden": false,
-      "requirement": {
-        "type": "stat_threshold",
-        "stat": "money",
-        "min": 5000
-      }
-    },
-    "sara_friend": {
-      "id": "sara_friend",
-      "name": "Друг Сары",
-      "description": "Достигните максимальных отношений с Сарой Новой",
-      "icon": "👩‍🔬",
-      "category": "relationships",
-      "points": 50,
-      "hidden": false,
-      "requirement": {
-        "type": "relationship_max",
-        "character": "sara_nova"
-      }
-    },
-    "grisha_friend": {
-      "id": "grisha_friend",
-      "name": "Братство с Гришей",
-      "description": "Достигните максимальных отношений с Гришей Романовым",
-      "icon": "🎖️",
-      "category": "relationships",
-      "points": 50,
-      "hidden": false,
-      "requirement": {
-        "type": "relationship_max",
-        "character": "grisha_romanov"
-      }
-    },
-    "li_friend": {
-      "id": "li_friend",
-      "name": "Тайны Ли Чжэнь",
-      "description": "Достигните максимальных отношений с Ли Чжэнь",
-      "icon": "🧭",
-      "category": "relationships",
-      "points": 50,
-      "hidden": false,
-      "requirement": {
-        "type": "relationship_max",
-        "character": "li_zheng"
-      }
-    },
-    "awakening": {
-      "id": "awakening",
-      "name": "Пробуждение Древних",
-      "description": "Завершите игру концовкой 'Пробуждение'",
-      "icon": "🌟",
-      "category": "endings",
-      "points": 100,
-      "hidden": true,
-      "requirement": {
-        "type": "ending",
-        "ending": "awakening"
-      }
-    },
-    "guardian_ending": {
-      "id": "guardian_ending",
-      "name": "Хранитель артефакта",
-      "description": "Завершите игру концовкой 'Хранитель'",
-      "icon": "🔮",
-      "category": "endings",
-      "points": 80,
-      "hidden": true,
-      "requirement": {
-        "type": "ending",
-        "ending": "guardian"
-      }
-    },
-    "sacrifice": {
-      "id": "sacrifice",
-      "name": "Жертва ради будущего",
-      "description": "Завершите игру концовкой 'Жертва'",
-      "icon": "💥",
-      "category": "endings",
-      "points": 70,
-      "hidden": true,
-      "requirement": {
-        "type": "ending",
-        "ending": "sacrifice"
-      }
-    },
-    "combat_victory": {
-      "id": "combat_victory",
-      "name": "Боевая победа",
-      "description": "Завершите игру концовкой 'Боевая победа'",
-      "icon": "🏆",
-      "category": "endings",
-      "points": 60,
-      "hidden": true,
-      "requirement": {
-        "type": "ending",
-        "ending": "combat_victory"
-      }
-    },
-    "speedrun": {
-      "id": "speedrun",
-      "name": "Спидраннер",
-      "description": "Завершите игру менее чем за 10 минут",
-      "icon": "⚡",
-      "category": "challenges",
-      "points": 75,
-      "hidden": false,
-      "requirement": {
-        "type": "playtime",
-        "max_minutes": 10
-      }
-    },
-    "survivor": {
-      "id": "survivor",
-      "name": "Выживший",
-      "description": "Завершите игру с критически низким здоровьем (< 20)",
-      "icon": "💪",
-      "category": "challenges",
-      "points": 60,
-      "hidden": false,
-      "requirement": {
-        "type": "final_stat",
-        "stat": "health",
-        "max": 20,
-        "min": 1
-      }
-    },
-    "pacifist": {
-      "id": "pacifist",
-      "name": "Пацифист",
-      "description": "Завершите игру без агрессивных выборов",
-      "icon": "☮️",
-      "category": "challenges",
-      "points": 100,
-      "hidden": false,
-      "requirement": {
-        "type": "no_pattern",
-        "pattern": "aggressive"
-      }
-    },
-    "completionist": {
-      "id": "completionist",
-      "name": "Перфекционист",
-      "description": "Откройте все достижения",
-      "icon": "🎖️",
-      "category": "meta",
-      "points": 200,
-      "hidden": true,
-      "requirement": {
-        "type": "all_achievements"
-      }
-    },
-    "veteran": {
-      "id": "veteran",
-      "name": "Ветеран космоса",
-      "description": "Завершите 5 игр",
-      "icon": "🏅",
-      "category": "meta",
-      "points": 50,
-      "hidden": false,
-      "requirement": {
-        "type": "games_completed",
-        "count": 5
-      }
-    }
-  },
-  "categories": {
-    "story": {
-      "name": "История",
-      "description": "Достижения за прогресс в сюжете",
-      "icon": "📖"
-    },
-    "exploration": {
-      "name": "Исследование",
-      "description": "Достижения за исследование мира",
-      "icon": "🗺️"
-    },
-    "gameplay": {
-      "name": "Геймплей",
-      "description": "Достижения за стиль игры",
-      "icon": "🎮"
-    },
-    "stats": {
-      "name": "Статистика",
-      "description": "Достижения за характеристики",
-      "icon": "📊"
-    },
-    "relationships": {
-      "name": "Отношения",
-      "description": "Достижения за отношения с персонажами",
-      "icon": "💕"
-    },
-    "endings": {
-      "name": "Концовки",
-      "description": "Достижения за различные концовки",
-      "icon": "🎬"
-    },
-    "challenges": {
-      "name": "Испытания",
-      "description": "Особые испытания",
-      "icon": "🏆"
-    },
-    "meta": {
-      "name": "Мета",
-      "description": "Мета-достижения",
-      "icon": "⭐"
-    }
-  },
-  "rarity": {
-    "common": {
-      "color": "#9ca3af",
-      "points_range": [0, 30]
-    },
-    "uncommon": {
-      "color": "#22c55e",
-      "points_range": [31, 50]
-    },
-    "rare": {
-      "color": "#3b82f6",
-      "points_range": [51, 75]
-    },
-    "epic": {
-      "color": "#a855f7",
-      "points_range": [76, 100]
-    },
-    "legendary": {
-      "color": "#f59e0b",
-      "points_range": [101, 999]
-    }
-  }
+﻿{
+    "achievements":  {
+                         "first_steps":  {
+                                             "id":  "first_steps",
+                                             "name":  "РџРµСЂРІС‹Рµ С€Р°РіРё",
+                                             "description":  "РќР°С‡РЅРёС‚Рµ СЃРІРѕС‘ РїРµСЂРІРѕРµ РїСЂРёРєР»СЋС‡РµРЅРёРµ",
+                                             "icon":  "рџљЂ",
+                                             "category":  "story",
+                                             "points":  10,
+                                             "hidden":  false,
+                                             "requirement":  {
+                                                                 "type":  "scenes_visited",
+                                                                 "count":  1
+                                                             }
+                                         },
+                         "explorer":  {
+                                          "id":  "explorer",
+                                          "name":  "РСЃСЃР»РµРґРѕРІР°С‚РµР»СЊ",
+                                          "description":  "РџРѕСЃРµС‚РёС‚Рµ 10 СЂР°Р·РЅС‹С… СЃС†РµРЅ",
+                                          "icon":  "рџ—єпёЏ",
+                                          "category":  "exploration",
+                                          "points":  30,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "scenes_visited",
+                                                              "count":  10
+                                                          }
+                                      },
+                         "world_traveler":  {
+                                                "id":  "world_traveler",
+                                                "name":  "РџСѓС‚РµС€РµСЃС‚РІРµРЅРЅРёРє РјРёСЂРѕРІ",
+                                                "description":  "РџРѕСЃРµС‚РёС‚Рµ РІСЃРµ СЃС†РµРЅС‹ РІ РёРіСЂРµ",
+                                                "icon":  "рџЊЊ",
+                                                "category":  "exploration",
+                                                "points":  100,
+                                                "hidden":  false,
+                                                "requirement":  {
+                                                                    "type":  "all_scenes_visited"
+                                                                }
+                                            },
+                         "diplomat":  {
+                                          "id":  "diplomat",
+                                          "name":  "Р”РёРїР»РѕРјР°С‚",
+                                          "description":  "РЎРґРµР»Р°Р№С‚Рµ 5 РґРёРїР»РѕРјР°С‚РёС‡РµСЃРєРёС… РІС‹Р±РѕСЂРѕРІ",
+                                          "icon":  "рџ¤ќ",
+                                          "category":  "gameplay",
+                                          "points":  25,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "choice_pattern",
+                                                              "pattern":  "diplomatic",
+                                                              "count":  5
+                                                          }
+                                      },
+                         "warrior":  {
+                                         "id":  "warrior",
+                                         "name":  "Р’РѕРёРЅ",
+                                         "description":  "РЎРґРµР»Р°Р№С‚Рµ 5 Р°РіСЂРµСЃСЃРёРІРЅС‹С… РІС‹Р±РѕСЂРѕРІ",
+                                         "icon":  "вљ”пёЏ",
+                                         "category":  "gameplay",
+                                         "points":  25,
+                                         "hidden":  false,
+                                         "requirement":  {
+                                                             "type":  "choice_pattern",
+                                                             "pattern":  "aggressive",
+                                                             "count":  5
+                                                         }
+                                     },
+                         "scholar":  {
+                                         "id":  "scholar",
+                                         "name":  "РЈС‡С‘РЅС‹Р№",
+                                         "description":  "РЎРґРµР»Р°Р№С‚Рµ 5 Р°РЅР°Р»РёС‚РёС‡РµСЃРєРёС… РІС‹Р±РѕСЂРѕРІ",
+                                         "icon":  "рџ“љ",
+                                         "category":  "gameplay",
+                                         "points":  25,
+                                         "hidden":  false,
+                                         "requirement":  {
+                                                             "type":  "choice_pattern",
+                                                             "pattern":  "analytical",
+                                                             "count":  5
+                                                         }
+                                     },
+                         "guardian":  {
+                                          "id":  "guardian",
+                                          "name":  "РҐСЂР°РЅРёС‚РµР»СЊ",
+                                          "description":  "РЎРґРµР»Р°Р№С‚Рµ 5 Р·Р°Р±РѕС‚Р»РёРІС‹С… РІС‹Р±РѕСЂРѕРІ",
+                                          "icon":  "рџ’–",
+                                          "category":  "gameplay",
+                                          "points":  25,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "choice_pattern",
+                                                              "pattern":  "caring",
+                                                              "count":  5
+                                                          }
+                                      },
+                         "healthy":  {
+                                         "id":  "healthy",
+                                         "name":  "Р—РґРѕСЂРѕРІСЏРє",
+                                         "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ СЃРѕ Р·РґРѕСЂРѕРІСЊРµРј РІС‹С€Рµ 90",
+                                         "icon":  "вќ¤пёЏ",
+                                         "category":  "stats",
+                                         "points":  40,
+                                         "hidden":  false,
+                                         "requirement":  {
+                                                             "type":  "final_stat",
+                                                             "stat":  "health",
+                                                             "min":  90
+                                                         }
+                                     },
+                         "optimist":  {
+                                          "id":  "optimist",
+                                          "name":  "РћРїС‚РёРјРёСЃС‚",
+                                          "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ СЃ РјРѕСЂР°Р»СЊСЋ РІС‹С€Рµ 90",
+                                          "icon":  "рџЉ",
+                                          "category":  "stats",
+                                          "points":  40,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "final_stat",
+                                                              "stat":  "morale",
+                                                              "min":  90
+                                                          }
+                                      },
+                         "knowledge_seeker":  {
+                                                  "id":  "knowledge_seeker",
+                                                  "name":  "РСЃРєР°С‚РµР»СЊ Р·РЅР°РЅРёР№",
+                                                  "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјСѓРјР° Р·РЅР°РЅРёР№ (100)",
+                                                  "icon":  "рџ§ ",
+                                                  "category":  "stats",
+                                                  "points":  50,
+                                                  "hidden":  false,
+                                                  "requirement":  {
+                                                                      "type":  "stat_maxed",
+                                                                      "stat":  "knowledge"
+                                                                  }
+                                              },
+                         "wealthy":  {
+                                         "id":  "wealthy",
+                                         "name":  "Р‘РѕРіР°С‡",
+                                         "description":  "РќР°РєРѕРїРёС‚Рµ Р±РѕР»РµРµ 5000 РєСЂРµРґРёС‚РѕРІ",
+                                         "icon":  "рџ’°",
+                                         "category":  "stats",
+                                         "points":  30,
+                                         "hidden":  false,
+                                         "requirement":  {
+                                                             "type":  "stat_threshold",
+                                                             "stat":  "money",
+                                                             "min":  5000
+                                                         }
+                                     },
+                         "sara_friend":  {
+                                             "id":  "sara_friend",
+                                             "name":  "Р”СЂСѓРі РЎР°СЂС‹",
+                                             "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РЎР°СЂРѕР№ РќРѕРІРѕР№",
+                                             "icon":  "рџ‘©вЂЌрџ”¬",
+                                             "category":  "relationships",
+                                             "points":  50,
+                                             "hidden":  false,
+                                             "requirement":  {
+                                                                 "type":  "relationship_max",
+                                                                 "character":  "sara_nova"
+                                                             }
+                                         },
+                         "grisha_friend":  {
+                                               "id":  "grisha_friend",
+                                               "name":  "Р‘СЂР°С‚СЃС‚РІРѕ СЃ Р“СЂРёС€РµР№",
+                                               "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ Р“СЂРёС€РµР№ Р РѕРјР°РЅРѕРІС‹Рј",
+                                               "icon":  "рџЋ–пёЏ",
+                                               "category":  "relationships",
+                                               "points":  50,
+                                               "hidden":  false,
+                                               "requirement":  {
+                                                                   "type":  "relationship_max",
+                                                                   "character":  "grisha_romanov"
+                                                               }
+                                           },
+                         "li_friend":  {
+                                           "id":  "li_friend",
+                                           "name":  "РўР°Р№РЅС‹ Р›Рё Р§Р¶СЌРЅСЊ",
+                                           "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ Р›Рё Р§Р¶СЌРЅСЊ",
+                                           "icon":  "рџ§­",
+                                           "category":  "relationships",
+                                           "points":  50,
+                                           "hidden":  false,
+                                           "requirement":  {
+                                                               "type":  "relationship_max",
+                                                               "character":  "li_zheng"
+                                                           }
+                                       },
+                         "awakening":  {
+                                           "id":  "awakening",
+                                           "name":  "РџСЂРѕР±СѓР¶РґРµРЅРёРµ Р”СЂРµРІРЅРёС…",
+                                           "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ РєРѕРЅС†РѕРІРєРѕР№ \u0027РџСЂРѕР±СѓР¶РґРµРЅРёРµ\u0027",
+                                           "icon":  "рџЊџ",
+                                           "category":  "endings",
+                                           "points":  100,
+                                           "hidden":  true,
+                                           "requirement":  {
+                                                               "type":  "ending",
+                                                               "ending":  "awakening"
+                                                           }
+                                       },
+                         "guardian_ending":  {
+                                                 "id":  "guardian_ending",
+                                                 "name":  "РҐСЂР°РЅРёС‚РµР»СЊ Р°СЂС‚РµС„Р°РєС‚Р°",
+                                                 "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ РєРѕРЅС†РѕРІРєРѕР№ \u0027РҐСЂР°РЅРёС‚РµР»СЊ\u0027",
+                                                 "icon":  "рџ”®",
+                                                 "category":  "endings",
+                                                 "points":  80,
+                                                 "hidden":  true,
+                                                 "requirement":  {
+                                                                     "type":  "ending",
+                                                                     "ending":  "guardian"
+                                                                 }
+                                             },
+                         "sacrifice":  {
+                                           "id":  "sacrifice",
+                                           "name":  "Р–РµСЂС‚РІР° СЂР°РґРё Р±СѓРґСѓС‰РµРіРѕ",
+                                           "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ РєРѕРЅС†РѕРІРєРѕР№ \u0027Р–РµСЂС‚РІР°\u0027",
+                                           "icon":  "рџ’Ґ",
+                                           "category":  "endings",
+                                           "points":  70,
+                                           "hidden":  true,
+                                           "requirement":  {
+                                                               "type":  "ending",
+                                                               "ending":  "sacrifice"
+                                                           }
+                                       },
+                         "combat_victory":  {
+                                                "id":  "combat_victory",
+                                                "name":  "Р‘РѕРµРІР°СЏ РїРѕР±РµРґР°",
+                                                "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ РєРѕРЅС†РѕРІРєРѕР№ \u0027Р‘РѕРµРІР°СЏ РїРѕР±РµРґР°\u0027",
+                                                "icon":  "рџЏ†",
+                                                "category":  "endings",
+                                                "points":  60,
+                                                "hidden":  true,
+                                                "requirement":  {
+                                                                    "type":  "ending",
+                                                                    "ending":  "combat_victory"
+                                                                }
+                                            },
+                         "speedrun":  {
+                                          "id":  "speedrun",
+                                          "name":  "РЎРїРёРґСЂР°РЅРЅРµСЂ",
+                                          "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ РјРµРЅРµРµ С‡РµРј Р·Р° 10 РјРёРЅСѓС‚",
+                                          "icon":  "вљЎ",
+                                          "category":  "challenges",
+                                          "points":  75,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "playtime",
+                                                              "max_minutes":  10
+                                                          }
+                                      },
+                         "pacifist":  {
+                                          "id":  "pacifist",
+                                          "name":  "РџР°С†РёС„РёСЃС‚",
+                                          "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ Р±РµР· Р°РіСЂРµСЃСЃРёРІРЅС‹С… РІС‹Р±РѕСЂРѕРІ",
+                                          "icon":  "в®пёЏ",
+                                          "category":  "challenges",
+                                          "points":  100,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "no_pattern",
+                                                              "pattern":  "aggressive"
+                                                          }
+                                      },
+                         "veteran":  {
+                                         "id":  "veteran",
+                                         "name":  "Р’РµС‚РµСЂР°РЅ РєРѕСЃРјРѕСЃР°",
+                                         "description":  "Р—Р°РІРµСЂС€РёС‚Рµ 5 РёРіСЂ",
+                                         "icon":  "рџЏ…",
+                                         "category":  "meta",
+                                         "points":  50,
+                                         "hidden":  false,
+                                         "requirement":  {
+                                                             "type":  "games_completed",
+                                                             "count":  5
+                                                         }
+                                     },
+                         "first_flight":  {
+                                              "id":  "first_flight",
+                                              "name":  "РџРµСЂРІС‹Р№ РїРѕР»С‘С‚",
+                                              "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РіР»Р°РІСѓ 1 Рё РїРѕР»СѓС‡РёС‚Рµ СЃРІРѕР№ РїРµСЂРІС‹Р№ РєРѕСЂР°Р±Р»СЊ",
+                                              "icon":  "рџљЂ",
+                                              "category":  "story",
+                                              "points":  50,
+                                              "hidden":  false,
+                                              "requirement":  {
+                                                                  "type":  "chapter_complete",
+                                                                  "chapter":  1
+                                                              }
+                                          },
+                         "echo_contact":  {
+                                              "id":  "echo_contact",
+                                              "name":  "Р“РѕР»РѕСЃ РёР· РіР»СѓР±РёРЅС‹",
+                                              "description":  "РЈСЃС‚Р°РЅРѕРІРёС‚Рµ РєРѕРЅС‚Р°РєС‚ СЃ Р­С…РѕРј РІ РіР»Р°РІРµ 11",
+                                              "icon":  "рџ”®",
+                                              "category":  "story",
+                                              "points":  40,
+                                              "hidden":  false,
+                                              "requirement":  {
+                                                                  "type":  "dialogue_complete",
+                                                                  "dialogue_id":  "echo_first_contact"
+                                                              }
+                                          },
+                         "path_chosen":  {
+                                             "id":  "path_chosen",
+                                             "name":  "Р’С‹Р±РѕСЂ СЃРґРµР»Р°РЅ",
+                                             "description":  "Р’С‹Р±РµСЂРёС‚Рµ СЃРІРѕР№ РїСѓС‚СЊ РІ РіР»Р°РІРµ 13",
+                                             "icon":  "в›¤",
+                                             "category":  "story",
+                                             "points":  75,
+                                             "hidden":  false,
+                                             "requirement":  {
+                                                                 "type":  "event",
+                                                                 "event_id":  "path_selected"
+                                                             }
+                                         },
+                         "survivor_found":  {
+                                                "id":  "survivor_found",
+                                                "name":  "РЎР»РµРґ РІС‹Р¶РёРІС€РµРіРѕ",
+                                                "description":  "РќР°Р№РґРёС‚Рµ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РІС‹Р¶РёРІС€РµРј РёР· Р—РѕРЅС‹ РўРёС€РёРЅС‹",
+                                                "icon":  "рџ‘Ј",
+                                                "category":  "exploration",
+                                                "points":  35,
+                                                "hidden":  false,
+                                                "requirement":  {
+                                                                    "type":  "quest_complete",
+                                                                    "quest_id":  "q11_02"
+                                                                }
+                                            },
+                         "crystal_obtained":  {
+                                                  "id":  "crystal_obtained",
+                                                  "name":  "РљСЂРёСЃС‚Р°Р»Р» Р’СЂРµРјРµРЅРё",
+                                                  "description":  "РџРѕР»СѓС‡РёС‚Рµ РљСЂРёСЃС‚Р°Р»Р» Р’СЂРµРјРµРЅРё РёР· РґСЂРµРІРЅРµРіРѕ С…СЂР°РјР°",
+                                                  "icon":  "рџ’Ћ",
+                                                  "category":  "story",
+                                                  "points":  60,
+                                                  "hidden":  false,
+                                                  "requirement":  {
+                                                                      "type":  "item_obtained",
+                                                                      "item_id":  "time_crystal"
+                                                                  }
+                                              },
+                         "traitor_revealed":  {
+                                                  "id":  "traitor_revealed",
+                                                  "name":  "Р›РёС†Рѕ РІСЂР°РіР°",
+                                                  "description":  "Р Р°СЃРєСЂРѕР№С‚Рµ РїСЂРµРґР°С‚РµР»СЏ РІ РіР»Р°РІРµ 15",
+                                                  "icon":  "рџЋ­",
+                                                  "category":  "story",
+                                                  "points":  80,
+                                                  "hidden":  true,
+                                                  "requirement":  {
+                                                                      "type":  "event",
+                                                                      "event_id":  "traitor_confronted"
+                                                                  }
+                                              },
+                         "zone_silence_entered":  {
+                                                      "id":  "zone_silence_entered",
+                                                      "name":  "Р—РѕРЅР° РўРёС€РёРЅС‹",
+                                                      "description":  "Р’РѕР№РґРёС‚Рµ РІ Р—РѕРЅСѓ РўРёС€РёРЅС‹ Рё РІС‹Р¶РёРІРёС‚Рµ",
+                                                      "icon":  "рџЊ‘",
+                                                      "category":  "exploration",
+                                                      "points":  50,
+                                                      "hidden":  false,
+                                                      "requirement":  {
+                                                                          "type":  "location_visited",
+                                                                          "location_id":  "zone_silence"
+                                                                      }
+                                                  },
+                         "guardian_met":  {
+                                              "id":  "guardian_met",
+                                              "name":  "Р”СЂРµРІРЅРёР№ РЎС‚СЂР°Р¶",
+                                              "description":  "Р’СЃС‚СЂРµС‚СЊС‚РµСЃСЊ СЃРѕ РЎС‚СЂР°Р¶РµРј РЇРґСЂР°",
+                                              "icon":  "рџ—ї",
+                                              "category":  "story",
+                                              "points":  70,
+                                              "hidden":  false,
+                                              "requirement":  {
+                                                                  "type":  "dialogue_complete",
+                                                                  "dialogue_id":  "guardian_encounter"
+                                                              }
+                                          },
+                         "exile_hero":  {
+                                            "id":  "exile_hero",
+                                            "name":  "РР·РіРЅР°РЅРёРµ РўСЊРјС‹",
+                                            "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ С„РёРЅР°Р»РѕРј РР·РіРЅР°РЅРёСЏ",
+                                            "icon":  "вЂпёЏ",
+                                            "category":  "ending",
+                                            "points":  200,
+                                            "hidden":  false,
+                                            "requirement":  {
+                                                                "type":  "ending",
+                                                                "ending_id":  "exile"
+                                                            }
+                                        },
+                         "treaty_keeper":  {
+                                               "id":  "treaty_keeper",
+                                               "name":  "РҐСЂР°РЅРёС‚РµР»СЊ Р“СЂР°РЅРёС†С‹",
+                                               "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ С„РёРЅР°Р»РѕРј Р”РѕРіРѕРІРѕСЂР°",
+                                               "icon":  "вљ–пёЏ",
+                                               "category":  "ending",
+                                               "points":  200,
+                                               "hidden":  false,
+                                               "requirement":  {
+                                                                   "type":  "ending",
+                                                                   "ending_id":  "treaty"
+                                                               }
+                                           },
+                         "transcendent":  {
+                                              "id":  "transcendent",
+                                              "name":  "РўСЂР°РЅСЃС†РµРЅРґРµРЅС†РёСЏ",
+                                              "description":  "Р—Р°РІРµСЂС€РёС‚Рµ РёРіСЂСѓ С„РёРЅР°Р»РѕРј РЎР»РёСЏРЅРёСЏ",
+                                              "icon":  "в™ѕпёЏ",
+                                              "category":  "ending",
+                                              "points":  300,
+                                              "hidden":  true,
+                                              "requirement":  {
+                                                                  "type":  "ending",
+                                                                  "ending_id":  "merge"
+                                                              }
+                                          },
+                         "all_endings":  {
+                                             "id":  "all_endings",
+                                             "name":  "РњР°СЃС‚РµСЂ СЃСѓРґРµР±",
+                                             "description":  "РџРѕР»СѓС‡РёС‚Рµ РІСЃРµ С‚СЂРё РєРѕРЅС†РѕРІРєРё",
+                                             "icon":  "рџ”±",
+                                             "category":  "ending",
+                                             "points":  500,
+                                             "hidden":  true,
+                                             "requirement":  {
+                                                                 "type":  "endings_count",
+                                                                 "count":  3
+                                                             }
+                                         },
+                         "first_kiss":  {
+                                            "id":  "first_kiss",
+                                            "name":  "РџРµСЂРІС‹Р№ РїРѕС†РµР»СѓР№",
+                                            "description":  "РќР°С‡РЅРёС‚Рµ СЂРѕРјР°РЅС‚РёС‡РµСЃРєРёРµ РѕС‚РЅРѕС€РµРЅРёСЏ СЃ РїРµСЂСЃРѕРЅР°Р¶РµРј",
+                                            "icon":  "рџ’•",
+                                            "category":  "romance",
+                                            "points":  30,
+                                            "hidden":  false,
+                                            "requirement":  {
+                                                                "type":  "romance_level",
+                                                                "level":  50
+                                                            }
+                                        },
+                         "true_love_mia":  {
+                                               "id":  "true_love_mia",
+                                               "name":  "РўР°РєС‚РёС‡РµСЃРєРёР№ СЃРѕСЋР·",
+                                               "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РњРёРµР№",
+                                               "icon":  "вќ¤пёЏ",
+                                               "category":  "romance",
+                                               "points":  100,
+                                               "hidden":  false,
+                                               "requirement":  {
+                                                                   "type":  "character_relationship",
+                                                                   "character":  "mia",
+                                                                   "value":  100
+                                                               }
+                                           },
+                         "true_love_maria":  {
+                                                 "id":  "true_love_maria",
+                                                 "name":  "РСЃС†РµР»РµРЅРёРµ СЃРµСЂРґС†Р°",
+                                                 "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РњР°СЂРёРµР№",
+                                                 "icon":  "вќ¤пёЏ",
+                                                 "category":  "romance",
+                                                 "points":  100,
+                                                 "hidden":  false,
+                                                 "requirement":  {
+                                                                     "type":  "character_relationship",
+                                                                     "character":  "maria",
+                                                                     "value":  100
+                                                                 }
+                                             },
+                         "true_love_anna":  {
+                                                "id":  "true_love_anna",
+                                                "name":  "Р—РІС‘Р·РґРЅС‹Р№ РЅР°РІРёРіР°С‚РѕСЂ",
+                                                "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РђРЅРЅРѕР№",
+                                                "icon":  "вќ¤пёЏ",
+                                                "category":  "romance",
+                                                "points":  100,
+                                                "hidden":  false,
+                                                "requirement":  {
+                                                                    "type":  "character_relationship",
+                                                                    "character":  "anna",
+                                                                    "value":  100
+                                                                }
+                                            },
+                         "true_love_veronica":  {
+                                                    "id":  "true_love_veronica",
+                                                    "name":  "РўРµРЅРµРІРѕР№ Р°Р»СЊСЏРЅСЃ",
+                                                    "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ Р’РµСЂРѕРЅРёРєРѕР№",
+                                                    "icon":  "вќ¤пёЏ",
+                                                    "category":  "romance",
+                                                    "points":  100,
+                                                    "hidden":  false,
+                                                    "requirement":  {
+                                                                        "type":  "character_relationship",
+                                                                        "character":  "veronica",
+                                                                        "value":  100
+                                                                    }
+                                                },
+                         "true_love_zara":  {
+                                                "id":  "true_love_zara",
+                                                "name":  "Р С‹С†Р°СЂСЊ Рё РјРёСЃС‚РёРє",
+                                                "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ Р—Р°СЂРѕР№",
+                                                "icon":  "вќ¤пёЏ",
+                                                "category":  "romance",
+                                                "points":  100,
+                                                "hidden":  false,
+                                                "requirement":  {
+                                                                    "type":  "character_relationship",
+                                                                    "character":  "zara",
+                                                                    "value":  100
+                                                                }
+                                            },
+                         "true_love_athena":  {
+                                                  "id":  "true_love_athena",
+                                                  "name":  "Р¦РёС„СЂРѕРІР°СЏ Р»СЋР±РѕРІСЊ",
+                                                  "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РђС„РёРЅРѕР№",
+                                                  "icon":  "вќ¤пёЏ",
+                                                  "category":  "romance",
+                                                  "points":  150,
+                                                  "hidden":  true,
+                                                  "requirement":  {
+                                                                      "type":  "character_relationship",
+                                                                      "character":  "athena",
+                                                                      "value":  100
+                                                                  }
+                                              },
+                         "true_love_alia":  {
+                                                "id":  "true_love_alia",
+                                                "name":  "Р‘РёРѕС‚РёС‡РµСЃРєР°СЏ СЃРІСЏР·СЊ",
+                                                "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅС‹С… РѕС‚РЅРѕС€РµРЅРёР№ СЃ РђР»РёС‘Р№",
+                                                "icon":  "вќ¤пёЏ",
+                                                "category":  "romance",
+                                                "points":  150,
+                                                "hidden":  false,
+                                                "requirement":  {
+                                                                    "type":  "character_relationship",
+                                                                    "character":  "alia_naar",
+                                                                    "value":  100
+                                                                }
+                                            },
+                         "heartbreaker":  {
+                                              "id":  "heartbreaker",
+                                              "name":  "Р Р°Р·Р±РёРІР°С‚РµР»СЊ СЃРµСЂРґРµС†",
+                                              "description":  "РћС‚РІРµСЂРіРЅРёС‚Рµ 3 СЂРѕРјР°РЅС‚РёС‡РµСЃРєРёС… РїСЂРµРґР»РѕР¶РµРЅРёСЏ",
+                                              "icon":  "рџ’”",
+                                              "category":  "romance",
+                                              "points":  50,
+                                              "hidden":  true,
+                                              "requirement":  {
+                                                                  "type":  "romance_rejections",
+                                                                  "count":  3
+                                                              }
+                                          },
+                         "polyamory_master":  {
+                                                  "id":  "polyamory_master",
+                                                  "name":  "РњР°СЃС‚РµСЂ РїРѕР»РёР°РјРѕСЂРёРё",
+                                                  "description":  "РџРѕРґРґРµСЂР¶РёРІР°Р№С‚Рµ РѕС‚РЅРѕС€РµРЅРёСЏ СЃ 3 РїР°СЂС‚РЅС‘СЂР°РјРё РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ",
+                                                  "icon":  "рџ’ћ",
+                                                  "category":  "romance",
+                                                  "points":  200,
+                                                  "hidden":  true,
+                                                  "requirement":  {
+                                                                      "type":  "simultaneous_relationships",
+                                                                      "count":  3
+                                                                  }
+                                              },
+                         "resonance_level_2":  {
+                                                   "id":  "resonance_level_2",
+                                                   "name":  "РџСЂРѕР±СѓР¶РґРµРЅРёРµ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ 2 СѓСЂРѕРІРЅСЏ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "icon":  "вњЁ",
+                                                   "category":  "mechanics",
+                                                   "points":  40,
+                                                   "hidden":  false,
+                                                   "requirement":  {
+                                                                       "type":  "resonance_level",
+                                                                       "level":  2
+                                                                   }
+                                               },
+                         "resonance_level_3":  {
+                                                   "id":  "resonance_level_3",
+                                                   "name":  "РњР°СЃС‚РµСЂ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ 3 СѓСЂРѕРІРЅСЏ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "icon":  "рџЊџ",
+                                                   "category":  "mechanics",
+                                                   "points":  75,
+                                                   "hidden":  false,
+                                                   "requirement":  {
+                                                                       "type":  "resonance_level",
+                                                                       "level":  3
+                                                                   }
+                                               },
+                         "resonance_level_4":  {
+                                                   "id":  "resonance_level_4",
+                                                   "name":  "РўСЂР°РЅСЃС†РµРЅРґРµРЅС‚РЅС‹Р№",
+                                                   "description":  "Р”РѕСЃС‚РёРіРЅРёС‚Рµ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ СѓСЂРѕРІРЅСЏ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "icon":  "в­ђ",
+                                                   "category":  "mechanics",
+                                                   "points":  150,
+                                                   "hidden":  true,
+                                                   "requirement":  {
+                                                                       "type":  "resonance_level",
+                                                                       "level":  4
+                                                                   }
+                                               },
+                         "diplomatic_victory":  {
+                                                    "id":  "diplomatic_victory",
+                                                    "name":  "Р”РёРїР»РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїРѕР±РµРґР°",
+                                                    "description":  "Р РµС€РёС‚Рµ 10 РєРѕРЅС„Р»РёРєС‚РѕРІ РјРёСЂРЅС‹Рј РїСѓС‚С‘Рј",
+                                                    "icon":  "рџ•ЉпёЏ",
+                                                    "category":  "gameplay",
+                                                    "points":  60,
+                                                    "hidden":  false,
+                                                    "requirement":  {
+                                                                        "type":  "peaceful_resolutions",
+                                                                        "count":  10
+                                                                    }
+                                                },
+                         "tactical_genius":  {
+                                                 "id":  "tactical_genius",
+                                                 "name":  "РўР°РєС‚РёС‡РµСЃРєРёР№ РіРµРЅРёР№",
+                                                 "description":  "Р’С‹РёРіСЂР°Р№С‚Рµ 10 Р±РѕС‘РІ Р±РµР· РїРѕС‚РµСЂСЊ",
+                                                 "icon":  "рџЋЇ",
+                                                 "category":  "combat",
+                                                 "points":  80,
+                                                 "hidden":  false,
+                                                 "requirement":  {
+                                                                     "type":  "flawless_victories",
+                                                                     "count":  10
+                                                                 }
+                                             },
+                         "survivor":  {
+                                          "id":  "survivor",
+                                          "name":  "Р’С‹Р¶РёРІС€РёР№",
+                                          "description":  "Р’С‹Р¶РёРІРёС‚Рµ РїРѕСЃР»Рµ 5 РєСЂРёС‚РёС‡РµСЃРєРёС… СЃРёС‚СѓР°С†РёР№",
+                                          "icon":  "рџ›ЎпёЏ",
+                                          "category":  "survival",
+                                          "points":  50,
+                                          "hidden":  false,
+                                          "requirement":  {
+                                                              "type":  "critical_survivals",
+                                                              "count":  5
+                                                          }
+                                      },
+                         "treasure_hunter":  {
+                                                 "id":  "treasure_hunter",
+                                                 "name":  "РћС…РѕС‚РЅРёРє Р·Р° СЃРѕРєСЂРѕРІРёС‰Р°РјРё",
+                                                 "description":  "РќР°Р№РґРёС‚Рµ 20 СЃРєСЂС‹С‚С‹С… Р°СЂС‚РµС„Р°РєС‚РѕРІ",
+                                                 "icon":  "рџ’°",
+                                                 "category":  "exploration",
+                                                 "points":  70,
+                                                 "hidden":  false,
+                                                 "requirement":  {
+                                                                     "type":  "artifacts_found",
+                                                                     "count":  20
+                                                                 }
+                                             },
+                         "completionist":  {
+                                               "id":  "completionist",
+                                               "name":  "РљРѕР»Р»РµРєС†РёРѕРЅРµСЂ",
+                                               "description":  "РЎРѕР±РµСЂРёС‚Рµ РІСЃРµ РґРѕСЃС‚РёР¶РµРЅРёСЏ",
+                                               "icon":  "рџЏ†",
+                                               "category":  "meta",
+                                               "points":  1000,
+                                               "hidden":  true,
+                                               "requirement":  {
+                                                                   "type":  "all_achievements"
+                                                               }
+                                           }
+                     },
+    "categories":  {
+                       "story":  {
+                                     "name":  "РСЃС‚РѕСЂРёСЏ",
+                                     "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° РїСЂРѕРіСЂРµСЃСЃ РІ СЃСЋР¶РµС‚Рµ",
+                                     "icon":  "рџ“–"
+                                 },
+                       "exploration":  {
+                                           "name":  "РСЃСЃР»РµРґРѕРІР°РЅРёРµ",
+                                           "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° РёСЃСЃР»РµРґРѕРІР°РЅРёРµ РјРёСЂР°",
+                                           "icon":  "рџ—єпёЏ"
+                                       },
+                       "gameplay":  {
+                                        "name":  "Р“РµР№РјРїР»РµР№",
+                                        "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° СЃС‚РёР»СЊ РёРіСЂС‹",
+                                        "icon":  "рџЋ®"
+                                    },
+                       "stats":  {
+                                     "name":  "РЎС‚Р°С‚РёСЃС‚РёРєР°",
+                                     "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё",
+                                     "icon":  "рџ“Љ"
+                                 },
+                       "relationships":  {
+                                             "name":  "РћС‚РЅРѕС€РµРЅРёСЏ",
+                                             "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° РѕС‚РЅРѕС€РµРЅРёСЏ СЃ РїРµСЂСЃРѕРЅР°Р¶Р°РјРё",
+                                             "icon":  "рџ’•"
+                                         },
+                       "endings":  {
+                                       "name":  "РљРѕРЅС†РѕРІРєРё",
+                                       "description":  "Р”РѕСЃС‚РёР¶РµРЅРёСЏ Р·Р° СЂР°Р·Р»РёС‡РЅС‹Рµ РєРѕРЅС†РѕРІРєРё",
+                                       "icon":  "рџЋ¬"
+                                   },
+                       "challenges":  {
+                                          "name":  "РСЃРїС‹С‚Р°РЅРёСЏ",
+                                          "description":  "РћСЃРѕР±С‹Рµ РёСЃРїС‹С‚Р°РЅРёСЏ",
+                                          "icon":  "рџЏ†"
+                                      },
+                       "meta":  {
+                                    "name":  "РњРµС‚Р°",
+                                    "description":  "РњРµС‚Р°-РґРѕСЃС‚РёР¶РµРЅРёСЏ",
+                                    "icon":  "в­ђ"
+                                }
+                   },
+    "rarity":  {
+                   "common":  {
+                                  "color":  "#9ca3af",
+                                  "points_range":  [
+                                                       0,
+                                                       30
+                                                   ]
+                              },
+                   "uncommon":  {
+                                    "color":  "#22c55e",
+                                    "points_range":  [
+                                                         31,
+                                                         50
+                                                     ]
+                                },
+                   "rare":  {
+                                "color":  "#3b82f6",
+                                "points_range":  [
+                                                     51,
+                                                     75
+                                                 ]
+                            },
+                   "epic":  {
+                                "color":  "#a855f7",
+                                "points_range":  [
+                                                     76,
+                                                     100
+                                                 ]
+                            },
+                   "legendary":  {
+                                     "color":  "#f59e0b",
+                                     "points_range":  [
+                                                          101,
+                                                          999
+                                                      ]
+                                 }
+               }
 }

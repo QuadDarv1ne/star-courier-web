@@ -600,6 +600,26 @@ async def get_chart_data(
 # CONTENT MANAGEMENT
 # ============================================================================
 
+@router.post("/cache/clear", summary="Очистить кэш данных")
+async def clear_data_cache(
+    admin: User = Depends(require_admin)
+):
+    """
+    Очистка кэша данных игры (сцены, персонажи)
+
+    Используйте после обновления JSON файлов
+    """
+    from app.services import data_service
+
+    data_service.clear_cache()
+    data_service.reload_data()
+
+    return {
+        "status": "success",
+        "message": "Кэш данных очищен и перезапущен"
+    }
+
+
 @router.get("/content/stats", summary="Статистика контента")
 async def get_content_stats(
     admin: User = Depends(require_admin),
@@ -609,7 +629,7 @@ async def get_content_stats(
     Получение статистики по контенту игры
     """
     from app.services import data_service
-    
+
     scenes = data_service.get_scenes()
     characters = data_service.get_characters()
     

@@ -18,13 +18,13 @@ export const useGameStore = defineStore('game', {
     // ========================
     // GAME STATE
     // ========================
-    
+
     isGameStarted: false,
     isLoading: false,
     playerId: null,
     currentSceneId: 'start',
     choicesMade: 0,
-    visitedScenes: new Set(['start']),
+    visitedScenes: ['start'], // Используем массив вместо Set для реактивности
     error: null,
     
     // ========================
@@ -356,7 +356,7 @@ export const useGameStore = defineStore('game', {
         this.startTime = Date.now();
         this.sceneEntryTime = Date.now();
         this.choicesMade = 0;
-        this.visitedScenes = new Set(['start']);
+        this.visitedScenes = ['start'];
         this.choiceHistory = [];
         
         // Initialize stat history
@@ -460,7 +460,9 @@ export const useGameStore = defineStore('game', {
         this.choicesMade = response.choices_made;
 
         // Track visited scenes
-        this.visitedScenes.add(nextSceneId);
+        if (!this.visitedScenes.includes(nextSceneId)) {
+          this.visitedScenes.push(nextSceneId);
+        }
 
         // Update stats and track history
         Object.keys(statChanges).forEach(stat => {
@@ -663,7 +665,7 @@ export const useGameStore = defineStore('game', {
       this.startTime = null
       this.sessionDuration = 0
       this.error = null
-      this.visitedScenes = new Set(['start'])
+      this.visitedScenes = ['start']
 
       // Reset stats to defaults
       this.stats = {
@@ -829,7 +831,7 @@ export const useGameStore = defineStore('game', {
         this.isGameStarted = true
         
         // Restore enhanced data
-        this.visitedScenes = new Set(saveData.visitedScenes || ['start'])
+        this.visitedScenes = Array.isArray(saveData.visitedScenes) ? saveData.visitedScenes : ['start']
         this.choiceHistory = [...(saveData.choiceHistory || [])]
         this.statHistory = { ...(saveData.statHistory || {}) }
         this.sceneTimeTracking = { ...(saveData.sceneTimeTracking || {}) }
@@ -944,7 +946,7 @@ export const useGameStore = defineStore('game', {
         this.isGameStarted = true
         
         // Restore enhanced data
-        this.visitedScenes = new Set(saveData.visitedScenes || ['start'])
+        this.visitedScenes = Array.isArray(saveData.visitedScenes) ? saveData.visitedScenes : ['start']
         this.choiceHistory = [...(saveData.choiceHistory || [])]
         this.statHistory = { ...(saveData.statHistory || {}) }
         this.sceneTimeTracking = { ...(saveData.sceneTimeTracking || {}) }
@@ -1283,22 +1285,24 @@ export const useGameStore = defineStore('game', {
       
       // Validate stats
       const validStats = ['health', 'morale', 'knowledge', 'team', 'danger', 'security', 'fuel', 'money', 'psychic', 'trust']
+      const statsWithMax100 = ['health', 'morale', 'knowledge', 'team', 'danger', 'security', 'fuel', 'psychic', 'trust']
       Object.entries(this.stats).forEach(([key, value]) => {
         if (!validStats.includes(key)) {
           errors.push(`Неизвестная статистика: ${key}`)
         }
-        if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
+        if (typeof value !== 'number' || isNaN(value) || value < 0) {
           errors.push(`Неверное значение статистики: ${key} = ${value}`)
+        }
+        // Only check max value for stats that should be <= 100
+        if (statsWithMax100.includes(key) && value > 100) {
+          errors.push(`Неверное значение статистики: ${key} = ${value} (максимум 100)`)
         }
       })
       
-      // Validate relationships
-      const validCharacters = ['sara_nova', 'grisha_romanov', 'li_zheng']
+      // Validate relationships (warning only, not error - characters can be added dynamically)
+      // Relationships can range from -100 to 100 (negative = hostile, positive = friendly)
       Object.entries(this.relationships).forEach(([key, value]) => {
-        if (!validCharacters.includes(key)) {
-          errors.push(`Неизвестный персонаж: ${key}`)
-        }
-        if (typeof value !== 'number' || isNaN(value) || value < 0 || value > 100) {
+        if (typeof value !== 'number' || isNaN(value) || value < -100 || value > 100) {
           errors.push(`Неверное значение отношения: ${key} = ${value}`)
         }
       })
@@ -1320,7 +1324,7 @@ export const useGameStore = defineStore('game', {
       }
       
       // Validate visited scenes
-      if (!(this.visitedScenes instanceof Set)) {
+      if (!Array.isArray(this.visitedScenes)) {
         errors.push('Неверный формат посещенных сцен')
       }
       

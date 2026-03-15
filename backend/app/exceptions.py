@@ -190,10 +190,10 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
         error_code=exc.error_code,
         details=exc.details
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
-        content=error.model_dump(),
+        content=error.model_dump(mode='json'),
         headers={"X-Request-ID": getattr(request.state, "request_id", None)}
     )
 
@@ -204,37 +204,22 @@ async def http_exception_handler(
 ) -> JSONResponse:
     """
     Обработчик HTTP исключений
-    
+
     Args:
         request: Запрос
         exc: HTTP исключение
-    
+
     Returns:
         JSONResponse с деталями ошибки
     """
-    # Маппинг HTTP кодов на ErrorCodeEnum
-    error_code_map = {
-        401: ErrorCodeEnum.UNAUTHORIZED,
-        403: ErrorCodeEnum.FORBIDDEN,
-        404: ErrorCodeEnum.NOT_FOUND,
-        409: ErrorCodeEnum.CONFLICT,
-        429: ErrorCodeEnum.TOO_MANY_REQUESTS,
-    }
-    
-    error_code = error_code_map.get(exc.status_code, ErrorCodeEnum.INTERNAL_ERROR)
-    
-    logger.warning(f"HTTP Exception: {exc.status_code} - {exc.detail}")
-    
-    error = ResponseBuilder.error(
-        message=str(exc.detail),
-        error_code=error_code,
-        details=ErrorDetail(reason=f"HTTP {exc.status_code}")
-    )
-    
+    # Простой обработчик без сложных моделей
     return JSONResponse(
         status_code=exc.status_code,
-        content=error.model_dump(),
-        headers=getattr(exc, "headers", None)
+        content={
+            "status": "error",
+            "message": str(exc.detail) if not isinstance(exc.detail, dict) else exc.detail.get('detail', 'HTTP Error'),
+            "code": f"HTTP_{exc.status_code}"
+        }
     )
 
 
@@ -267,10 +252,10 @@ async def validation_exception_handler(
         errors=errors,
         path=str(request.url.path)
     )
-    
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=validation_error.model_dump(),
+        content=validation_error.model_dump(mode='json'),
         headers={"X-Request-ID": getattr(request.state, "request_id", None)}
     )
 
@@ -304,10 +289,10 @@ async def pydantic_validation_exception_handler(
         errors=errors,
         path=str(request.url.path)
     )
-    
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=validation_error.model_dump(),
+        content=validation_error.model_dump(mode='json'),
         headers={"X-Request-ID": getattr(request.state, "request_id", None)}
     )
 
@@ -346,7 +331,7 @@ async def sqlalchemy_exception_handler(
     
     return JSONResponse(
         status_code=status_code,
-        content=error.model_dump(),
+        content=error.model_dump(mode='json'),
         headers={"X-Request-ID": getattr(request.state, "request_id", None)}
     )
 
@@ -354,36 +339,30 @@ async def sqlalchemy_exception_handler(
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """
     Глобальный обработчик всех необработанных исключений
-    
+
     Args:
         request: Запрос
         exc: Исключение
-    
+
     Returns:
         JSONResponse с деталями ошибки
     """
     logger.error(
         f"Unhandled Exception: {str(exc)}",
-        exc_info=True,
         extra={
             "request_id": getattr(request.state, "request_id", None),
             "path": str(request.url.path),
             "method": request.method,
         }
     )
-    
-    # В продакшене не показываем детали ошибки
-    error = ResponseBuilder.internal_error(
-        message="Внутренняя ошибка сервера",
-        details=ErrorDetail(
-            reason="Обратитесь к администратору"
-        ) if False else None  # Заменить на True для debug режима
-    )
-    
+
+    # Простой обработчик без сложных моделей
     return JSONResponse(
         status_code=500,
-        content=error.model_dump(),
-        headers={"X-Request-ID": getattr(request.state, "request_id", None)}
+        content={
+            "status": "error",
+            "message": "Внутренняя ошибка сервера"
+        }
     )
 
 

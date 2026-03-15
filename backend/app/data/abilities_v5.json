@@ -1,0 +1,154 @@
+{
+  "alchemy": {
+    "anomaly_antidote_v5": {
+      "id": "alc_50_v5",
+      "name": "Противоядие от Аномалий",
+      "description": "Создание препаратов, защищающих от воздействия аномальных зон",
+      "branch": "alchemy",
+      "level_required": 50,
+      "effects": {"anomaly_resistance": 40, "mental_protection": 20},
+      "cost": {"ingredients": 3, "credits": 500},
+      "chapters": [11, 12, 16, 17]
+    },
+    "combat_stim_supreme_v5": {
+      "id": "alc_60_v5",
+      "name": "Боевой Стимулятор Высшего класса",
+      "description": "Мощный стимулятор, временно увеличивающий все боевые характеристики",
+      "branch": "alchemy",
+      "level_required": 60,
+      "effects": {"combat_boost": 50, "duration": 3},
+      "cost": {"ingredients": 5, "credits": 1000},
+      "chapters": [14, 15, 17, 18]
+    },
+    "mental_shield_serum_v5": {
+      "id": "alc_70_v5",
+      "name": "Сыворотка Ментального Щита",
+      "description": "Защита от Psychic атак и ментального воздействия Сущности",
+      "branch": "alchemy",
+      "level_required": 70,
+      "effects": {"psychic_resistance": 60},
+      "cost": {"ingredients": 7, "rare_components": 1, "credits": 2500},
+      "chapters": [16, 17, 18]
+    },
+    "resurrection_draft_v5": {
+      "id": "alc_80_v5",
+      "name": "Эликсир Возрождения",
+      "description": "Экстремальный препарат, способный вернуть к жизни",
+      "branch": "alchemy",
+      "level_required": 80,
+      "effects": {"revive": true, "hp_restore": 30},
+      "cost": {"ingredients": 10, "rare_components": 3, "credits": 10000},
+      "chapters": [17, 18]
+    },
+    "transcendence_formula_v5": {
+      "id": "alc_100_v5",
+      "name": "Формула Трансценденции",
+      "description": "Легендарный препарат, открывающий путь к финалу Слияния",
+      "branch": "alchemy",
+      "level_required": 100,
+      "effects": {"merge_ending_unlock": true, "psychic_boost": 100},
+      "cost": {"time_crystal_fragment": 1, "entity_core": 1},
+      "chapters": [18]
+    }
+  },
+  "biotics": {
+    "gravity_mastery_v5": {
+      "id": "bio_50_v5",
+      "name": "Мастерство Гравитации",
+      "description": "Точное управление гравитационными полями",
+      "branch": "biotics",
+      "level_required": 50,
+      "effects": {"gravity_damage": 40, "enemy_slow": 50},
+      "cooldown": 3,
+      "chapters": [11, 12, 13, 14, 15]
+    },
+    "kinetic_barricade_v5": {
+      "id": "bio_60_v5",
+      "name": "Кинетическая Баррикада",
+      "description": "Мощный щит из биотической энергии",
+      "branch": "biotics",
+      "level_required": 60,
+      "effects": {"team_shield": 200, "duration": 4},
+      "cooldown": 5,
+      "chapters": [14, 15, 16, 17, 18]
+    },
+    "biotic_charge_devastating_v5": {
+      "id": "bio_70_v5",
+      "name": "Разрушительный Биотический Заряд",
+      "description": "Телепортация сквозь врагов с уроном по площади",
+      "branch": "biotics",
+      "level_required": 70,
+      "effects": {"aoe_damage": 150, "stun": 2},
+      "cooldown": 4,
+      "chapters": [16, 17, 18]
+    },
+    "nova_burst_v5": {
+      "id": "bio_80_v5",
+      "name": "Взрыв Новы",
+      "description": "Высвобождение всей биотической энергии",
+      "branch": "biotics",
+      "level_required": 80,
+      "effects": {"massive_aoe_damage": 200},
+      "cooldown": 6,
+      "chapters": [17, 18]
+    },
+    "singularity_master_v5": {
+      "id": "bio_90_v5",
+      "name": "Мастер Сингулярности",
+      "description": "Создание миниатюрной чёрной дыры",
+      "branch": "biotics",
+      "level_required": 90,
+      "effects": {"black_hole_damage": 300},
+      "cooldown": 8,
+      "chapters": [17, 18]
+    },
+    "biotic_god_v5": {
+      "id": "bio_100_v5",
+      "name": "Биотический Бог",
+      "description": "Абсолютный контроль над биотической энергией",
+      "branch": "biotics",
+      "level_required": 100,
+      "effects": {"all_biotics_boost": 100},
+      "cooldown": 10,
+      "chapters": [18]
+    }
+  },
+  "resonance": {
+    "resonance_sense_v5": {
+      "id": "res_1_v5",
+      "name": "Чувство Резонанса",
+      "description": "Способность чувствовать Сущность",
+      "branch": "resonance",
+      "level_required": 1,
+      "effects": {"entity_detection": true, "radius": 100},
+      "chapters": [11, 12, 13, 14, 15, 16, 17, 18]
+    },
+    "resonance_amplify_v5": {
+      "id": "res_25_v5",
+      "name": "Усиление Резонанса",
+      "description": "Усиление способности Резонанса",
+      "branch": "resonance",
+      "level_required": 25,
+      "effects": {"radius": 500, "weakness_perception": true},
+      "chapters": [12, 13, 14, 15, 16, 17, 18]
+    },
+    "resonance_mastery_v5": {
+      "id": "res_50_v5",
+      "name": "Мастерство Резонанса",
+      "description": "Навигация через аномалии",
+      "branch": "resonance",
+      "level_required": 50,
+      "effects": {"anomaly_navigation": true},
+      "chapters": [14, 15, 16, 17, 18]
+    },
+    "resonance_transcendence_v5": {
+      "id": "res_75_v5",
+      "name": "Трансцендентный Резонанс",
+      "description": "Манипуляция реальностью через Резонанс",
+      "branch": "resonance",
+      "level_required": 75,
+      "effects": {"reality_manipulation": true},
+      "chapters": [16, 17, 18]
+    }
+  }
+}

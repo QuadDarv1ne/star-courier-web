@@ -1,495 +1,862 @@
-{
-  "metadata": {
-    "version": "2.0",
-    "description": "Система способностей Star Courier (уровни 1-100)",
-    "branches": ["alchemy", "biotics", "psychic", "resonance", "carrier", "path"]
-  },
-
-  "alchemy": {
-    "anomaly_antidote": {
-      "id": "alc_50",
-      "name": "Противоядие от Аномалий",
-      "description": "Создание препаратов, защищающих от воздействия аномальных зон.",
-      "branch": "alchemy",
-      "level_required": 50,
-      "effects": {
-        "anomaly_resistance": 40,
-        "mental_protection": 20
-      },
-      "cost": {"ingredients": 3, "credits": 500},
-      "chapters": [11, 12, 16, 17],
-      "quest_unlock": "q12_01"
-    },
-    "combat_stim_supreme": {
-      "id": "alc_60",
-      "name": "Боевой Стимулятор Высшего класса",
-      "description": "Мощный стимулятор, временно увеличивающий все боевые характеристики.",
-      "branch": "alchemy",
-      "level_required": 60,
-      "effects": {
-        "combat_boost": 50,
-        "duration": 3,
-        "side_effect": "fatigue_after"
-      },
-      "cost": {"ingredients": 5, "credits": 1000},
-      "chapters": [14, 15, 17, 18]
-    },
-    "mental_shield_serum": {
-      "id": "alc_70",
-      "name": "Сыворотка Ментального Щита",
-      "description": "Защита от Psychic атак и ментального воздействия Сущности.",
-      "branch": "alchemy",
-      "level_required": 70,
-      "effects": {
-        "psychic_resistance": 60,
-        "entity_contact_protection": true
-      },
-      "cost": {"ingredients": 7, "rare_components": 1, "credits": 2500},
-      "chapters": [16, 17, 18],
-      "quest_unlock": "q16_01"
-    },
-    "resurrection_draft": {
-      "id": "alc_80",
-      "name": "Эликсир Возрождения",
-      "description": "Экстремальный препарат, способный вернуть к жизни при критических ранениях.",
-      "branch": "alchemy",
-      "level_required": 80,
-      "effects": {
-        "revive": true,
-        "hp_restore": 30,
-        "uses_per_chapter": 1
-      },
-      "cost": {"ingredients": 10, "rare_components": 3, "credits": 10000},
-      "chapters": [17, 18],
-      "quest_unlock": "q17_02"
-    },
-    "entity_essence_extract": {
-      "id": "alc_90",
-      "name": "Экстракт Сущности",
-      "description": "Опасный препарат из останков порождений Тьмы. Даёт временное усиление, но имеет риск мутации.",
-      "branch": "alchemy",
-      "level_required": 90,
-      "effects": {
-        "all_stats_boost": 30,
-        "mutation_risk": 25,
-        "psychic_sensitivity": 50
-      },
-      "cost": {"entity_remains": 5, "rare_components": 5, "credits": 50000},
-      "chapters": [17, 18],
-      "special_requirement": "entity_sample"
-    },
-    "transcendence_formula": {
-      "id": "alc_100",
-      "name": "Формула Трансценденции",
-      "description": "Легендарный препарат, открывающий путь к финалу Слияния.",
-      "branch": "alchemy",
-      "level_required": 100,
-      "effects": {
-        "merge_ending_unlock": true,
-        "psychic_boost": 100,
-        "permanent_transformation": true
-      },
-      "cost": {"time_crystal_fragment": 1, "entity_core": 1, "ancient_knowledge": 10},
-      "chapters": [18],
-      "quest_unlock": "q17_03"
-    }
-  },
-
-  "biotics": {
-    "gravity_mastery": {
-      "id": "bio_50",
-      "name": "Мастерство Гравитации",
-      "description": "Точное управление гравитационными полями для боя и навигации.",
-      "branch": "biotics",
-      "level_required": 50,
-      "effects": {
-        "gravity_damage": 40,
-        "enemy_slow": 50,
-        "mobility_boost": 30
-      },
-      "cooldown": 3,
-      "chapters": [11, 12, 13, 14, 15]
-    },
-    "kinetic_barricade": {
-      "id": "bio_60",
-      "name": "Кинетическая Баррикада",
-      "description": "Мощный щит из биотической энергии, защищающий всю команду.",
-      "branch": "biotics",
-      "level_required": 60,
-      "effects": {
-        "team_shield": 200,
-        "duration": 4,
-        "damage_reflection": 25
-      },
-      "cooldown": 5,
-      "chapters": [14, 15, 16, 17, 18]
-    },
-    "biotic_charge_devastating": {
-      "id": "bio_70",
-      "name": "Разрушительный Биотический Заряд",
-      "description": "Телепортация сквозь врагов с массивным уроном по площади.",
-      "branch": "biotics",
-      "level_required": 70,
-      "effects": {
-        "aoe_damage": 150,
-        "stun": 2,
-        "self_shield": 50
-      },
-      "cooldown": 4,
-      "chapters": [16, 17, 18]
-    },
-    "nova_burst": {
-      "id": "bio_80",
-      "name": "Взрыв Новы",
-      "description": "Высвобождение всей биотической энергии в разрушительной волне.",
-      "branch": "biotics",
-      "level_required": 80,
-      "effects": {
-        "massive_aoe_damage": 300,
-        "knockback": "large",
-        "self_stun": 1
-      },
-      "cooldown": 8,
-      "chapters": [17, 18]
-    },
-    "singularity_control": {
-      "id": "bio_90",
-      "name": "Контроль Сингулярности",
-      "description": "Создание контролируемой мини-сингулярности, поглощающей врагов.",
-      "branch": "biotics",
-      "level_required": 90,
-      "effects": {
-        "black_hole": true,
-        "duration": 5,
-        "damage_per_second": 50
-      },
-      "cooldown": 10,
-      "chapters": [17, 18]
-    },
-    "reality_anchor": {
-      "id": "bio_100",
-      "name": "Якорь Реальности",
-      "description": "Биотическая стабилизация пространства против аномалий Сущности.",
-      "branch": "biotics",
-      "level_required": 100,
-      "effects": {
-        "anomaly_negation": true,
-        "reality_stabilization": 100,
-        "exile_ending_boost": true
-      },
-      "cooldown": 15,
-      "chapters": [17, 18],
-      "quest_unlock": "q17_03"
-    }
-  },
-
-  "psychic": {
-    "mind_shield_collective": {
-      "id": "psy_50",
-      "name": "Коллективный Ментальный Щит",
-      "description": "Защита разума всей команды от Psychic атак.",
-      "branch": "psychic",
-      "level_required": 50,
-      "effects": {
-        "team_psychic_defense": 60,
-        "confusion_immunity": true
-      },
-      "sustain": true,
-      "chapters": [11, 12, 13, 14, 15, 16]
-    },
-    "domination_mass": {
-      "id": "psy_60",
-      "name": "Массовое Доминирование",
-      "description": "Одновременный контроль над несколькими противниками.",
-      "branch": "psychic",
-      "level_required": 60,
-      "effects": {
-        "dominate_count": 3,
-        "duration": 5,
-        "damage_on_release": 50
-      },
-      "cooldown": 6,
-      "chapters": [14, 15, 16, 17]
-    },
-    "future_glimpse": {
-      "id": "psy_70",
-      "name": "Взгляд в Будущее",
-      "description": "Способность видеть возможные исходы боёв и решений.",
-      "branch": "psychic",
-      "level_required": 70,
-      "effects": {
-        "preview_outcomes": true,
-        "dodge_boost": 40,
-        "critical_chance": 30
-      },
-      "quest_requirement": "q14_01",
-      "chapters": [15, 16, 17, 18]
-    },
-    "entity_communion": {
-      "id": "psy_80",
-      "name": "Причастие к Сущности",
-      "description": "Способность безопасно коммуницировать с Сущностью.",
-      "branch": "psychic",
-      "level_required": 80,
-      "effects": {
-        "entity_dialogue_safe": true,
-        "entity_weakness_insight": true,
-        "mental_damage_reduction": 50
-      },
-      "quest_requirement": "q16_01",
-      "chapters": [16, 17, 18]
-    },
-    "reality_perception": {
-      "id": "psy_90",
-      "name": "Восприятие Реальности",
-      "description": "Способность видеть истинную природу пространства и аномалий.",
-      "branch": "psychic",
-      "level_required": 90,
-      "effects": {
-        "illusion_immunity": true,
-        "hidden_path_vision": true,
-        "entity_core_vision": true,
-        "merge_ending_unlock": true
-      },
-      "quest_requirement": "q17_02",
-      "chapters": [17, 18]
-    },
-    "transcendence": {
-      "id": "psy_100",
-      "name": "Трансценденция",
-      "description": "Полное пробуждение Psychic потенциала. Открывает финал Слияния.",
-      "branch": "psychic",
-      "level_required": 100,
-      "effects": {
-        "merge_ending_available": true,
-        "all_psychic_boost": 50,
-        "entity_integration": true,
-        "reality_manipulation": true
-      },
-      "quest_requirement": "q17_03",
-      "chapters": [18]
-    }
-  },
-
-  "resonance": {
-    "resonance_basics": {
-      "id": "res_1",
-      "name": "Основы Резонанса",
-      "description": "Базовая способность чувствовать присутствие аномалий и Сущности.",
-      "unlock_condition": "chapter_6_complete",
-      "effects": {
-        "anomaly_detection_range": 100,
-        "entity_presence_warning": true
-      }
-    },
-    "resonance_amplification": {
-      "id": "res_2",
-      "name": "Усиление Резонанса",
-      "description": "Улучшенное чувствование и частичное сопротивление аномалиям.",
-      "unlock_condition": "chapter_10_complete",
-      "effects": {
-        "anomaly_detection_range": 500,
-        "entity_weakness_perception": true,
-        "mental_resistance": 20
-      }
-    },
-    "resonance_mastery": {
-      "id": "res_3",
-      "name": "Мастерство Резонанса",
-      "description": "Полный контроль над резонансом с пространством.",
-      "unlock_condition": "chapter_14_complete",
-      "effects": {
-        "anomaly_navigation": true,
-        "entity_communication": true,
-        "future_fragments": true
-      }
-    },
-    "resonance_transcendent": {
-      "id": "res_4",
-      "name": "Трансцендентный Резонанс",
-      "description": "Единение с тканью реальности. Требуется для финала Слияния.",
-      "unlock_condition": "psychic_90_or_entity_communion",
-      "effects": {
-        "reality_manipulation": true,
-        "entity_integration_safe": true,
-        "merge_ending_unlock": true
-      }
-    }
-  },
-
-  "carrier": {
-    "cargo_optimization": {
-      "id": "car_1",
-      "name": "Оптимизация Груза",
-      "description": "Увеличение грузоподъёмности корабля.",
-      "unlock_condition": "ship_upgrade_1",
-      "effects": {
-        "cargo_capacity": 50,
-        "fuel_efficiency": 10
-      }
-    },
-    "smuggler_compartments": {
-      "id": "car_2",
-      "name": "Контрабандные Отсеки",
-      "description": "Скрытые отсеки для нелегальных грузов.",
-      "unlock_condition": "veronica_relationship_40",
-      "effects": {
-        "hidden_cargo": 20,
-        "scan_evasion": 60
-      }
-    },
-    "anomaly_containment": {
-      "id": "car_3",
-      "name": "Сдерживание Аномалий",
-      "description": "Специальные контейнеры для аномальных артефактов.",
-      "unlock_condition": "q12_01_complete",
-      "effects": {
-        "anomaly_transport": true,
-        "radiation_shielding": 80
-      }
-    },
-    "entity_sample_storage": {
-      "id": "car_4",
-      "name": "Хранилище Образцов Сущности",
-      "description": "Биоконтейнеры для безопасного хранения останков порождений.",
-      "unlock_condition": "q17_01_complete",
-      "effects": {
-        "entity_sample_transport": true,
-        "alchemy_ingredient_access": true
-      }
-    }
-  },
-
-  "path": {
-    "alliance": {
-      "fleet_coordination": {
-        "id": "path_all_1",
-        "name": "Координация Флота",
-        "description": "Вызов поддержки флота Объединённых Миров.",
-        "effects": {
-          "fleet_support": true,
-          "combat_advantage": 30
-        },
-        "unlock": "alliance_path_chapter_13"
-      },
-      "alliance_resources": {
-        "id": "path_all_2",
-        "name": "Ресурсы Альянса",
-        "description": "Доступ к оборудованию и технологиям Альянса.",
-        "effects": {
-          "credit_bonus": 5000,
-          "equipment_discount": 40
-        },
-        "unlock": "alliance_path_chapter_14"
-      },
-      "united_front": {
-        "id": "path_all_3",
-        "name": "Единый Фронт",
-        "description": "Финальная поддержка Альянса в битве с Сущностью.",
-        "effects": {
-          "final_battle_allies": "alliance_fleet",
-          "exile_ending_army": true
-        },
-        "unlock": "alliance_path_chapter_16"
-      }
-    },
-    "observer": {
-      "ancient_knowledge_access": {
-        "id": "path_obs_1",
-        "name": "Древние Знания",
-        "description": "Доступ к архивам Ордена Наблюдателей.",
-        "effects": {
-          "lore_unlock": true,
-          "psychic_boost": 20
-        },
-        "unlock": "observer_path_chapter_13"
-      },
-      "resonance_training": {
-        "id": "path_obs_2",
-        "name": "Обучение Резонансу",
-        "description": "Ускоренное развитие резонанса под руководством Зары.",
-        "effects": {
-          "resonance_level_boost": 2,
-          "anomaly_mastery": true
-        },
-        "unlock": "observer_path_chapter_14"
-      },
-      "order_blessing": {
-        "id": "path_obs_3",
-        "name": "Благословение Ордена",
-        "description": "Финальная поддержка Ордена и Зары.",
-        "effects": {
-          "final_battle_allies": "knights_of_order",
-          "treaty_ending_knowledge": true
-        },
-        "unlock": "observer_path_chapter_16"
-      }
-    },
-    "independence": {
-      "network_access": {
-        "id": "path_ind_1",
-        "name": "Сеть Независимых",
-        "description": "Доступ к сети агентов Волкова.",
-        "effects": {
-          "intel_bonus": true,
-          "smuggler_routes": true
-        },
-        "unlock": "independence_path_chapter_13"
-      },
-      "freedom_fighters": {
-        "id": "path_ind_2",
-        "name": "Бойцы Свободы",
-        "description": "Привлечение наёмников и независимых капитанов.",
-        "effects": {
-          "mercenary_discount": 50,
-          "unique_contracts": true
-        },
-        "unlock": "independence_path_chapter_14"
-      },
-      "independent_fleet": {
-        "id": "path_ind_3",
-        "name": "Независимый Флот",
-        "description": "Собственная флотилия из независимых кораблей.",
-        "effects": {
-          "final_battle_allies": "independent_squadron",
-          "freedom_ending": true
-        },
-        "unlock": "independence_path_chapter_16"
-      }
-    }
-  },
-
-  "final_battle": {
-    "sacrifice_strike": {
-      "id": "final_1",
-      "name": "Удар Жертвы",
-      "description": "Мощная атака ценой собственного здоровья. Требуется для финала Изгнания.",
-      "effects": {
-        "damage": 500,
-        "self_damage": 50,
-        "anchor_damage": 100
-      },
-      "requirement": "exile_path_chosen"
-    },
-    "diplomatic_communion": {
-      "id": "final_2",
-      "name": "Дипломатическое Причастие",
-      "description": "Ментальная связь с Сущностью для переговоров. Требуется для финала Договора.",
-      "effects": {
-        "entity_negotiation": true,
-        "treaty_establishment": true
-      },
-      "requirement": "psychic_70_or_empathy_80"
-    },
-    "entity_absorption": {
-      "id": "final_3",
-      "name": "Поглощение Сущности",
-      "description": "Интеграция Сущности в собственное сознание. Требуется для финала Слияния.",
-      "effects": {
-        "merge_with_entity": true,
-        "transcendence": true
-      },
-      "requirement": "psychic_90_and_resonance_transcendent"
-    }
-  }
+﻿{
+    "metadata":  {
+                     "version":  "2.0",
+                     "description":  "РЎРёСЃС‚РµРјР° СЃРїРѕСЃРѕР±РЅРѕСЃС‚РµР№ Star Courier (СѓСЂРѕРІРЅРё 1-100)",
+                     "branches":  [
+                                      "alchemy",
+                                      "biotics",
+                                      "psychic",
+                                      "resonance",
+                                      "carrier",
+                                      "path"
+                                  ]
+                 },
+    "alchemy":  {
+                    "anomaly_antidote":  {
+                                             "id":  "alc_50",
+                                             "name":  "РџСЂРѕС‚РёРІРѕСЏРґРёРµ РѕС‚ РђРЅРѕРјР°Р»РёР№",
+                                             "description":  "РЎРѕР·РґР°РЅРёРµ РїСЂРµРїР°СЂР°С‚РѕРІ, Р·Р°С‰РёС‰Р°СЋС‰РёС… РѕС‚ РІРѕР·РґРµР№СЃС‚РІРёСЏ Р°РЅРѕРјР°Р»СЊРЅС‹С… Р·РѕРЅ.",
+                                             "branch":  "alchemy",
+                                             "level_required":  50,
+                                             "effects":  {
+                                                             "anomaly_resistance":  40,
+                                                             "mental_protection":  20
+                                                         },
+                                             "cost":  {
+                                                          "ingredients":  3,
+                                                          "credits":  500
+                                                      },
+                                             "chapters":  [
+                                                              11,
+                                                              12,
+                                                              16,
+                                                              17
+                                                          ],
+                                             "quest_unlock":  "q12_01"
+                                         },
+                    "combat_stim_supreme":  {
+                                                "id":  "alc_60",
+                                                "name":  "Р‘РѕРµРІРѕР№ РЎС‚РёРјСѓР»СЏС‚РѕСЂ Р’С‹СЃС€РµРіРѕ РєР»Р°СЃСЃР°",
+                                                "description":  "РњРѕС‰РЅС‹Р№ СЃС‚РёРјСѓР»СЏС‚РѕСЂ, РІСЂРµРјРµРЅРЅРѕ СѓРІРµР»РёС‡РёРІР°СЋС‰РёР№ РІСЃРµ Р±РѕРµРІС‹Рµ С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё.",
+                                                "branch":  "alchemy",
+                                                "level_required":  60,
+                                                "effects":  {
+                                                                "combat_boost":  50,
+                                                                "duration":  3,
+                                                                "side_effect":  "fatigue_after"
+                                                            },
+                                                "cost":  {
+                                                             "ingredients":  5,
+                                                             "credits":  1000
+                                                         },
+                                                "chapters":  [
+                                                                 14,
+                                                                 15,
+                                                                 17,
+                                                                 18
+                                                             ]
+                                            },
+                    "mental_shield_serum":  {
+                                                "id":  "alc_70",
+                                                "name":  "РЎС‹РІРѕСЂРѕС‚РєР° РњРµРЅС‚Р°Р»СЊРЅРѕРіРѕ Р©РёС‚Р°",
+                                                "description":  "Р—Р°С‰РёС‚Р° РѕС‚ Psychic Р°С‚Р°Рє Рё РјРµРЅС‚Р°Р»СЊРЅРѕРіРѕ РІРѕР·РґРµР№СЃС‚РІРёСЏ РЎСѓС‰РЅРѕСЃС‚Рё.",
+                                                "branch":  "alchemy",
+                                                "level_required":  70,
+                                                "effects":  {
+                                                                "psychic_resistance":  60,
+                                                                "entity_contact_protection":  true
+                                                            },
+                                                "cost":  {
+                                                             "ingredients":  7,
+                                                             "rare_components":  1,
+                                                             "credits":  2500
+                                                         },
+                                                "chapters":  [
+                                                                 16,
+                                                                 17,
+                                                                 18
+                                                             ],
+                                                "quest_unlock":  "q16_01"
+                                            },
+                    "resurrection_draft":  {
+                                               "id":  "alc_80",
+                                               "name":  "Р­Р»РёРєСЃРёСЂ Р’РѕР·СЂРѕР¶РґРµРЅРёСЏ",
+                                               "description":  "Р­РєСЃС‚СЂРµРјР°Р»СЊРЅС‹Р№ РїСЂРµРїР°СЂР°С‚, СЃРїРѕСЃРѕР±РЅС‹Р№ РІРµСЂРЅСѓС‚СЊ Рє Р¶РёР·РЅРё РїСЂРё РєСЂРёС‚РёС‡РµСЃРєРёС… СЂР°РЅРµРЅРёСЏС….",
+                                               "branch":  "alchemy",
+                                               "level_required":  80,
+                                               "effects":  {
+                                                               "revive":  true,
+                                                               "hp_restore":  30,
+                                                               "uses_per_chapter":  1
+                                                           },
+                                               "cost":  {
+                                                            "ingredients":  10,
+                                                            "rare_components":  3,
+                                                            "credits":  10000
+                                                        },
+                                               "chapters":  [
+                                                                17,
+                                                                18
+                                                            ],
+                                               "quest_unlock":  "q17_02"
+                                           },
+                    "entity_essence_extract":  {
+                                                   "id":  "alc_90",
+                                                   "name":  "Р­РєСЃС‚СЂР°РєС‚ РЎСѓС‰РЅРѕСЃС‚Рё",
+                                                   "description":  "РћРїР°СЃРЅС‹Р№ РїСЂРµРїР°СЂР°С‚ РёР· РѕСЃС‚Р°РЅРєРѕРІ РїРѕСЂРѕР¶РґРµРЅРёР№ РўСЊРјС‹. Р”Р°С‘С‚ РІСЂРµРјРµРЅРЅРѕРµ СѓСЃРёР»РµРЅРёРµ, РЅРѕ РёРјРµРµС‚ СЂРёСЃРє РјСѓС‚Р°С†РёРё.",
+                                                   "branch":  "alchemy",
+                                                   "level_required":  90,
+                                                   "effects":  {
+                                                                   "all_stats_boost":  30,
+                                                                   "mutation_risk":  25,
+                                                                   "psychic_sensitivity":  50
+                                                               },
+                                                   "cost":  {
+                                                                "entity_remains":  5,
+                                                                "rare_components":  5,
+                                                                "credits":  50000
+                                                            },
+                                                   "chapters":  [
+                                                                    17,
+                                                                    18
+                                                                ],
+                                                   "special_requirement":  "entity_sample"
+                                               },
+                    "transcendence_formula":  {
+                                                  "id":  "alc_100",
+                                                  "name":  "Р¤РѕСЂРјСѓР»Р° РўСЂР°РЅСЃС†РµРЅРґРµРЅС†РёРё",
+                                                  "description":  "Р›РµРіРµРЅРґР°СЂРЅС‹Р№ РїСЂРµРїР°СЂР°С‚, РѕС‚РєСЂС‹РІР°СЋС‰РёР№ РїСѓС‚СЊ Рє С„РёРЅР°Р»Сѓ РЎР»РёСЏРЅРёСЏ.",
+                                                  "branch":  "alchemy",
+                                                  "level_required":  100,
+                                                  "effects":  {
+                                                                  "merge_ending_unlock":  true,
+                                                                  "psychic_boost":  100,
+                                                                  "permanent_transformation":  true
+                                                              },
+                                                  "cost":  {
+                                                               "time_crystal_fragment":  1,
+                                                               "entity_core":  1,
+                                                               "ancient_knowledge":  10
+                                                           },
+                                                  "chapters":  [
+                                                                   18
+                                                               ],
+                                                  "quest_unlock":  "q17_03"
+                                              },
+                    "anomaly_antidote_v5":  {
+                                                "id":  "alc_50_v5",
+                                                "name":  "РџСЂРѕС‚РёРІРѕСЏРґРёРµ РѕС‚ РђРЅРѕРјР°Р»РёР№",
+                                                "description":  "РЎРѕР·РґР°РЅРёРµ РїСЂРµРїР°СЂР°С‚РѕРІ, Р·Р°С‰РёС‰Р°СЋС‰РёС… РѕС‚ РІРѕР·РґРµР№СЃС‚РІРёСЏ Р°РЅРѕРјР°Р»СЊРЅС‹С… Р·РѕРЅ",
+                                                "branch":  "alchemy",
+                                                "level_required":  50,
+                                                "effects":  {
+                                                                "anomaly_resistance":  40,
+                                                                "mental_protection":  20
+                                                            },
+                                                "cost":  {
+                                                             "ingredients":  3,
+                                                             "credits":  500
+                                                         },
+                                                "chapters":  [
+                                                                 11,
+                                                                 12,
+                                                                 16,
+                                                                 17
+                                                             ]
+                                            },
+                    "combat_stim_supreme_v5":  {
+                                                   "id":  "alc_60_v5",
+                                                   "name":  "Р‘РѕРµРІРѕР№ РЎС‚РёРјСѓР»СЏС‚РѕСЂ Р’С‹СЃС€РµРіРѕ РєР»Р°СЃСЃР°",
+                                                   "description":  "РњРѕС‰РЅС‹Р№ СЃС‚РёРјСѓР»СЏС‚РѕСЂ, РІСЂРµРјРµРЅРЅРѕ СѓРІРµР»РёС‡РёРІР°СЋС‰РёР№ РІСЃРµ Р±РѕРµРІС‹Рµ С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєРё",
+                                                   "branch":  "alchemy",
+                                                   "level_required":  60,
+                                                   "effects":  {
+                                                                   "combat_boost":  50,
+                                                                   "duration":  3
+                                                               },
+                                                   "cost":  {
+                                                                "ingredients":  5,
+                                                                "credits":  1000
+                                                            },
+                                                   "chapters":  [
+                                                                    14,
+                                                                    15,
+                                                                    17,
+                                                                    18
+                                                                ]
+                                               },
+                    "mental_shield_serum_v5":  {
+                                                   "id":  "alc_70_v5",
+                                                   "name":  "РЎС‹РІРѕСЂРѕС‚РєР° РњРµРЅС‚Р°Р»СЊРЅРѕРіРѕ Р©РёС‚Р°",
+                                                   "description":  "Р—Р°С‰РёС‚Р° РѕС‚ Psychic Р°С‚Р°Рє Рё РјРµРЅС‚Р°Р»СЊРЅРѕРіРѕ РІРѕР·РґРµР№СЃС‚РІРёСЏ РЎСѓС‰РЅРѕСЃС‚Рё",
+                                                   "branch":  "alchemy",
+                                                   "level_required":  70,
+                                                   "effects":  {
+                                                                   "psychic_resistance":  60
+                                                               },
+                                                   "cost":  {
+                                                                "ingredients":  7,
+                                                                "rare_components":  1,
+                                                                "credits":  2500
+                                                            },
+                                                   "chapters":  [
+                                                                    16,
+                                                                    17,
+                                                                    18
+                                                                ]
+                                               },
+                    "resurrection_draft_v5":  {
+                                                  "id":  "alc_80_v5",
+                                                  "name":  "Р­Р»РёРєСЃРёСЂ Р’РѕР·СЂРѕР¶РґРµРЅРёСЏ",
+                                                  "description":  "Р­РєСЃС‚СЂРµРјР°Р»СЊРЅС‹Р№ РїСЂРµРїР°СЂР°С‚, СЃРїРѕСЃРѕР±РЅС‹Р№ РІРµСЂРЅСѓС‚СЊ Рє Р¶РёР·РЅРё",
+                                                  "branch":  "alchemy",
+                                                  "level_required":  80,
+                                                  "effects":  {
+                                                                  "revive":  true,
+                                                                  "hp_restore":  30
+                                                              },
+                                                  "cost":  {
+                                                               "ingredients":  10,
+                                                               "rare_components":  3,
+                                                               "credits":  10000
+                                                           },
+                                                  "chapters":  [
+                                                                   17,
+                                                                   18
+                                                               ]
+                                              },
+                    "transcendence_formula_v5":  {
+                                                     "id":  "alc_100_v5",
+                                                     "name":  "Р¤РѕСЂРјСѓР»Р° РўСЂР°РЅСЃС†РµРЅРґРµРЅС†РёРё",
+                                                     "description":  "Р›РµРіРµРЅРґР°СЂРЅС‹Р№ РїСЂРµРїР°СЂР°С‚, РѕС‚РєСЂС‹РІР°СЋС‰РёР№ РїСѓС‚СЊ Рє С„РёРЅР°Р»Сѓ РЎР»РёСЏРЅРёСЏ",
+                                                     "branch":  "alchemy",
+                                                     "level_required":  100,
+                                                     "effects":  {
+                                                                     "merge_ending_unlock":  true,
+                                                                     "psychic_boost":  100
+                                                                 },
+                                                     "cost":  {
+                                                                  "time_crystal_fragment":  1,
+                                                                  "entity_core":  1
+                                                              },
+                                                     "chapters":  [
+                                                                      18
+                                                                  ]
+                                                 }
+                },
+    "biotics":  {
+                    "gravity_mastery":  {
+                                            "id":  "bio_50",
+                                            "name":  "РњР°СЃС‚РµСЂСЃС‚РІРѕ Р“СЂР°РІРёС‚Р°С†РёРё",
+                                            "description":  "РўРѕС‡РЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ РіСЂР°РІРёС‚Р°С†РёРѕРЅРЅС‹РјРё РїРѕР»СЏРјРё РґР»СЏ Р±РѕСЏ Рё РЅР°РІРёРіР°С†РёРё.",
+                                            "branch":  "biotics",
+                                            "level_required":  50,
+                                            "effects":  {
+                                                            "gravity_damage":  40,
+                                                            "enemy_slow":  50,
+                                                            "mobility_boost":  30
+                                                        },
+                                            "cooldown":  3,
+                                            "chapters":  [
+                                                             11,
+                                                             12,
+                                                             13,
+                                                             14,
+                                                             15
+                                                         ]
+                                        },
+                    "kinetic_barricade":  {
+                                              "id":  "bio_60",
+                                              "name":  "РљРёРЅРµС‚РёС‡РµСЃРєР°СЏ Р‘Р°СЂСЂРёРєР°РґР°",
+                                              "description":  "РњРѕС‰РЅС‹Р№ С‰РёС‚ РёР· Р±РёРѕС‚РёС‡РµСЃРєРѕР№ СЌРЅРµСЂРіРёРё, Р·Р°С‰РёС‰Р°СЋС‰РёР№ РІСЃСЋ РєРѕРјР°РЅРґСѓ.",
+                                              "branch":  "biotics",
+                                              "level_required":  60,
+                                              "effects":  {
+                                                              "team_shield":  200,
+                                                              "duration":  4,
+                                                              "damage_reflection":  25
+                                                          },
+                                              "cooldown":  5,
+                                              "chapters":  [
+                                                               14,
+                                                               15,
+                                                               16,
+                                                               17,
+                                                               18
+                                                           ]
+                                          },
+                    "biotic_charge_devastating":  {
+                                                      "id":  "bio_70",
+                                                      "name":  "Р Р°Р·СЂСѓС€РёС‚РµР»СЊРЅС‹Р№ Р‘РёРѕС‚РёС‡РµСЃРєРёР№ Р—Р°СЂСЏРґ",
+                                                      "description":  "РўРµР»РµРїРѕСЂС‚Р°С†РёСЏ СЃРєРІРѕР·СЊ РІСЂР°РіРѕРІ СЃ РјР°СЃСЃРёРІРЅС‹Рј СѓСЂРѕРЅРѕРј РїРѕ РїР»РѕС‰Р°РґРё.",
+                                                      "branch":  "biotics",
+                                                      "level_required":  70,
+                                                      "effects":  {
+                                                                      "aoe_damage":  150,
+                                                                      "stun":  2,
+                                                                      "self_shield":  50
+                                                                  },
+                                                      "cooldown":  4,
+                                                      "chapters":  [
+                                                                       16,
+                                                                       17,
+                                                                       18
+                                                                   ]
+                                                  },
+                    "nova_burst":  {
+                                       "id":  "bio_80",
+                                       "name":  "Р’Р·СЂС‹РІ РќРѕРІС‹",
+                                       "description":  "Р’С‹СЃРІРѕР±РѕР¶РґРµРЅРёРµ РІСЃРµР№ Р±РёРѕС‚РёС‡РµСЃРєРѕР№ СЌРЅРµСЂРіРёРё РІ СЂР°Р·СЂСѓС€РёС‚РµР»СЊРЅРѕР№ РІРѕР»РЅРµ.",
+                                       "branch":  "biotics",
+                                       "level_required":  80,
+                                       "effects":  {
+                                                       "massive_aoe_damage":  300,
+                                                       "knockback":  "large",
+                                                       "self_stun":  1
+                                                   },
+                                       "cooldown":  8,
+                                       "chapters":  [
+                                                        17,
+                                                        18
+                                                    ]
+                                   },
+                    "singularity_control":  {
+                                                "id":  "bio_90",
+                                                "name":  "РљРѕРЅС‚СЂРѕР»СЊ РЎРёРЅРіСѓР»СЏСЂРЅРѕСЃС‚Рё",
+                                                "description":  "РЎРѕР·РґР°РЅРёРµ РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјРѕР№ РјРёРЅРё-СЃРёРЅРіСѓР»СЏСЂРЅРѕСЃС‚Рё, РїРѕРіР»РѕС‰Р°СЋС‰РµР№ РІСЂР°РіРѕРІ.",
+                                                "branch":  "biotics",
+                                                "level_required":  90,
+                                                "effects":  {
+                                                                "black_hole":  true,
+                                                                "duration":  5,
+                                                                "damage_per_second":  50
+                                                            },
+                                                "cooldown":  10,
+                                                "chapters":  [
+                                                                 17,
+                                                                 18
+                                                             ]
+                                            },
+                    "reality_anchor":  {
+                                           "id":  "bio_100",
+                                           "name":  "РЇРєРѕСЂСЊ Р РµР°Р»СЊРЅРѕСЃС‚Рё",
+                                           "description":  "Р‘РёРѕС‚РёС‡РµСЃРєР°СЏ СЃС‚Р°Р±РёР»РёР·Р°С†РёСЏ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РїСЂРѕС‚РёРІ Р°РЅРѕРјР°Р»РёР№ РЎСѓС‰РЅРѕСЃС‚Рё.",
+                                           "branch":  "biotics",
+                                           "level_required":  100,
+                                           "effects":  {
+                                                           "anomaly_negation":  true,
+                                                           "reality_stabilization":  100,
+                                                           "exile_ending_boost":  true
+                                                       },
+                                           "cooldown":  15,
+                                           "chapters":  [
+                                                            17,
+                                                            18
+                                                        ],
+                                           "quest_unlock":  "q17_03"
+                                       },
+                    "gravity_mastery_v5":  {
+                                               "id":  "bio_50_v5",
+                                               "name":  "РњР°СЃС‚РµСЂСЃС‚РІРѕ Р“СЂР°РІРёС‚Р°С†РёРё",
+                                               "description":  "РўРѕС‡РЅРѕРµ СѓРїСЂР°РІР»РµРЅРёРµ РіСЂР°РІРёС‚Р°С†РёРѕРЅРЅС‹РјРё РїРѕР»СЏРјРё",
+                                               "branch":  "biotics",
+                                               "level_required":  50,
+                                               "effects":  {
+                                                               "gravity_damage":  40,
+                                                               "enemy_slow":  50
+                                                           },
+                                               "cooldown":  3,
+                                               "chapters":  [
+                                                                11,
+                                                                12,
+                                                                13,
+                                                                14,
+                                                                15
+                                                            ]
+                                           },
+                    "kinetic_barricade_v5":  {
+                                                 "id":  "bio_60_v5",
+                                                 "name":  "РљРёРЅРµС‚РёС‡РµСЃРєР°СЏ Р‘Р°СЂСЂРёРєР°РґР°",
+                                                 "description":  "РњРѕС‰РЅС‹Р№ С‰РёС‚ РёР· Р±РёРѕС‚РёС‡РµСЃРєРѕР№ СЌРЅРµСЂРіРёРё",
+                                                 "branch":  "biotics",
+                                                 "level_required":  60,
+                                                 "effects":  {
+                                                                 "team_shield":  200,
+                                                                 "duration":  4
+                                                             },
+                                                 "cooldown":  5,
+                                                 "chapters":  [
+                                                                  14,
+                                                                  15,
+                                                                  16,
+                                                                  17,
+                                                                  18
+                                                              ]
+                                             },
+                    "biotic_charge_devastating_v5":  {
+                                                         "id":  "bio_70_v5",
+                                                         "name":  "Р Р°Р·СЂСѓС€РёС‚РµР»СЊРЅС‹Р№ Р‘РёРѕС‚РёС‡РµСЃРєРёР№ Р—Р°СЂСЏРґ",
+                                                         "description":  "РўРµР»РµРїРѕСЂС‚Р°С†РёСЏ СЃРєРІРѕР·СЊ РІСЂР°РіРѕРІ СЃ СѓСЂРѕРЅРѕРј РїРѕ РїР»РѕС‰Р°РґРё",
+                                                         "branch":  "biotics",
+                                                         "level_required":  70,
+                                                         "effects":  {
+                                                                         "aoe_damage":  150,
+                                                                         "stun":  2
+                                                                     },
+                                                         "cooldown":  4,
+                                                         "chapters":  [
+                                                                          16,
+                                                                          17,
+                                                                          18
+                                                                      ]
+                                                     },
+                    "nova_burst_v5":  {
+                                          "id":  "bio_80_v5",
+                                          "name":  "Р’Р·СЂС‹РІ РќРѕРІС‹",
+                                          "description":  "Р’С‹СЃРІРѕР±РѕР¶РґРµРЅРёРµ РІСЃРµР№ Р±РёРѕС‚РёС‡РµСЃРєРѕР№ СЌРЅРµСЂРіРёРё",
+                                          "branch":  "biotics",
+                                          "level_required":  80,
+                                          "effects":  {
+                                                          "massive_aoe_damage":  200
+                                                      },
+                                          "cooldown":  6,
+                                          "chapters":  [
+                                                           17,
+                                                           18
+                                                       ]
+                                      },
+                    "singularity_master_v5":  {
+                                                  "id":  "bio_90_v5",
+                                                  "name":  "РњР°СЃС‚РµСЂ РЎРёРЅРіСѓР»СЏСЂРЅРѕСЃС‚Рё",
+                                                  "description":  "РЎРѕР·РґР°РЅРёРµ РјРёРЅРёР°С‚СЋСЂРЅРѕР№ С‡С‘СЂРЅРѕР№ РґС‹СЂС‹",
+                                                  "branch":  "biotics",
+                                                  "level_required":  90,
+                                                  "effects":  {
+                                                                  "black_hole_damage":  300
+                                                              },
+                                                  "cooldown":  8,
+                                                  "chapters":  [
+                                                                   17,
+                                                                   18
+                                                               ]
+                                              },
+                    "biotic_god_v5":  {
+                                          "id":  "bio_100_v5",
+                                          "name":  "Р‘РёРѕС‚РёС‡РµСЃРєРёР№ Р‘РѕРі",
+                                          "description":  "РђР±СЃРѕР»СЋС‚РЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ Р±РёРѕС‚РёС‡РµСЃРєРѕР№ СЌРЅРµСЂРіРёРµР№",
+                                          "branch":  "biotics",
+                                          "level_required":  100,
+                                          "effects":  {
+                                                          "all_biotics_boost":  100
+                                                      },
+                                          "cooldown":  10,
+                                          "chapters":  [
+                                                           18
+                                                       ]
+                                      }
+                },
+    "psychic":  {
+                    "mind_shield_collective":  {
+                                                   "id":  "psy_50",
+                                                   "name":  "РљРѕР»Р»РµРєС‚РёРІРЅС‹Р№ РњРµРЅС‚Р°Р»СЊРЅС‹Р№ Р©РёС‚",
+                                                   "description":  "Р—Р°С‰РёС‚Р° СЂР°Р·СѓРјР° РІСЃРµР№ РєРѕРјР°РЅРґС‹ РѕС‚ Psychic Р°С‚Р°Рє.",
+                                                   "branch":  "psychic",
+                                                   "level_required":  50,
+                                                   "effects":  {
+                                                                   "team_psychic_defense":  60,
+                                                                   "confusion_immunity":  true
+                                                               },
+                                                   "sustain":  true,
+                                                   "chapters":  [
+                                                                    11,
+                                                                    12,
+                                                                    13,
+                                                                    14,
+                                                                    15,
+                                                                    16
+                                                                ]
+                                               },
+                    "domination_mass":  {
+                                            "id":  "psy_60",
+                                            "name":  "РњР°СЃСЃРѕРІРѕРµ Р”РѕРјРёРЅРёСЂРѕРІР°РЅРёРµ",
+                                            "description":  "РћРґРЅРѕРІСЂРµРјРµРЅРЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ РЅРµСЃРєРѕР»СЊРєРёРјРё РїСЂРѕС‚РёРІРЅРёРєР°РјРё.",
+                                            "branch":  "psychic",
+                                            "level_required":  60,
+                                            "effects":  {
+                                                            "dominate_count":  3,
+                                                            "duration":  5,
+                                                            "damage_on_release":  50
+                                                        },
+                                            "cooldown":  6,
+                                            "chapters":  [
+                                                             14,
+                                                             15,
+                                                             16,
+                                                             17
+                                                         ]
+                                        },
+                    "future_glimpse":  {
+                                           "id":  "psy_70",
+                                           "name":  "Р’Р·РіР»СЏРґ РІ Р‘СѓРґСѓС‰РµРµ",
+                                           "description":  "РЎРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РІРёРґРµС‚СЊ РІРѕР·РјРѕР¶РЅС‹Рµ РёСЃС…РѕРґС‹ Р±РѕС‘РІ Рё СЂРµС€РµРЅРёР№.",
+                                           "branch":  "psychic",
+                                           "level_required":  70,
+                                           "effects":  {
+                                                           "preview_outcomes":  true,
+                                                           "dodge_boost":  40,
+                                                           "critical_chance":  30
+                                                       },
+                                           "quest_requirement":  "q14_01",
+                                           "chapters":  [
+                                                            15,
+                                                            16,
+                                                            17,
+                                                            18
+                                                        ]
+                                       },
+                    "entity_communion":  {
+                                             "id":  "psy_80",
+                                             "name":  "РџСЂРёС‡Р°СЃС‚РёРµ Рє РЎСѓС‰РЅРѕСЃС‚Рё",
+                                             "description":  "РЎРїРѕСЃРѕР±РЅРѕСЃС‚СЊ Р±РµР·РѕРїР°СЃРЅРѕ РєРѕРјРјСѓРЅРёС†РёСЂРѕРІР°С‚СЊ СЃ РЎСѓС‰РЅРѕСЃС‚СЊСЋ.",
+                                             "branch":  "psychic",
+                                             "level_required":  80,
+                                             "effects":  {
+                                                             "entity_dialogue_safe":  true,
+                                                             "entity_weakness_insight":  true,
+                                                             "mental_damage_reduction":  50
+                                                         },
+                                             "quest_requirement":  "q16_01",
+                                             "chapters":  [
+                                                              16,
+                                                              17,
+                                                              18
+                                                          ]
+                                         },
+                    "reality_perception":  {
+                                               "id":  "psy_90",
+                                               "name":  "Р’РѕСЃРїСЂРёСЏС‚РёРµ Р РµР°Р»СЊРЅРѕСЃС‚Рё",
+                                               "description":  "РЎРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РІРёРґРµС‚СЊ РёСЃС‚РёРЅРЅСѓСЋ РїСЂРёСЂРѕРґСѓ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° Рё Р°РЅРѕРјР°Р»РёР№.",
+                                               "branch":  "psychic",
+                                               "level_required":  90,
+                                               "effects":  {
+                                                               "illusion_immunity":  true,
+                                                               "hidden_path_vision":  true,
+                                                               "entity_core_vision":  true,
+                                                               "merge_ending_unlock":  true
+                                                           },
+                                               "quest_requirement":  "q17_02",
+                                               "chapters":  [
+                                                                17,
+                                                                18
+                                                            ]
+                                           },
+                    "transcendence":  {
+                                          "id":  "psy_100",
+                                          "name":  "РўСЂР°РЅСЃС†РµРЅРґРµРЅС†РёСЏ",
+                                          "description":  "РџРѕР»РЅРѕРµ РїСЂРѕР±СѓР¶РґРµРЅРёРµ Psychic РїРѕС‚РµРЅС†РёР°Р»Р°. РћС‚РєСЂС‹РІР°РµС‚ С„РёРЅР°Р» РЎР»РёСЏРЅРёСЏ.",
+                                          "branch":  "psychic",
+                                          "level_required":  100,
+                                          "effects":  {
+                                                          "merge_ending_available":  true,
+                                                          "all_psychic_boost":  50,
+                                                          "entity_integration":  true,
+                                                          "reality_manipulation":  true
+                                                      },
+                                          "quest_requirement":  "q17_03",
+                                          "chapters":  [
+                                                           18
+                                                       ]
+                                      }
+                },
+    "resonance":  {
+                      "resonance_basics":  {
+                                               "id":  "res_1",
+                                               "name":  "РћСЃРЅРѕРІС‹ Р РµР·РѕРЅР°РЅСЃР°",
+                                               "description":  "Р‘Р°Р·РѕРІР°СЏ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ С‡СѓРІСЃС‚РІРѕРІР°С‚СЊ РїСЂРёСЃСѓС‚СЃС‚РІРёРµ Р°РЅРѕРјР°Р»РёР№ Рё РЎСѓС‰РЅРѕСЃС‚Рё.",
+                                               "unlock_condition":  "chapter_6_complete",
+                                               "effects":  {
+                                                               "anomaly_detection_range":  100,
+                                                               "entity_presence_warning":  true
+                                                           }
+                                           },
+                      "resonance_amplification":  {
+                                                      "id":  "res_2",
+                                                      "name":  "РЈСЃРёР»РµРЅРёРµ Р РµР·РѕРЅР°РЅСЃР°",
+                                                      "description":  "РЈР»СѓС‡С€РµРЅРЅРѕРµ С‡СѓРІСЃС‚РІРѕРІР°РЅРёРµ Рё С‡Р°СЃС‚РёС‡РЅРѕРµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ Р°РЅРѕРјР°Р»РёСЏРј.",
+                                                      "unlock_condition":  "chapter_10_complete",
+                                                      "effects":  {
+                                                                      "anomaly_detection_range":  500,
+                                                                      "entity_weakness_perception":  true,
+                                                                      "mental_resistance":  20
+                                                                  }
+                                                  },
+                      "resonance_mastery":  {
+                                                "id":  "res_3",
+                                                "name":  "РњР°СЃС‚РµСЂСЃС‚РІРѕ Р РµР·РѕРЅР°РЅСЃР°",
+                                                "description":  "РџРѕР»РЅС‹Р№ РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ СЂРµР·РѕРЅР°РЅСЃРѕРј СЃ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕРј.",
+                                                "unlock_condition":  "chapter_14_complete",
+                                                "effects":  {
+                                                                "anomaly_navigation":  true,
+                                                                "entity_communication":  true,
+                                                                "future_fragments":  true
+                                                            }
+                                            },
+                      "resonance_transcendent":  {
+                                                     "id":  "res_4",
+                                                     "name":  "РўСЂР°РЅСЃС†РµРЅРґРµРЅС‚РЅС‹Р№ Р РµР·РѕРЅР°РЅСЃ",
+                                                     "description":  "Р•РґРёРЅРµРЅРёРµ СЃ С‚РєР°РЅСЊСЋ СЂРµР°Р»СЊРЅРѕСЃС‚Рё. РўСЂРµР±СѓРµС‚СЃСЏ РґР»СЏ С„РёРЅР°Р»Р° РЎР»РёСЏРЅРёСЏ.",
+                                                     "unlock_condition":  "psychic_90_or_entity_communion",
+                                                     "effects":  {
+                                                                     "reality_manipulation":  true,
+                                                                     "entity_integration_safe":  true,
+                                                                     "merge_ending_unlock":  true
+                                                                 }
+                                                 },
+                      "resonance_sense_v5":  {
+                                                 "id":  "res_1_v5",
+                                                 "name":  "Р§СѓРІСЃС‚РІРѕ Р РµР·РѕРЅР°РЅСЃР°",
+                                                 "description":  "РЎРїРѕСЃРѕР±РЅРѕСЃС‚СЊ С‡СѓРІСЃС‚РІРѕРІР°С‚СЊ РЎСѓС‰РЅРѕСЃС‚СЊ",
+                                                 "branch":  "resonance",
+                                                 "level_required":  1,
+                                                 "effects":  {
+                                                                 "entity_detection":  true,
+                                                                 "radius":  100
+                                                             },
+                                                 "chapters":  [
+                                                                  11,
+                                                                  12,
+                                                                  13,
+                                                                  14,
+                                                                  15,
+                                                                  16,
+                                                                  17,
+                                                                  18
+                                                              ]
+                                             },
+                      "resonance_amplify_v5":  {
+                                                   "id":  "res_25_v5",
+                                                   "name":  "РЈСЃРёР»РµРЅРёРµ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "description":  "РЈСЃРёР»РµРЅРёРµ СЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "branch":  "resonance",
+                                                   "level_required":  25,
+                                                   "effects":  {
+                                                                   "radius":  500,
+                                                                   "weakness_perception":  true
+                                                               },
+                                                   "chapters":  [
+                                                                    12,
+                                                                    13,
+                                                                    14,
+                                                                    15,
+                                                                    16,
+                                                                    17,
+                                                                    18
+                                                                ]
+                                               },
+                      "resonance_mastery_v5":  {
+                                                   "id":  "res_50_v5",
+                                                   "name":  "РњР°СЃС‚РµСЂСЃС‚РІРѕ Р РµР·РѕРЅР°РЅСЃР°",
+                                                   "description":  "РќР°РІРёРіР°С†РёСЏ С‡РµСЂРµР· Р°РЅРѕРјР°Р»РёРё",
+                                                   "branch":  "resonance",
+                                                   "level_required":  50,
+                                                   "effects":  {
+                                                                   "anomaly_navigation":  true
+                                                               },
+                                                   "chapters":  [
+                                                                    14,
+                                                                    15,
+                                                                    16,
+                                                                    17,
+                                                                    18
+                                                                ]
+                                               },
+                      "resonance_transcendence_v5":  {
+                                                         "id":  "res_75_v5",
+                                                         "name":  "РўСЂР°РЅСЃС†РµРЅРґРµРЅС‚РЅС‹Р№ Р РµР·РѕРЅР°РЅСЃ",
+                                                         "description":  "РњР°РЅРёРїСѓР»СЏС†РёСЏ СЂРµР°Р»СЊРЅРѕСЃС‚СЊСЋ С‡РµСЂРµР· Р РµР·РѕРЅР°РЅСЃ",
+                                                         "branch":  "resonance",
+                                                         "level_required":  75,
+                                                         "effects":  {
+                                                                         "reality_manipulation":  true
+                                                                     },
+                                                         "chapters":  [
+                                                                          16,
+                                                                          17,
+                                                                          18
+                                                                      ]
+                                                     }
+                  },
+    "carrier":  {
+                    "cargo_optimization":  {
+                                               "id":  "car_1",
+                                               "name":  "РћРїС‚РёРјРёР·Р°С†РёСЏ Р“СЂСѓР·Р°",
+                                               "description":  "РЈРІРµР»РёС‡РµРЅРёРµ РіСЂСѓР·РѕРїРѕРґСЉС‘РјРЅРѕСЃС‚Рё РєРѕСЂР°Р±Р»СЏ.",
+                                               "unlock_condition":  "ship_upgrade_1",
+                                               "effects":  {
+                                                               "cargo_capacity":  50,
+                                                               "fuel_efficiency":  10
+                                                           }
+                                           },
+                    "smuggler_compartments":  {
+                                                  "id":  "car_2",
+                                                  "name":  "РљРѕРЅС‚СЂР°Р±Р°РЅРґРЅС‹Рµ РћС‚СЃРµРєРё",
+                                                  "description":  "РЎРєСЂС‹С‚С‹Рµ РѕС‚СЃРµРєРё РґР»СЏ РЅРµР»РµРіР°Р»СЊРЅС‹С… РіСЂСѓР·РѕРІ.",
+                                                  "unlock_condition":  "veronica_relationship_40",
+                                                  "effects":  {
+                                                                  "hidden_cargo":  20,
+                                                                  "scan_evasion":  60
+                                                              }
+                                              },
+                    "anomaly_containment":  {
+                                                "id":  "car_3",
+                                                "name":  "РЎРґРµСЂР¶РёРІР°РЅРёРµ РђРЅРѕРјР°Р»РёР№",
+                                                "description":  "РЎРїРµС†РёР°Р»СЊРЅС‹Рµ РєРѕРЅС‚РµР№РЅРµСЂС‹ РґР»СЏ Р°РЅРѕРјР°Р»СЊРЅС‹С… Р°СЂС‚РµС„Р°РєС‚РѕРІ.",
+                                                "unlock_condition":  "q12_01_complete",
+                                                "effects":  {
+                                                                "anomaly_transport":  true,
+                                                                "radiation_shielding":  80
+                                                            }
+                                            },
+                    "entity_sample_storage":  {
+                                                  "id":  "car_4",
+                                                  "name":  "РҐСЂР°РЅРёР»РёС‰Рµ РћР±СЂР°Р·С†РѕРІ РЎСѓС‰РЅРѕСЃС‚Рё",
+                                                  "description":  "Р‘РёРѕРєРѕРЅС‚РµР№РЅРµСЂС‹ РґР»СЏ Р±РµР·РѕРїР°СЃРЅРѕРіРѕ С…СЂР°РЅРµРЅРёСЏ РѕСЃС‚Р°РЅРєРѕРІ РїРѕСЂРѕР¶РґРµРЅРёР№.",
+                                                  "unlock_condition":  "q17_01_complete",
+                                                  "effects":  {
+                                                                  "entity_sample_transport":  true,
+                                                                  "alchemy_ingredient_access":  true
+                                                              }
+                                              }
+                },
+    "path":  {
+                 "alliance":  {
+                                  "fleet_coordination":  {
+                                                             "id":  "path_all_1",
+                                                             "name":  "РљРѕРѕСЂРґРёРЅР°С†РёСЏ Р¤Р»РѕС‚Р°",
+                                                             "description":  "Р’С‹Р·РѕРІ РїРѕРґРґРµСЂР¶РєРё С„Р»РѕС‚Р° РћР±СЉРµРґРёРЅС‘РЅРЅС‹С… РњРёСЂРѕРІ.",
+                                                             "effects":  {
+                                                                             "fleet_support":  true,
+                                                                             "combat_advantage":  30
+                                                                         },
+                                                             "unlock":  "alliance_path_chapter_13"
+                                                         },
+                                  "alliance_resources":  {
+                                                             "id":  "path_all_2",
+                                                             "name":  "Р РµСЃСѓСЂСЃС‹ РђР»СЊСЏРЅСЃР°",
+                                                             "description":  "Р”РѕСЃС‚СѓРї Рє РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЋ Рё С‚РµС…РЅРѕР»РѕРіРёСЏРј РђР»СЊСЏРЅСЃР°.",
+                                                             "effects":  {
+                                                                             "credit_bonus":  5000,
+                                                                             "equipment_discount":  40
+                                                                         },
+                                                             "unlock":  "alliance_path_chapter_14"
+                                                         },
+                                  "united_front":  {
+                                                       "id":  "path_all_3",
+                                                       "name":  "Р•РґРёРЅС‹Р№ Р¤СЂРѕРЅС‚",
+                                                       "description":  "Р¤РёРЅР°Р»СЊРЅР°СЏ РїРѕРґРґРµСЂР¶РєР° РђР»СЊСЏРЅСЃР° РІ Р±РёС‚РІРµ СЃ РЎСѓС‰РЅРѕСЃС‚СЊСЋ.",
+                                                       "effects":  {
+                                                                       "final_battle_allies":  "alliance_fleet",
+                                                                       "exile_ending_army":  true
+                                                                   },
+                                                       "unlock":  "alliance_path_chapter_16"
+                                                   }
+                              },
+                 "observer":  {
+                                  "ancient_knowledge_access":  {
+                                                                   "id":  "path_obs_1",
+                                                                   "name":  "Р”СЂРµРІРЅРёРµ Р—РЅР°РЅРёСЏ",
+                                                                   "description":  "Р”РѕСЃС‚СѓРї Рє Р°СЂС…РёРІР°Рј РћСЂРґРµРЅР° РќР°Р±Р»СЋРґР°С‚РµР»РµР№.",
+                                                                   "effects":  {
+                                                                                   "lore_unlock":  true,
+                                                                                   "psychic_boost":  20
+                                                                               },
+                                                                   "unlock":  "observer_path_chapter_13"
+                                                               },
+                                  "resonance_training":  {
+                                                             "id":  "path_obs_2",
+                                                             "name":  "РћР±СѓС‡РµРЅРёРµ Р РµР·РѕРЅР°РЅСЃСѓ",
+                                                             "description":  "РЈСЃРєРѕСЂРµРЅРЅРѕРµ СЂР°Р·РІРёС‚РёРµ СЂРµР·РѕРЅР°РЅСЃР° РїРѕРґ СЂСѓРєРѕРІРѕРґСЃС‚РІРѕРј Р—Р°СЂС‹.",
+                                                             "effects":  {
+                                                                             "resonance_level_boost":  2,
+                                                                             "anomaly_mastery":  true
+                                                                         },
+                                                             "unlock":  "observer_path_chapter_14"
+                                                         },
+                                  "order_blessing":  {
+                                                         "id":  "path_obs_3",
+                                                         "name":  "Р‘Р»Р°РіРѕСЃР»РѕРІРµРЅРёРµ РћСЂРґРµРЅР°",
+                                                         "description":  "Р¤РёРЅР°Р»СЊРЅР°СЏ РїРѕРґРґРµСЂР¶РєР° РћСЂРґРµРЅР° Рё Р—Р°СЂС‹.",
+                                                         "effects":  {
+                                                                         "final_battle_allies":  "knights_of_order",
+                                                                         "treaty_ending_knowledge":  true
+                                                                     },
+                                                         "unlock":  "observer_path_chapter_16"
+                                                     }
+                              },
+                 "independence":  {
+                                      "network_access":  {
+                                                             "id":  "path_ind_1",
+                                                             "name":  "РЎРµС‚СЊ РќРµР·Р°РІРёСЃРёРјС‹С…",
+                                                             "description":  "Р”РѕСЃС‚СѓРї Рє СЃРµС‚Рё Р°РіРµРЅС‚РѕРІ Р’РѕР»РєРѕРІР°.",
+                                                             "effects":  {
+                                                                             "intel_bonus":  true,
+                                                                             "smuggler_routes":  true
+                                                                         },
+                                                             "unlock":  "independence_path_chapter_13"
+                                                         },
+                                      "freedom_fighters":  {
+                                                               "id":  "path_ind_2",
+                                                               "name":  "Р‘РѕР№С†С‹ РЎРІРѕР±РѕРґС‹",
+                                                               "description":  "РџСЂРёРІР»РµС‡РµРЅРёРµ РЅР°С‘РјРЅРёРєРѕРІ Рё РЅРµР·Р°РІРёСЃРёРјС‹С… РєР°РїРёС‚Р°РЅРѕРІ.",
+                                                               "effects":  {
+                                                                               "mercenary_discount":  50,
+                                                                               "unique_contracts":  true
+                                                                           },
+                                                               "unlock":  "independence_path_chapter_14"
+                                                           },
+                                      "independent_fleet":  {
+                                                                "id":  "path_ind_3",
+                                                                "name":  "РќРµР·Р°РІРёСЃРёРјС‹Р№ Р¤Р»РѕС‚",
+                                                                "description":  "РЎРѕР±СЃС‚РІРµРЅРЅР°СЏ С„Р»РѕС‚РёР»РёСЏ РёР· РЅРµР·Р°РІРёСЃРёРјС‹С… РєРѕСЂР°Р±Р»РµР№.",
+                                                                "effects":  {
+                                                                                "final_battle_allies":  "independent_squadron",
+                                                                                "freedom_ending":  true
+                                                                            },
+                                                                "unlock":  "independence_path_chapter_16"
+                                                            }
+                                  }
+             },
+    "final_battle":  {
+                         "sacrifice_strike":  {
+                                                  "id":  "final_1",
+                                                  "name":  "РЈРґР°СЂ Р–РµСЂС‚РІС‹",
+                                                  "description":  "РњРѕС‰РЅР°СЏ Р°С‚Р°РєР° С†РµРЅРѕР№ СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ Р·РґРѕСЂРѕРІСЊСЏ. РўСЂРµР±СѓРµС‚СЃСЏ РґР»СЏ С„РёРЅР°Р»Р° РР·РіРЅР°РЅРёСЏ.",
+                                                  "effects":  {
+                                                                  "damage":  500,
+                                                                  "self_damage":  50,
+                                                                  "anchor_damage":  100
+                                                              },
+                                                  "requirement":  "exile_path_chosen"
+                                              },
+                         "diplomatic_communion":  {
+                                                      "id":  "final_2",
+                                                      "name":  "Р”РёРїР»РѕРјР°С‚РёС‡РµСЃРєРѕРµ РџСЂРёС‡Р°СЃС‚РёРµ",
+                                                      "description":  "РњРµРЅС‚Р°Р»СЊРЅР°СЏ СЃРІСЏР·СЊ СЃ РЎСѓС‰РЅРѕСЃС‚СЊСЋ РґР»СЏ РїРµСЂРµРіРѕРІРѕСЂРѕРІ. РўСЂРµР±СѓРµС‚СЃСЏ РґР»СЏ С„РёРЅР°Р»Р° Р”РѕРіРѕРІРѕСЂР°.",
+                                                      "effects":  {
+                                                                      "entity_negotiation":  true,
+                                                                      "treaty_establishment":  true
+                                                                  },
+                                                      "requirement":  "psychic_70_or_empathy_80"
+                                                  },
+                         "entity_absorption":  {
+                                                   "id":  "final_3",
+                                                   "name":  "РџРѕРіР»РѕС‰РµРЅРёРµ РЎСѓС‰РЅРѕСЃС‚Рё",
+                                                   "description":  "РРЅС‚РµРіСЂР°С†РёСЏ РЎСѓС‰РЅРѕСЃС‚Рё РІ СЃРѕР±СЃС‚РІРµРЅРЅРѕРµ СЃРѕР·РЅР°РЅРёРµ. РўСЂРµР±СѓРµС‚СЃСЏ РґР»СЏ С„РёРЅР°Р»Р° РЎР»РёСЏРЅРёСЏ.",
+                                                   "effects":  {
+                                                                   "merge_with_entity":  true,
+                                                                   "transcendence":  true
+                                                               },
+                                                   "requirement":  "psychic_90_and_resonance_transcendent"
+                                               }
+                     }
 }
