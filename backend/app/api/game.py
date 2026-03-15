@@ -3,11 +3,11 @@ StarCourier Web - Game API Router
 API endpoints для игровой логики
 
 Автор: QuadDarv1ne
-Версия: 1.0.0
+Версия: 1.1.0
 """
 
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, status
@@ -31,8 +31,15 @@ players_state: Dict[str, dict] = {}
 # HELPER FUNCTIONS
 # ============================================================================
 
-def check_game_over(stats: Dict[str, int]) -> tuple[bool, Optional[str]]:
-    """Проверка условий конца игры"""
+def check_game_over(stats: Dict[str, int]) -> Tuple[bool, Optional[str]]:
+    """Проверка условий конца игры
+    
+    Args:
+        stats: Текущая статистика игрока
+        
+    Returns:
+        Кортеж (is_game_over, reason)
+    """
     if stats.get("health", 100) <= 0:
         return True, "health_depleted"
     if stats.get("morale", 100) <= 0:
@@ -41,15 +48,29 @@ def check_game_over(stats: Dict[str, int]) -> tuple[bool, Optional[str]]:
 
 
 def is_ending_scene(scene_id: str) -> bool:
-    """Проверка, является ли сцена финальной"""
+    """Проверка, является ли сцена финальной
+    
+    Args:
+        scene_id: ID сцены для проверки
+        
+    Returns:
+        True если сцена финальная
+    """
     ending_keywords = ["ancient_awakening", "hide_artifact", "artifact_destruction",
                        "defend_station", "victory", "game_over"]
     return any(keyword in scene_id for keyword in ending_keywords)
 
 
 def get_ending_type(scene_id: str) -> Optional[str]:
-    """Определить тип концовки"""
-    ending_types = {
+    """Определить тип концовки
+    
+    Args:
+        scene_id: ID сцены
+        
+    Returns:
+        Тип концовки или None
+    """
+    ending_types: Dict[str, str] = {
         "ancient_awakening": "awakening",
         "hide_artifact": "guardian",
         "artifact_destruction": "sacrifice",
@@ -64,7 +85,15 @@ def get_ending_type(scene_id: str) -> Optional[str]:
 
 def apply_stat_changes(current_stats: Dict[str, int],
                        changes: Optional[Dict[str, int]]) -> Dict[str, int]:
-    """Применить изменения статистики"""
+    """Применить изменения статистики
+    
+    Args:
+        current_stats: Текущая статистика игрока
+        changes: Изменения статистики
+        
+    Returns:
+        Новая статистика с применёнными изменениями
+    """
     if not changes:
         return current_stats
 
@@ -79,7 +108,15 @@ def apply_stat_changes(current_stats: Dict[str, int],
 
 
 def format_scene_response(scene_id: str, scene_data: dict) -> SceneResponse:
-    """Форматировать данные сцены для ответа"""
+    """Форматировать данные сцены для ответа
+    
+    Args:
+        scene_id: ID сцены
+        scene_data: Данные сцены из JSON
+        
+    Returns:
+        SceneResponse для API
+    """
     choices = [
         Choice(
             text=choice.get("text", ""),

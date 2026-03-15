@@ -220,5 +220,73 @@ class TestIntegration:
         assert response.status_code == 200
 
 
+# ============================================================================
+# GAME HELPERS TESTS
+# ============================================================================
+
+class TestGameHelpers:
+    """Тесты вспомогательных функций игры"""
+
+    def test_check_game_over_health(self):
+        """Проверка конца игры по здоровью"""
+        from app.api.game import check_game_over
+        
+        # Игра не окончена
+        is_over, reason = check_game_over({"health": 50, "morale": 50})
+        assert is_over is False
+        assert reason is None
+        
+        # Игра окончена (health)
+        is_over, reason = check_game_over({"health": 0, "morale": 50})
+        assert is_over is True
+        assert reason == "health_depleted"
+
+    def test_check_game_over_morale(self):
+        """Проверка конца игры по морали"""
+        from app.api.game import check_game_over
+        
+        # Игра окончена (morale)
+        is_over, reason = check_game_over({"health": 50, "morale": 0})
+        assert is_over is True
+        assert reason == "morale_depleted"
+
+    def test_is_ending_scene(self):
+        """Проверка финальных сцен"""
+        from app.api.game import is_ending_scene
+        
+        assert is_ending_scene("ancient_awakening") is True
+        assert is_ending_scene("hide_artifact") is True
+        assert is_ending_scene("start") is False
+        assert is_ending_scene("command_center") is False
+
+    def test_get_ending_type(self):
+        """Проверка типа концовки"""
+        from app.api.game import get_ending_type
+        
+        assert get_ending_type("ancient_awakening") == "awakening"
+        assert get_ending_type("hide_artifact") == "guardian"
+        assert get_ending_type("start") is None
+
+    def test_apply_stat_changes(self):
+        """Проверка применения изменений статистики"""
+        from app.api.game import apply_stat_changes
+        
+        stats = {"health": 100, "morale": 75, "knowledge": 30}
+        
+        # Положительное изменение
+        new_stats = apply_stat_changes(stats, {"health": 10, "morale": -5})
+        assert new_stats["health"] == 100  # capped at 100
+        assert new_stats["morale"] == 70
+        assert new_stats["knowledge"] == 30  # unchanged
+        
+        # Отрицательное изменение
+        new_stats = apply_stat_changes(stats, {"health": -50})
+        assert new_stats["health"] == 50
+        
+        # Изменение за пределами диапазона
+        new_stats = apply_stat_changes(stats, {"health": -150})
+        assert new_stats["health"] == 0  # capped at 0
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
