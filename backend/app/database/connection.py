@@ -244,15 +244,5 @@ async def bulk_insert(
 # EVENTS
 # ============================================================================
 
-@event.listens_for(AsyncSession, "before_commit")
-def receive_before_commit(session):
-    """Обработчик перед коммитом - обновление временных меток"""
-    for instance in session.new:
-        if hasattr(instance, 'created_at') and instance.created_at is None:
-            instance.created_at = datetime.utcnow()
-        if hasattr(instance, 'updated_at') and instance.updated_at is None:
-            instance.updated_at = datetime.utcnow()
-    
-    for instance in session.dirty:
-        if hasattr(instance, 'updated_at'):
-            instance.updated_at = datetime.utcnow()
+# Примечание: AsyncSession не поддерживает события напрямую
+# Обновление временных меток реализовано через модели

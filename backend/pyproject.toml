@@ -1,0 +1,40 @@
+# StarCourier Web - Black configuration
+# Форматирование Python кода
+
+[tool.black]
+# Длина строки
+line-length = 100
+
+# Целевая версия Python
+target_version = ['py313']
+
+# Кодировка
+encoding = 'utf-8'
+
+# Исключения
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | \.qwen
+  | node_modules
+  | __pycache__
+  | migrations
+  | alembic
+  | \.mypy_cache
+  | \.pytest_cache
+)/
+'''
+
+# Расширения файлов
+include = '\.pyi?$'
+
+# Дополнительные настройки
+skip-string-normalization = false
+skip-magic-trailing-comma = false
+preview = true
+fast = false
+color = true
+verbose = true
+quiet = false

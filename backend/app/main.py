@@ -19,7 +19,11 @@ from fastapi.responses import JSONResponse
 from app.config import settings
 
 # Импорт роутеров
-from app.api import game, characters, scenes, websocket, auth, leaderboard, achievements, analytics, admin, data, abilities, quests, game_mechanics
+from app.api import (
+    game, characters, scenes, websocket, auth, leaderboard,
+    achievements, analytics, admin, data, abilities, quests,
+    game_mechanics, inventory, combat
+)
 
 # Импорт сервисов
 from app.services import data_service
@@ -28,7 +32,8 @@ from app.services import data_service
 from app.database import init_db, close_db
 
 # Импорт middleware
-from app.middleware import RateLimitMiddleware, RequestLoggerMiddleware, SecurityMiddleware, rate_limiter
+from app.middleware import RateLimitMiddleware, RequestLoggerMiddleware, SecurityMiddleware
+from app.middleware.rate_limit import RateLimiter, rate_limiter
 from app.middleware.performance import PerformanceMiddleware, metrics
 
 # Импорт кэша
@@ -36,6 +41,9 @@ from app.services.cache_service import init_cache
 
 # Импорт моделей
 from app.models import HealthCheckResponse, ErrorResponse
+
+# Импорт обработчиков исключений
+from app.exceptions import register_exception_handlers
 
 # ============================================================================
 # ЛОГИРОВАНИЕ
@@ -146,9 +154,18 @@ app.add_middleware(
 # EXCEPTION HANDLERS
 # ============================================================================
 
+# Регистрация глобальных обработчиков исключений
+register_exception_handlers(app)
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Глобальный обработчик ошибок"""
+    """
+    Глобальный обработчик ошибок (резервный)
+    
+    Примечание: Основные обработчики зарегистрированы через register_exception_handlers()
+    """
+    # Этот обработчик остаётся как резервный
     logger.error(f"❌ Необработанная ошибка: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
@@ -176,6 +193,8 @@ app.include_router(data.router, prefix="/api/data", tags=["📦 Данные"])
 app.include_router(abilities.router, prefix="/api/abilities", tags=["⚡ Способности"])
 app.include_router(quests.router, prefix="/api/quests", tags=["📜 Квесты"])
 app.include_router(game_mechanics.router, prefix="/api/game-mechanics", tags=["🎮 Игровые механики"])
+app.include_router(inventory.router, prefix="/api/inventory", tags=["🎒 Инвентарь"])
+app.include_router(combat.router, prefix="/api/combat", tags=["⚔️ Бой"])
 app.include_router(websocket.router, tags=["🔌 WebSocket"])
 
 

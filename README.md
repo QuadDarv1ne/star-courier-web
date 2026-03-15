@@ -8,10 +8,14 @@
 ![Python](https://img.shields.io/badge/python-3.13-green)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.6-009688)
 ![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+[![CI/CD](https://github.com/QuadDarv1ne/star-courier-web/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/QuadDarv1ne/star-courier-web/actions/workflows/ci-cd.yml)
+[![Codecov](https://codecov.io/gh/QuadDarv1ne/star-courier-web/branch/main/graph/badge.svg)](https://codecov.io/gh/QuadDarv1ne/star-courier-web)
 
 > **📢 Новое в версии 3.0:** Добавлены механики глав 11-18 — Система Резонанса, Пути развития (Альянс/Наблюдатель/Независимость), 3 финала, Ментальное состояние.
-> 
-> 📖 [Документация по новым механикам](NEW_MECHANICS.md)
+>
+> 📖 [Документация по новым механикам](temp_extract/Star_Courier_Project/documentation/Star_Courier_New_Mechanics.md)
 
 ---
 
@@ -25,6 +29,8 @@
 - [Структура проекта](#-структура-проекта)
 - [Функции](#-функции)
 - [Новые механики](#-новые-механики)
+- [Разработка](#-разработка)
+- [Вклад в проект](#-вклад-в-проект)
 
 ---
 
@@ -323,7 +329,84 @@ POST /api/game-mechanics/ending/check   # Проверка финала
 POST /api/game-mechanics/entity/contact # Контакт с Сущностью
 ```
 
-📖 **Полная документация:** [NEW_MECHANICS.md](NEW_MECHANICS.md)
+📖 **Полная документация:** [NEW_MECHANICS.md](temp_extract/Star_Courier_Project/documentation/Star_Courier_New_Mechanics.md)
+
+---
+
+## 👨‍💻 Разработка
+
+### Быстрый старт
+
+```bash
+# Клонируйте репозиторий
+git clone https://github.com/QuadDarv1ne/star-courier-web.git
+cd star-courier-web
+
+# Настройте окружение (Linux/Mac)
+./scripts/setup-dev.sh
+
+# Настройте окружение (Windows PowerShell)
+.\scripts\setup-dev.ps1
+```
+
+### Ручная настройка
+
+#### Backend
+
+```bash
+cd backend
+
+# Создание виртуального окружения
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+.\venv\Scripts\Activate   # Windows
+
+# Установка зависимостей
+pip install -r requirements.txt
+
+# Запуск сервера разработки
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### Frontend
+
+```bash
+cd frontend
+
+# Установка зависимостей
+npm install
+
+# Запуск сервера разработки
+npm run dev
+```
+
+### Инструменты разработчика
+
+```bash
+# Backend
+cd backend
+pytest tests/ -v                    # Запуск тестов
+flake8 app/                         # Линтинг
+mypy app/                           # Проверка типов
+black app/                          # Форматирование
+
+# Frontend
+cd frontend
+npm run test                        # Запуск тестов
+npm run lint                        # Линтинг
+npm run format                      # Форматирование
+```
+
+### Pre-commit хуки
+
+```bash
+# Установка pre-commit
+pip install pre-commit
+pre-commit install
+
+# Запуск всех проверок
+pre-commit run --all-files
+```
 
 ---
 
@@ -338,6 +421,24 @@ pytest tests/ -v --cov=app
 cd frontend
 npm run test
 ```
+
+---
+
+## 🤝 Вклад в проект
+
+Мы приветствуем вклад в проект! Пожалуйста, ознакомьтесь с:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Гайд для контрибьюторов
+- [TODO.md](TODO.md) - Дорожная карта проекта
+- [CHANGELOG.md](CHANGELOG.md) - История изменений
+
+### Как помочь
+
+1. Найдите задачу в [TODO.md](TODO.md) или создайте Issue
+2. Форкните репозиторий
+3. Создайте ветку (`git checkout -b feature/your-feature`)
+4. Внесите изменения и протестируйте
+5. Отправьте Pull Request
 
 ---
 
@@ -370,15 +471,17 @@ SC_CACHE_TYPE=memory
 
 ---
 
-## 👨‍💻 Автор
+## 👨‍💻 Команда и контакты
 
-**QuadDarv1ne** (Dupley Maxim Igorevich)
+**Автор и ведущий разработчик:** QuadDarv1ne (Dupley Maxim Igorevich)
+
+**Вкладчики:** [Список контрибьюторов](https://github.com/QuadDarv1ne/star-courier-web/graphs/contributors)
 
 ---
 
 ## 📄 Лицензия
 
-MIT License
+MIT License - см. [LICENSE](LICENSE)
 
 ---
 
@@ -386,4 +489,13 @@ MIT License
 
 - FastAPI за отличный фреймворк
 - Vue.js за реактивный frontend
-- Всем контрибьюторам
+- Всем контрибьюторам проекта
+
+---
+
+## 📚 Дополнительные ресурсы
+
+- [Документация для разработчиков](temp_extract/Star_Courier_Project/documentation/README_DEVELOPERS.md)
+- [Игровые механики](temp_extract/Star_Courier_Project/documentation/Star_Courier_New_Mechanics.md)
+- [Swagger UI](http://localhost:8000/docs)
+- [ReDoc](http://localhost:8000/redoc)
