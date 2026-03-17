@@ -3,9 +3,9 @@
 > Дорожная карта развития проекта StarCourier Web
 
 **Последнее обновление:** 17 марта 2026
-**Версия:** 3.9
-**Статус:** Рефакторинг API + тесты
-**Текущая ветка:** dev (в разработке)
+**Версия:** 4.0
+**Статус:** Стабилизация + тесты
+**Текущая ветка:** dev → main (требуется слияние)
 
 ---
 
@@ -20,12 +20,14 @@
   - [x] Создать CHANGELOG.md с историей изменений
   - [ ] Добавить API документацию в OpenAPI формате
 
-- [x] **Backend улучшения**
+- [ ] **Backend улучшения**
   - [x] Унифицировать response модели API (ResponseBuilder, APIError)
   - [x] Добавить глобальный обработчик ошибок (exceptions.py - 8 обработчиков)
   - [x] Улучшить типизацию (TypeHint) во всех модулях (validators.py, data_service.py, cache_service.py)
   - [x] Рефакторинг middleware (performance.py, rate_limit.py, security.py, request_logger.py)
+  - [x] Рефакторинг API endpoints (game.py, characters.py, scenes.py, auth.py, leaderboard.py)
   - [ ] Добавить pydantic v2 валидацию
+  - [ ] Рефакторинг inventory.py и combat.py
 
 - [ ] **Frontend улучшения**
   - [ ] Улучшить компонент GameView
@@ -48,6 +50,7 @@
   - [x] Unit-тесты для Scenes API
   - [x] Unit-тесты для Leaderboard API
   - [x] Unit-тесты для Auth API
+  - [x] Базовые тесты (test_app.py, test_api.py, test_advanced.py, test_game_mechanics.py)
   - [ ] Unit-тесты для сервисов (60% coverage)
   - [ ] Integration тесты API
   - [ ] E2E тесты критических путей
@@ -146,6 +149,7 @@
 - [ ] Оптимизация SQL запросов
 - [x] Добавить type hints в service слой (data_service.py, cache_service.py)
 - [x] Добавить type hints в middleware слой (performance.py, rate_limit.py, security.py, request_logger.py)
+- [x] Рефакторинг API endpoints (game, characters, scenes, auth, leaderboard)
 
 ### Frontend
 - [ ] Миграция на Vue 3.4+
@@ -170,6 +174,7 @@
 - [ ] Unit-тесты для сервисов (60% coverage)
 - [ ] Integration тесты API
 - [ ] E2E тесты критических путей
+- [ ] Тесты для inventory.py и combat.py API
 
 ---
 
@@ -268,7 +273,7 @@
 | Ветка | Статус | Изменения |
 |-------|--------|-----------|
 | `main` | ✅ Актуальна | Refactor API + тесты + очистка |
-| `dev` | 🔄 В работе | Refactor API + тесты (Auth/Leaderboard/Characters/Scenes) |
+| `dev` | ✅ Готово к слиянию | Refactor API + тесты (Auth/Leaderboard/Characters/Scenes) |
 
 **Выполнено:**
 - [x] Завершить изменения в `main` (обработчик ошибок + автовыбор порта) ✅
@@ -300,13 +305,14 @@
 - [x] Улучшение exception handling ✅
 
 **План на следующую итерацию:**
+- [ ] Слить dev → main (требуется слияние)
 - [ ] Рефакторинг API endpoints (inventory.py, combat.py)
 - [ ] Добавить тесты для service слоя (60% coverage)
+- [ ] Тесты для inventory.py и combat.py API
 - [ ] Оптимизировать кэширование сцен
 - [ ] Pydantic v2 валидация
 - [ ] Интеграционные тесты API
 - [ ] README.md с новыми механиками
-- [ ] Слить dev → main после тестирования
 
 ---
 
