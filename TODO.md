@@ -2,10 +2,10 @@
 
 > Дорожная карта развития проекта StarCourier Web
 
-**Последнее обновление:** 15 марта 2026
-**Версия:** 3.8
-**Статус:** Стабилизация
-**Текущая ветка:** main = dev (синхронизированы)
+**Последнее обновление:** 17 марта 2026
+**Версия:** 3.9
+**Статус:** Рефакторинг API + тесты
+**Текущая ветка:** dev (в разработке)
 
 ---
 
@@ -25,14 +25,13 @@
   - [x] Добавить глобальный обработчик ошибок (exceptions.py - 8 обработчиков)
   - [x] Улучшить типизацию (TypeHint) во всех модулях (validators.py, data_service.py, cache_service.py)
   - [x] Рефакторинг middleware (performance.py, rate_limit.py, security.py, request_logger.py)
-  - [x] Очистка данных от дубликатов (abilities_v5.json, characters_v5.json, scenes_ch1_5.json)
   - [ ] Добавить pydantic v2 валидацию
 
 - [ ] **Frontend улучшения**
   - [ ] Улучшить компонент GameView
   - [ ] Добавить анимации переходов
-  - [x] Исправить баги с состоянием Pinia (валидация в game.js)
-  - [x] Оптимизировать Pinia store
+  - [x] Исправить баги с состоянием Pinia (валидация в game.js добавлена)
+  - [x] Оптимизировать Pinia store (Set для visitedScenes)
   - [ ] Добавить тёмную тему
 
 ### 📅 Апрель 2026
@@ -43,7 +42,7 @@
   - [ ] Боевая тактическая система
   - [ ] Репутация с фракциями
 
-- [x] **Тестирование**
+- [ ] **Тестирование**
   - [x] Unit-тесты для helper функций игры (check_game_over, is_ending_scene, get_ending_type, apply_stat_changes)
   - [x] Unit-тесты для Characters API
   - [x] Unit-тесты для Scenes API
@@ -154,7 +153,6 @@
 - [ ] Оптимизация размера bundle
 - [ ] Улучшение доступности
 - [x] Валидация данных в Pinia store (game.js)
-- [x] Оптимизация состояния store
 
 ### DevOps
 - [ ] Автоматизация деплоя
@@ -164,10 +162,11 @@
 
 ### Тесты
 - [x] Базовые тесты (test_app.py, test_api.py, test_advanced.py, test_game_mechanics.py)
-- [x] Тесты Characters API
-- [x] Тесты Scenes API
-- [x] Тесты Leaderboard API
-- [x] Тесты Auth API
+- [x] Unit-тесты для helper функций игры
+- [x] Unit-тесты для Characters API
+- [x] Unit-тесты для Scenes API
+- [x] Unit-тесты для Leaderboard API
+- [x] Unit-тесты для Auth API
 - [ ] Unit-тесты для сервисов (60% coverage)
 - [ ] Integration тесты API
 - [ ] E2E тесты критических путей
@@ -264,12 +263,12 @@
 
 ## 🔄 Статус синхронизации веток
 
-**Последняя проверка:** 15 марта 2026
+**Последняя проверка:** 17 марта 2026
 
 | Ветка | Статус | Изменения |
 |-------|--------|-----------|
 | `main` | ✅ Актуальна | Refactor API + тесты + очистка |
-| `dev` | ✅ Синхронизирована | Refactor API + тесты + очистка |
+| `dev` | 🔄 В работе | Refactor API + тесты (Auth/Leaderboard/Characters/Scenes) |
 
 **Выполнено:**
 - [x] Завершить изменения в `main` (обработчик ошибок + автовыбор порта) ✅
@@ -293,8 +292,9 @@
 - [x] Добавить тесты Characters API ✅
 - [x] Добавить тесты Scenes API ✅
 - [x] Добавить тесты Leaderboard API ✅
+- [x] Добавить тесты Auth API ✅
 - [x] Улучшить документацию API ✅
-- [x] Оптимизировать Pinia store ✅
+- [x] Оптимизировать Pinia store (Set для visitedScenes) ✅
 - [x] Очистка временных файлов (temp_extract, temp_v5) ✅
 - [x] Рефакторинг data/*.json файлов ✅
 - [x] Улучшение exception handling ✅
@@ -306,6 +306,7 @@
 - [ ] Pydantic v2 валидация
 - [ ] Интеграционные тесты API
 - [ ] README.md с новыми механиками
+- [ ] Слить dev → main после тестирования
 
 ---
 
